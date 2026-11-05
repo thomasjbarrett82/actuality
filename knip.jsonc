@@ -1,0 +1,17 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  // The E2E journeys run tests/e2e/server-fixture.ts with tsx to put fixtures on the test server.
+  // The print preview window loads its own preload (16 §3), an entry of electron.vite.config.ts.
+  "entry": [
+    "src/host/index.ts",
+    "src/preload/print-preview.ts",
+    "scripts/*.ts",
+    "tests/e2e/server-fixture.ts",
+  ],
+  "project": ["src/**/*.{ts,vue}", "scripts/**/*.ts", "eslint-rules/**/*.ts", "tests/**/*.ts"],
+  // Constants exported for documentation but used only in their own file aren't dead code.
+  "ignoreExportsUsedInFile": true,
+  // vitest-axe runs axe-core; it is a direct devDependency so its version is pinned exactly, like every
+  // other dependency (AGENTS.md).
+  "ignoreDependencies": ["axe-core"],
+}

@@ -1,0 +1,27 @@
+!Type:Bank
+D01/02/2026
+T2500.00
+PEmployer
+MJanuary
+Cc
+LIncome: Available This Month
+^
+D01/05/2026
+T-1000.00
+PLandlord
+Mrent & savings
+LSplit Transaction
+SMonthly Bills: Rent
+Erent
+$-800.00
+STransfer : Savings
+$-200.00
+^
+D01/20/2026
+T-123.45
+PCity Water
+Mquarterly #utilities
+N1042
+CR
+LMonthly Bills: Water "City"
+^

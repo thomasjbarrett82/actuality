@@ -1,0 +1,28 @@
+# Build and test output (21 §4.3)
+out/
+dist/
+release/
+coverage/
+test-results/
+playwright-report/
+*.tsbuildinfo
+package-lock.json
+website/build/
+.docusaurus/
+
+# Generated files
+src/shared/i18n/en-XA/
+docs/app-spec/swatches/
+docs/app-spec/theme-palettes.md
+
+# Fixtures and golden files that must stay byte-exact
+tests/fixtures/
+src/host/parsers/fixtures/
+src/shared/export/golden/
+src/shared/reports/golden/
+
+# Spec chapters are formatted by markdownlint, not Prettier: Prettier would rewrite their tables
+docs/
+
+# Local-only downloaded API docs
+references/

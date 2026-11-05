@@ -1,0 +1,7 @@
+Date,Payee,Category,Notes,Amount,Check
+01/05/2026,"Kroger, Inc.",Everyday: Groceries,"He said ""hi""",-45.20,
+01/06/2026,Employer,Income,,"2,000.00",
+,Skipped no date,,,1.00,
+01/07/2026,Skipped no amount,,,,
+01/08/2026,Water Co,Bills: Water,"two
+lines",-30,1043

@@ -1,0 +1,14 @@
+﻿"Report","Spending Breakdown"
+"Timeframe","Latest 3 Months (Aug '26–Oct '26)"
+"Categories","All Categories"
+"Payees","All Payees"
+"Accounts","Budget Accounts"
+"Group By","Quarter"
+"Stack By","Payee"
+"Category group","Food"
+
+"Spending by quarter"
+"Item","Q3 2026","Q4 2026","Average","Total"
+"Market",210.00,0.00,105.00,210.00
+"Cafe",0.00,25.00,12.50,25.00
+"Total Spending",210.00,25.00,117.50,235.00

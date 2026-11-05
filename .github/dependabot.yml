@@ -1,0 +1,17 @@
+# Dependency updates (02 §2). Versions stay pinned exactly; Dependabot opens one pull request per bump.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    versioning-strategy: increase
+    open-pull-requests-limit: 10
+    groups:
+      # @actual-app/api upgrades need the 02 §5 native-module re-check and the full integration matrix.
+      actual-api:
+        patterns: ['@actual-app/api']
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

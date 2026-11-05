@@ -1,0 +1,24 @@
+{
+  "format": "ofx",
+  "accounts": [
+    {
+      "key": "broker.example|Z-77",
+      "type": "INVESTMENT",
+      "number": "Z-77",
+      "transactions": [
+        {
+          "rawDate": "2026-10-02",
+          "date": "2026-10-02",
+          "amount": 321,
+          "payee": "Dividend",
+          "notes": "",
+          "checkNumber": null,
+          "fitId": "D1",
+          "category": null,
+          "splits": []
+        }
+      ]
+    }
+  ],
+  "emptyAccounts": 0
+}

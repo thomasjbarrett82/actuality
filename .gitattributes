@@ -1,0 +1,29 @@
+# Line endings: LF in the repo and in every working copy, on every OS (docs/app-spec/21-testing-quality.md §4.3).
+* text=auto eol=lf
+
+# Windows-only scripts keep CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Binary files: no line-ending conversion, no text diffs.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.icns binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.zip binary
+*.pdf binary
+*.node binary
+
+# Bank-file fixtures keep their exact bytes (CRLF, windows-1252) for the parser golden tests (16 §4).
+src/host/parsers/fixtures/*.ofx binary
+src/host/parsers/fixtures/*.qfx binary
+src/host/parsers/fixtures/*.qif binary
+src/host/parsers/fixtures/*.csv binary

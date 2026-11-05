@@ -1,0 +1,67 @@
+# Dependencies (package-lock.json stays tracked: CI runs `npm ci`)
+node_modules/
+
+# Build output: electron-vite, electron-builder, vue-tsc --build, Docusaurus
+out/
+dist/
+release/
+*.tsbuildinfo
+website/build/
+.docusaurus/
+
+# Test output: Vitest coverage, Playwright reports and traces
+coverage/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# Fixture budgets: built for the current month by the test suites' global setup (21 §2)
+tests/fixtures/budgets/
+
+# Tool caches
+.cache/
+.vite/
+.eslintcache
+.stylelintcache
+
+# Logs
+*.log
+npm-debug.log*
+
+# Secrets and local config (server URLs and Sync IDs)
+.env
+.env.*
+!.env.example
+!.env.test.example
+*.config.json
+!*.config.example.json
+
+# Code-signing material (Authenticode certificates, notarization API keys)
+*.p12
+*.pfx
+*.p8
+*.cer
+*.keychain
+*.provisionprofile
+
+# Generated at build time (dev-only pseudo-locale, 20 §3.6)
+src/shared/i18n/en-XA/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors (shared VS Code settings and extension recommendations stay tracked)
+.idea/
+.vscode*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Claude Code personal settings
+.claude/settings.local.json
+CLAUDE.local.md
+
+# Local-only folders
+references/

@@ -1,0 +1,146 @@
+# CI (02 §5.1). check runs first; test, integration, build and website follow in parallel.
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - name: Commit messages (pull requests)
+        if: github.event_name == 'pull_request'
+        run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose
+      - name: Spec, user guide and UI strings in step (pull requests)
+        if: github.event_name == 'pull_request'
+        run: npm run docs:sync -- ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }}
+      - name: Pull request title
+        if: github.event_name == 'pull_request'
+        env:
+          TITLE: ${{ github.event.pull_request.title }}
+        run: echo "$TITLE" | npx commitlint --verbose
+
+  test:
+    needs: check
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run test:coverage
+
+  integration:
+    needs: check
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Minimum supported server (21 §7) and the latest release.
+        server: ['26.2.0', 'latest']
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - name: Start the Actual test server
+        run: docker compose -f tests/int/docker-compose.yml up -d --wait
+        env:
+          ACTUAL_SERVER_VERSION: ${{ matrix.server }}
+      - run: npm run test:int
+        env:
+          ACTUAL_TEST_SERVER_URL: http://localhost:5006
+          ACTUAL_TEST_PASSWORD: integration-test
+          ACTUAL_TEST_BOOTSTRAP: '1'
+      - name: Stop the test server
+        if: always()
+        run: docker compose -f tests/int/docker-compose.yml down -v
+
+  build:
+    needs: check
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Package
+        shell: bash
+        # A secret that isn't set still arrives as an empty variable, and electron-builder reads an empty
+        # CSC_LINK as a path (the working directory). Unset the empty ones, so builds without signing
+        # secrets are simply unsigned.
+        run: |
+          for v in CSC_LINK CSC_KEY_PASSWORD APPLE_API_KEY APPLE_API_KEY_ID APPLE_API_ISSUER; do
+            if [ -z "${!v}" ]; then unset "$v"; fi
+          done
+          npm run package -- --publish never
+        env:
+          # Code signing and notarization use repository secrets when present (02 §5).
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+          APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
+          APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+          CSC_IDENTITY_AUTO_DISCOVERY: ${{ secrets.CSC_LINK != '' }}
+      - uses: actions/upload-artifact@v7
+        with:
+          name: installers-${{ matrix.os }}
+          path: |
+            release/*.exe
+            release/*.dmg
+            release/*.zip
+            release/*.AppImage
+            release/*.deb
+            release/*.rpm
+          if-no-files-found: error
+
+  # The user guide site (website/, 02 §3): its own lockfile, typecheck and Docusaurus build. Broken links
+  # and anchors fail the build. Deploying it is a separate workflow.
+  website:
+    needs: check
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: website
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: website/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run build

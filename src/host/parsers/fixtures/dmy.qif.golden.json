@@ -1,0 +1,35 @@
+{
+  "format": "qif",
+  "accounts": [
+    {
+      "key": null,
+      "type": "Bank",
+      "number": null,
+      "transactions": [
+        {
+          "rawDate": "25/12/2025",
+          "date": null,
+          "amount": -1000,
+          "payee": "Shop",
+          "notes": "",
+          "checkNumber": null,
+          "fitId": null,
+          "category": null,
+          "splits": []
+        },
+        {
+          "rawDate": "03/01/2026",
+          "date": null,
+          "amount": -500,
+          "payee": "Shop",
+          "notes": "",
+          "checkNumber": null,
+          "fitId": null,
+          "category": null,
+          "splits": []
+        }
+      ]
+    }
+  ],
+  "emptyAccounts": 0
+}

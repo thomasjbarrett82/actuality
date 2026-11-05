@@ -1,0 +1,35 @@
+{
+  "format": "csv",
+  "accounts": [
+    {
+      "key": null,
+      "type": null,
+      "number": null,
+      "transactions": [
+        {
+          "rawDate": "2026-02-01",
+          "date": null,
+          "amount": -350,
+          "payee": "Bakery",
+          "notes": "",
+          "checkNumber": null,
+          "fitId": null,
+          "category": null,
+          "splits": []
+        },
+        {
+          "rawDate": "2026-02-02",
+          "date": null,
+          "amount": 1000,
+          "payee": "Refund",
+          "notes": "",
+          "checkNumber": null,
+          "fitId": null,
+          "category": null,
+          "splits": []
+        }
+      ]
+    }
+  ],
+  "emptyAccounts": 0
+}

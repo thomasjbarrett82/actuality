@@ -1,0 +1,39 @@
+!Option:AutoSwitch
+!Account
+NChecking 4455
+TBank
+^
+!Type:Bank
+D1/ 5'26
+T-1,234.56
+N101
+PLandlord
+MJanuary rent
+LBills:Rent
+^
+D1/20'26
+U42.00
+PMarket
+SGroceries
+EFood
+$30.00
+SHousehold: Cleaning: Supplies
+$12.00
+^
+!Account
+NVisa 9911
+TCCard
+^
+!Type:CCard
+D02/03/2026
+T25.00-
+PRefund
+CX
+AHidden address
+^
+!Type:Invst
+D1/1'26
+NBuy
+YACME
+^
+!Clear:AutoSwitch

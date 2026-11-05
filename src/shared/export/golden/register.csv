@@ -1,0 +1,6 @@
+﻿"Account","Check Number","Date","Payee","Category","Master Category","Sub Category","Notes","Outflow","Inflow","Cleared","Running Balance"
+"Checking",,01/02/2026,"Employer","Income: Available This Month","Income","Available This Month","January",0.00,2500.00,C,2500.00
+"Checking",,01/05/2026,"Landlord","Monthly Bills: Rent","Monthly Bills","Rent","(Split 1/2) rent / rent & savings",800.00,0.00,U,1500.00
+"Checking",,01/05/2026,"Landlord / Transfer : Savings","","","","(Split 2/2) rent & savings",200.00,0.00,U,1500.00
+"Checking",1042,01/20/2026,"City Water","Monthly Bills: Water ""City""","Monthly Bills","Water ""City""","quarterly #utilities",123.45,0.00,R,1376.55
+"Savings",,01/05/2026,"Transfer : Checking","","","","",0.00,200.00,U,200.00

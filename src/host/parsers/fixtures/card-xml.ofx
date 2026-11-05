@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?OFX OFXHEADER="200" VERSION="211" SECURITY="NONE" OLDFILEUID="NONE" NEWFILEUID="NONE"?>
+<OFX>
+  <CREDITCARDMSGSRSV1>
+    <CCSTMTTRNRS>
+      <TRNUID>0</TRNUID>
+      <CCSTMTRS>
+        <CURDEF>EUR</CURDEF>
+        <CCACCTFROM><ACCTID>4111111111114321</ACCTID></CCACCTFROM>
+        <BANKTRANLIST>
+          <STMTTRN>
+            <TRNTYPE>DEBIT</TRNTYPE>
+            <DTPOSTED>20261012000000.000</DTPOSTED>
+            <TRNAMT>-12,30</TRNAMT>
+            <FITID>A1</FITID>
+            <NAME>Ignored name</NAME>
+            <PAYEE><NAME>Bäckerei Müller</NAME></PAYEE>
+            <MEMO>Brötchen</MEMO>
+          </STMTTRN>
+          <STMTTRN>
+            <TRNTYPE>CREDIT</TRNTYPE>
+            <DTPOSTED>20261015</DTPOSTED>
+            <TRNAMT>250.00</TRNAMT>
+            <FITID>A2</FITID>
+            <NAME>Refund</NAME>
+          </STMTTRN>
+        </BANKTRANLIST>
+      </CCSTMTRS>
+    </CCSTMTTRNRS>
+  </CREDITCARDMSGSRSV1>
+</OFX>

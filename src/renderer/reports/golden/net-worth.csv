@@ -1,0 +1,18 @@
+﻿"Report","Net Worth"
+"Timeframe","Sep '26–Oct '26"
+"Accounts","All Accounts"
+"Chart lines","Multiline"
+
+"Month-end balances by account"
+"Account","Sep '26","Oct '26","Change"
+"Checking",5060.00,,4210.00
+"Card",-180.00,,-25.00
+"Savings",500.00,,501.00
+"Net Worth",5380.00,,4686.00
+
+"Net worth chart points"
+"Account","08/31/2026","09/15/2026","09/30/2026","10/15/2026","10/20/2026","10/31/2026"
+"Checking",2650.00,5560.00,5060.00,6860.00,6860.00,
+"Card",-180.00,-180.00,-180.00,-205.00,-205.00,
+"Savings",0.00,0.00,500.00,501.00,501.00,
+"Net Worth",2470.00,5380.00,5380.00,7156.00,7156.00,

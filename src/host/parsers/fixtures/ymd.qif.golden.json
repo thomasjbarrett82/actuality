@@ -1,0 +1,24 @@
+{
+  "format": "qif",
+  "accounts": [
+    {
+      "key": null,
+      "type": "Bank",
+      "number": null,
+      "transactions": [
+        {
+          "rawDate": "2026-01-05",
+          "date": null,
+          "amount": 1000,
+          "payee": "",
+          "notes": "",
+          "checkNumber": null,
+          "fitId": null,
+          "category": null,
+          "splits": []
+        }
+      ]
+    }
+  ],
+  "emptyAccounts": 0
+}

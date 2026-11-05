@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2023"],
+    "types": ["node", "vite/client", "electron-vite/node"],
+    "allowImportingTsExtensions": true,
+    "outDir": "node_modules/.cache/tsc/node",
+    "tsBuildInfoFile": "node_modules/.cache/tsc/node.tsbuildinfo"
+  },
+  "include": [
+    "src/main/**/*",
+    "src/host/**/*",
+    "src/shared/**/*",
+    "scripts/**/*",
+    "eslint-rules/**/*",
+    "tests/**/*",
+    "*.config.ts",
+    "*.config.mts"
+  ]
+}

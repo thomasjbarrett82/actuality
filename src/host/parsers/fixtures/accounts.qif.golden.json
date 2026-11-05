@@ -1,0 +1,64 @@
+{
+  "format": "qif",
+  "accounts": [
+    {
+      "key": "qif|Checking 4455",
+      "type": "Bank",
+      "number": "Checking 4455",
+      "transactions": [
+        {
+          "rawDate": "1/ 5'26",
+          "date": null,
+          "amount": -123456,
+          "payee": "Landlord",
+          "notes": "January rent",
+          "checkNumber": "101",
+          "fitId": null,
+          "category": "Bills:Rent",
+          "splits": []
+        },
+        {
+          "rawDate": "1/20'26",
+          "date": null,
+          "amount": 4200,
+          "payee": "Market",
+          "notes": "",
+          "checkNumber": null,
+          "fitId": null,
+          "category": null,
+          "splits": [
+            {
+              "category": "Groceries",
+              "notes": "Food",
+              "amount": 3000
+            },
+            {
+              "category": "Household: Cleaning: Supplies",
+              "notes": "",
+              "amount": 1200
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "qif|Visa 9911",
+      "type": "CCard",
+      "number": "Visa 9911",
+      "transactions": [
+        {
+          "rawDate": "02/03/2026",
+          "date": null,
+          "amount": -2500,
+          "payee": "Refund",
+          "notes": "",
+          "checkNumber": null,
+          "fitId": null,
+          "category": null,
+          "splits": []
+        }
+      ]
+    }
+  ],
+  "emptyAccounts": 0
+}

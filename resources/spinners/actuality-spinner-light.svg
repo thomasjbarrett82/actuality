@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="14 13 72 72" role="img" aria-label="Loading">
+<defs><mask id="tri" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100">
+<polygon points="50,18 82,80 18,80" fill="#fff" stroke="#fff" stroke-width="4" stroke-linejoin="round"/>
+<rect x="0" y="57" width="100" height="10" fill="#000"><animate attributeName="y" values="57;57;2;2;57;57" keyTimes="0;0.12;0.62;0.849;0.85;1" calcMode="spline" keySplines="0 0 1 1;0.45 0 0.55 1;0 0 1 1;0 0 1 1;0 0 1 1" dur="2.4s" repeatCount="indefinite"/></rect>
+</mask></defs>
+<g mask="url(#tri)"><animate attributeName="opacity" values="1;1;0;0;1" keyTimes="0;0.72;0.84;0.86;1" dur="2.4s" repeatCount="indefinite"/>
+<rect x="0" y="0" width="100" height="100" fill="#00365F"/>
+<rect x="0" y="67" width="100" height="100" fill="#508200"><animate attributeName="y" values="67;67;12;12;67;67" keyTimes="0;0.12;0.62;0.849;0.85;1" calcMode="spline" keySplines="0 0 1 1;0.45 0 0.55 1;0 0 1 1;0 0 1 1;0 0 1 1" dur="2.4s" repeatCount="indefinite"/></rect></g>
+</svg>

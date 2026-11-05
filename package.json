@@ -1,0 +1,153 @@
+{
+  "name": "actual-desktop",
+  "productName": "Actuality",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A desktop client for an Actual Budget sync server",
+  "author": {
+    "name": "Tom Barrett",
+    "email": "thomasjbarrett82@users.noreply.github.com"
+  },
+  "desktopName": "actual-desktop.desktop",
+  "license": "MIT",
+  "type": "module",
+  "main": "./out/main/index.js",
+  "engines": {
+    "node": ">=26.10.0"
+  },
+  "scripts": {
+    "dev": "install-electron && tsx scripts/i18n-pseudo.ts && electron-vite dev",
+    "start": "install-electron && electron-vite preview",
+    "typecheck": "vue-tsc --build",
+    "lint": "eslint . --max-warnings 0 --cache --report-unused-disable-directives",
+    "lint:css": "stylelint \"src/**/*.{css,vue}\" --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "deadcode": "knip",
+    "docs:check": "markdownlint-cli2 \"docs/**/*.md\" \"website/docs/**/*.md\" && tsx scripts/docs-check.ts",
+    "docs:sync": "tsx scripts/docs-sync.ts",
+    "docs:site": "npm --prefix website start",
+    "docs:site:build": "npm --prefix website run typecheck && npm --prefix website run build",
+    "i18n:check": "tsx scripts/i18n-check.ts",
+    "i18n:catalog": "tsx scripts/i18n-catalog.ts",
+    "check": "npm run format:check && npm run lint && npm run lint:css && npm run typecheck && npm run i18n:check && npm run deadcode && npm run docs:check",
+    "build": "npm run typecheck && electron-vite build && npm run licenses",
+    "licenses": "tsx scripts/third-party-licenses.ts",
+    "package": "electron-builder --config electron-builder.yml",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:int": "vitest run --config vitest.int.config.ts",
+    "test:e2e": "npm run build && playwright test",
+    "fixtures:build": "tsx --tsconfig tsconfig.node.json tests/fixtures/build-fixture.ts",
+    "demo:build": "tsx --tsconfig tsconfig.node.json tests/fixtures/build-demo.ts",
+    "prepare": "simple-git-hooks"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged --max-arg-length 4096 && npm run typecheck",
+    "commit-msg": "npx commitlint --edit \"$1\"",
+    "pre-push": "npm run check && npm test && npm run docs:sync"
+  },
+  "lint-staged": {
+    "*.{ts,vue,mjs}": [
+      "eslint --fix --max-warnings 0 --no-warn-ignored",
+      "prettier --write"
+    ],
+    "src/**/*.{css,vue}": [
+      "stylelint --fix --max-warnings 0"
+    ],
+    "*.md": [
+      "markdownlint-cli2 --fix",
+      "prettier --write"
+    ],
+    "{docs/**/*.md,src/renderer/styles/tokens.css}": "tsx scripts/docs-check.ts",
+    "*.{json,jsonc,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "allowScripts": {
+    "electron": true,
+    "esbuild": true,
+    "better-sqlite3": false,
+    "simple-git-hooks": true,
+    "vue-demi": true,
+    "unrs-resolver": true,
+    "electron-winstaller": false
+  },
+  "dependencies": {
+    "@actual-app/api": "26.11.0",
+    "@tanstack/vue-virtual": "3.13.39",
+    "date-fns": "4.4.0",
+    "zod": "4.6.7"
+  },
+  "overrides": {
+    "@intlify/eslint-plugin-vue-i18n": {
+      "glob": "14.0.3"
+    },
+    "js-beautify": {
+      "glob": "14.0.3"
+    },
+    "markdownlint": {
+      "re2js": "2.8.7"
+    }
+  },
+  "devDependencies": {
+    "@commitlint/cli": "21.2.4",
+    "@commitlint/config-conventional": "21.2.4",
+    "@eslint-community/eslint-plugin-eslint-comments": "4.8.1",
+    "@eslint/js": "10.0.1",
+    "@floating-ui/dom": "1.8.0",
+    "@fontsource/source-sans-3": "5.3.1",
+    "@intlify/eslint-plugin-vue-i18n": "4.5.1",
+    "@playwright/test": "1.64.1",
+    "@tanstack/vue-query": "5.104.4",
+    "@types/node": "26.6.5",
+    "@typescript-eslint/parser": "8.71.2",
+    "@typescript-eslint/rule-tester": "8.71.2",
+    "@typescript-eslint/utils": "8.71.2",
+    "@vitejs/plugin-vue": "6.0.10",
+    "@vitest/coverage-v8": "5.0.5",
+    "@vitest/eslint-plugin": "1.6.27",
+    "@vue/test-utils": "2.5.1",
+    "axe-core": "4.14.0",
+    "electron": "44.9.1",
+    "electron-builder": "26.15.3",
+    "electron-vite": "6.0.0",
+    "eslint": "10.13.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-import-resolver-typescript": "4.4.5",
+    "eslint-plugin-boundaries": "7.4.1",
+    "eslint-plugin-import-x": "4.17.1",
+    "eslint-plugin-jsonc": "3.4.2",
+    "eslint-plugin-playwright": "2.12.1",
+    "eslint-plugin-vue": "10.11.1",
+    "eslint-plugin-vuejs-accessibility": "2.6.2",
+    "fast-check": "4.10.2",
+    "globals": "17.13.0",
+    "happy-dom": "21.0.4",
+    "jiti": "2.7.0",
+    "jsonc-eslint-parser": "3.3.0",
+    "knip": "6.42.0",
+    "lint-staged": "17.6.0",
+    "lucide-vue-next": "1.0.0",
+    "markdownlint-cli2": "0.24.0",
+    "pinia": "4.1.0",
+    "postcss-html": "2.0.0",
+    "prettier": "3.9.10",
+    "prettier-plugin-organize-imports": "4.3.0",
+    "simple-git-hooks": "2.14.0",
+    "stylelint": "17.16.0",
+    "stylelint-config-recommended-vue": "2.0.0",
+    "stylelint-config-standard": "40.0.0",
+    "tsx": "4.23.15",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.71.2",
+    "vite": "8.3.4",
+    "vitest": "5.0.5",
+    "vitest-axe": "0.1.0",
+    "vue": "3.5.44",
+    "vue-eslint-parser": "10.4.1",
+    "vue-i18n": "11.4.16",
+    "vue-router": "5.4.0",
+    "vue-tsc": "3.3.13"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "format": "csv",
+  "accounts": [
+    {
+      "key": null,
+      "type": null,
+      "number": null,
+      "transactions": [
+        {
+          "rawDate": "01/05/2026",
+          "date": null,
+          "amount": -4520,
+          "payee": "Kroger, Inc.",
+          "notes": "He said \"hi\"",
+          "checkNumber": null,
+          "fitId": null,
+          "category": "Everyday: Groceries",
+          "splits": []
+        },
+        {
+          "rawDate": "01/06/2026",
+          "date": null,
+          "amount": 200000,
+          "payee": "Employer",
+          "notes": "",
+          "checkNumber": null,
+          "fitId": null,
+          "category": "Income",
+          "splits": []
+        },
+        {
+          "rawDate": "01/08/2026",
+          "date": null,
+          "amount": -3000,
+          "payee": "Water Co",
+          "notes": "two\r\nlines",
+          "checkNumber": "1043",
+          "fitId": null,
+          "category": "Bills: Water",
+          "splits": []
+        }
+      ]
+    }
+  ],
+  "emptyAccounts": 0
+}

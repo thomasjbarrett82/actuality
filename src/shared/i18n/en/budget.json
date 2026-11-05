@@ -1,0 +1,20 @@
+{
+  "availableToBudget": "Available to Budget",
+  "balance": "Balance",
+  "budgeted": "Budgeted",
+  "categories": "Categories",
+  "categoryAddNewLabel": "Add New Category...",
+  "hiddenCategoriesGroup": "Hidden Categories",
+  "newCategoryGroupName": "New Category Group {number}",
+  "newCategoryName": "New Category {number}",
+  "outflows": "Outflows",
+  "overbudgeted": "Overbudgeted",
+  "overspendingQuestion": "How do you want to handle overspending for this category?",
+  "overspendingSettingsTooltip": "Click here to determine how to handle overspending for this category.",
+  "rolloverToAvailableToBudget": "Subtract it from next month's \"Available to Budget\"",
+  "rolloverToCategoryBalance": "Subtract it from next month's category balance",
+  "spentAcrossTransactions": "You spent {amount} in {count} transactions:",
+  "spentInOneTransaction": "You spent {amount} in {count} transaction:",
+  "spentWithoutCategory": "You spent {amount} in {count} transactions with no category assigned:",
+  "uncategorizedTransactionsCategory": "Uncategorized Transactions"
+}

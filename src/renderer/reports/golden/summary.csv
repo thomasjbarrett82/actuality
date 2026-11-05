@@ -1,0 +1,34 @@
+﻿"Report","Summary"
+"Timeframe","Latest 3 Months (Aug '26–Oct '26)"
+"Categories","All Categories"
+"Payees","All Payees"
+"Accounts","Budget Accounts"
+
+"Summary"
+"Measure","Amount"
+"Total Inflow",8990.00
+"Total Outflow",-3135.00
+"Net Flow",5855.00
+"Avg Monthly Inflow",2996.67
+"Avg Monthly Outflow",-1045.00
+"Avg Monthly Net Flow",1951.67
+"Budgeted Net Worth",6655.00
+
+"Budgeted Net Worth by month"
+"Month","Balance"
+"07/31/2026",800.00
+"Aug '26",2470.00
+"Sep '26",4880.00
+"Oct '26",6655.00
+
+"Top Spending Category Groups"
+"Category Group","Share","Amount"
+"Bills","76.6%",-2400.00
+"Food","7.5%",-235.00
+"Other items (1)","16%",-500.00
+
+"Money Age by month"
+"Month","Money Age","Known-age coverage"
+"Aug '26","3 days","25.9%"
+"Sep '26","32 days","100%"
+"Oct '26","63 days","100%"

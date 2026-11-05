@@ -1,0 +1,35 @@
+{
+  "format": "ofx",
+  "accounts": [
+    {
+      "key": "|4111111111114321",
+      "type": "CREDITCARD",
+      "number": "4111111111114321",
+      "transactions": [
+        {
+          "rawDate": "2026-10-12",
+          "date": "2026-10-12",
+          "amount": -1230,
+          "payee": "Bäckerei Müller",
+          "notes": "Brötchen",
+          "checkNumber": null,
+          "fitId": "A1",
+          "category": null,
+          "splits": []
+        },
+        {
+          "rawDate": "2026-10-15",
+          "date": "2026-10-15",
+          "amount": 25000,
+          "payee": "Refund",
+          "notes": "",
+          "checkNumber": null,
+          "fitId": "A2",
+          "category": null,
+          "splits": []
+        }
+      ]
+    }
+  ],
+  "emptyAccounts": 0
+}

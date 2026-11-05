@@ -1,0 +1,9 @@
+// markdownlint-cli2 (21 §4.5): the default rules, with line length (MD013) off because spec tables
+// are wide. No inline HTML: the swatches in theme-palettes.md use Markdown image syntax.
+{
+  "config": {
+    "default": true,
+    "MD013": false,
+  },
+  "ignores": ["**/node_modules/**", "references/**", "website/build/**"],
+}

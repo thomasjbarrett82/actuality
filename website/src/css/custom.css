@@ -1,0 +1,45 @@
+/* Site-wide theme. Colors follow the app's tokens (src/renderer/styles/tokens.css): the primary color
+   is --accent-blue, and the home page hero uses the blue canvas (--app-bg to --app-bg-dark). */
+
+:root {
+  --ifm-color-primary: #006fae;
+  --ifm-color-primary-dark: #00649d;
+  --ifm-color-primary-darker: #005e94;
+  --ifm-color-primary-darkest: #004e7a;
+  --ifm-color-primary-light: #1a7db6;
+  --ifm-color-primary-lighter: #2685ba;
+  --ifm-color-primary-lightest: #4d9ac6;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgb(0 0 0 / 10%);
+  --site-canvas-start: #22779b;
+  --site-canvas-end: #00365f;
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #4fb3f0;
+  --ifm-color-primary-dark: #47a1d8;
+  --ifm-color-primary-darker: #4398cc;
+  --ifm-color-primary-darkest: #377da8;
+  --ifm-color-primary-light: #61bbf2;
+  --ifm-color-primary-lighter: #69bef2;
+  --ifm-color-primary-lightest: #84caf5;
+  --docusaurus-highlighted-code-line-bg: rgb(0 0 0 / 30%);
+  --site-canvas-start: #17435a;
+  --site-canvas-end: #0a2233;
+}
+
+/* Screenshots in guide pages: a thin frame, so the app's white panels stand out from the page in light
+   mode and don't glare as bare edges in dark mode. Only images in page content; the navbar logo and the
+   home page are untouched. */
+.markdown img {
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+}
+
+/* Screenshots taken in each theme: ![…](x-light.png#light) shows only in light mode and
+   ![…](x-dark.png#dark) only in dark mode. Docusaurus keeps the #fragment in the built src. Images
+   without one show in both. */
+[data-theme='light'] .markdown img[src$='#dark'],
+[data-theme='dark'] .markdown img[src$='#light'] {
+  display: none;
+}

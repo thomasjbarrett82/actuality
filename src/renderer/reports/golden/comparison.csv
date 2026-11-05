@@ -1,0 +1,49 @@
+﻿"Report","Spending Comparison"
+"Compare Period","This Month (Oct 2026)"
+"Categories","All Categories"
+"Payees","All Payees"
+"Accounts","Budget Accounts"
+"Previous","Sep '26"
+
+"Spending comparison"
+"Category","Current","Previous","Change","Change %"
+"Bills",1200.00,0.00,1200.00,"New"
+"  Rent",1200.00,0.00,1200.00,"New"
+"Food",25.00,80.00,-55.00,"-68.8%"
+"  Groceries",0.00,50.00,-50.00,"-100%"
+"  Dining",25.00,30.00,-5.00,"-16.7%"
+"Total Spending",1225.00,80.00,1145.00,"+1,431.3%"
+
+"Cumulative spending by day"
+"Day","Current","Previous"
+"Day 1",0.00,0.00
+"Day 2",0.00,80.00
+"Day 3",1200.00,80.00
+"Day 4",1200.00,80.00
+"Day 5",1200.00,80.00
+"Day 6",1200.00,80.00
+"Day 7",1200.00,80.00
+"Day 8",1200.00,80.00
+"Day 9",1200.00,80.00
+"Day 10",1225.00,80.00
+"Day 11",1225.00,80.00
+"Day 12",1225.00,80.00
+"Day 13",1225.00,80.00
+"Day 14",1225.00,80.00
+"Day 15",1225.00,80.00
+"Day 16",1225.00,80.00
+"Day 17",1225.00,80.00
+"Day 18",1225.00,80.00
+"Day 19",1225.00,80.00
+"Day 20",1225.00,80.00
+"Day 21",,
+"Day 22",,
+"Day 23",,
+"Day 24",,
+"Day 25",,
+"Day 26",,
+"Day 27",,
+"Day 28",,
+"Day 29",,
+"Day 30",,
+"Day 31",,

@@ -1,0 +1,12 @@
+{
+  "accountNameLabel": "Name:",
+  "balanceLabel": "Balance:",
+  "closeAccount": "Close Account",
+  "confirmDeleteAccount": "Delete account '{account}'?",
+  "createAccount": "Create Account",
+  "createAccountTitle": "Create a New Account",
+  "deleteAccount": "Delete Account",
+  "offBudgetCheckbox": "Off budget",
+  "reconciliationAdjustmentNotes": "Reconciliation balance adjustment",
+  "reopenAccount": "Re-open Account"
+}

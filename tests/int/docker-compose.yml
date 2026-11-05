@@ -1,0 +1,20 @@
+# The Actual server for the integration tests (21 §1), in CI and locally. ACTUAL_SERVER_VERSION picks the image:
+# the minimum supported version (26.2.0) or latest. Plain HTTP on localhost; nothing is persisted.
+services:
+  actual:
+    image: actualbudget/actual-server:${ACTUAL_SERVER_VERSION:-26.2.0}
+    ports:
+      - '5006:5006'
+    tmpfs:
+      - /data
+    healthcheck:
+      test:
+        [
+          'CMD',
+          'node',
+          '-e',
+          "fetch('http://localhost:5006/info').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))",
+        ]
+      interval: 2s
+      timeout: 5s
+      retries: 30

@@ -1,0 +1,14 @@
+﻿"Report","Spending Breakdown"
+"Timeframe","Latest 3 Months (Aug '26–Oct '26)"
+"Categories","All Categories"
+"Payees","All Payees"
+"Accounts","Budget Accounts"
+"Group By","Month"
+"Stack By","Category Group"
+
+"Spending by month"
+"Item","Aug '26","Sep '26","Oct '26","Average","Total"
+"Bills",1200.00,0.00,1200.00,800.00,2400.00
+"Uncategorized",0.00,500.00,0.00,166.67,500.00
+"Food",130.00,80.00,25.00,78.33,235.00
+"Total Spending",1330.00,580.00,1225.00,1045.00,3135.00

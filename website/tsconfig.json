@@ -1,0 +1,10 @@
+{
+  // Editor and `npm run typecheck` support only: Docusaurus compiles the site itself.
+  // baseUrl is unset because TypeScript 6 deprecates it; paths resolve from this file without it.
+  "extends": "@docusaurus/tsconfig",
+  "compilerOptions": {
+    "baseUrl": null,
+    "strict": true
+  },
+  "exclude": [".docusaurus", "build", "node_modules"]
+}

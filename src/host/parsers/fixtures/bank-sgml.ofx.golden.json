@@ -1,0 +1,47 @@
+{
+  "format": "ofx",
+  "accounts": [
+    {
+      "key": "12345|000111222333",
+      "type": "CHECKING",
+      "number": "000111222333",
+      "transactions": [
+        {
+          "rawDate": "2026-10-03",
+          "date": "2026-10-03",
+          "amount": -4567,
+          "payee": "CAFÉ ROUGE & CO",
+          "notes": "Card purchase",
+          "checkNumber": null,
+          "fitId": "2026100301",
+          "category": null,
+          "splits": []
+        },
+        {
+          "rawDate": "2026-10-05",
+          "date": "2026-10-05",
+          "amount": -10000,
+          "payee": "CHECK 1042",
+          "notes": "",
+          "checkNumber": "1042",
+          "fitId": "2026100502",
+          "category": null,
+          "splits": []
+        },
+        {
+          "rawDate": "2026-10-10",
+          "date": "2026-10-10",
+          "amount": 123450,
+          "payee": "ACME PAYROLL",
+          "notes": "",
+          "checkNumber": "77",
+          "fitId": "2026101003",
+          "category": null,
+          "splits": []
+        }
+      ],
+      "unreadable": 1
+    }
+  ],
+  "emptyAccounts": 1
+}
