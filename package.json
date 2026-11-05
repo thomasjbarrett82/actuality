@@ -99,7 +99,7 @@
     "@fontsource/source-sans-3": "5.3.1",
     "@intlify/eslint-plugin-vue-i18n": "4.5.1",
     "@playwright/test": "1.64.1",
-    "@tanstack/vue-query": "5.104.4",
+    "@tanstack/vue-query": "5.105.2",
     "@types/node": "26.6.5",
     "@typescript-eslint/parser": "8.71.2",
     "@typescript-eslint/rule-tester": "8.71.2",
