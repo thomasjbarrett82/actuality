@@ -145,6 +145,8 @@ Project rules live in `eslint-rules/` as a small local plugin, with their own un
   - a user-facing chapter changed but none of the guide pages that name it did, unless a commit message in the range has the line `Guide-Impact: none` (for changes users don't see);
   - a UI string in `src/shared/i18n/en/` was removed or reworded, and a spec chapter or guide page still contains its text (each part between placeholders of 10 characters or more that no current string contains).
 
+  It passes without checking when `origin` has no `main` yet, because a repository's first push has no base to compare with. A missing `origin/main` is still an error when the remote has `main` or can't be reached.
+
 ### 4.6 Commit messages
 
 **commitlint** with `@commitlint/config-conventional`, checked by the `commit-msg` hook and again in CI for every commit in a pull request:

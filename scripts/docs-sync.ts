@@ -28,10 +28,23 @@ function stringsAt(ref: string): string[] {
     .flatMap((p) => messageValues(JSON.parse(git('show', `${ref}:${p}`)) as unknown));
 }
 
+/** True when origin answers and has no main: the repo's first push, so there's no base to compare with. */
+function originHasNoMain(): boolean {
+  try {
+    return git('ls-remote', 'origin', 'refs/heads/main') === '';
+  } catch {
+    return false;
+  }
+}
+
 for (const ref of [base, head]) {
   try {
     git('rev-parse', '--verify', '--quiet', `${ref}^{commit}`);
   } catch {
+    if (ref === 'origin/main' && originHasNoMain()) {
+      console.log('docs:sync: origin has no main yet, nothing to compare.');
+      process.exit(0);
+    }
     console.error(
       `docs:sync: can't find ${ref}. Run \`git fetch\`, or pass the base: npm run docs:sync -- <base>.`,
     );
