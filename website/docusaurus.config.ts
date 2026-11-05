@@ -3,17 +3,18 @@ import type * as Preset from '@docusaurus/preset-classic';
 import type { Config } from '@docusaurus/types';
 import { themes as prismThemes } from 'prism-react-renderer';
 
-const repoUrl = 'https://github.com/thomasjbarrett82/actual-desktop';
+const repoUrl = 'https://github.com/thomasjbarrett82/actuality';
 
 const config: Config = {
   title: 'Actuality',
   tagline: 'Potential made actual',
   favicon: 'actuality-icon.svg',
 
-  // Where the site is published. A project site on GitHub Pages lives under /actual-desktop/; with a
-  // custom domain, set url to that domain and baseUrl to '/'.
-  url: 'https://thomasjbarrett82.github.io',
-  baseUrl: '/actual-desktop/',
+  // Where the site is published.
+  url: 'https://actualitydesktop.org',
+  baseUrl: '/',
+  projectName: 'actuality',
+  organizationName: 'thomasjbarrett82',
   trailingSlash: false,
 
   onBrokenLinks: 'throw',
