@@ -272,9 +272,14 @@ test.describe('accessibility audit (22 §7)', () => {
       // Register dialogs: Reconcile, and Import Transactions with its file chosen through a stubbed
       // native dialog (the intro and the CSV mapping dialog).
       await page.getByRole('button', { name: /^Reconcile\s+Account/ }).click();
-      await expect(page.locator(DIALOG)).toBeVisible();
+      // It opens on the date field with the calendar, a dialog of its own, so this audits both (11 §3).
+      await expect(page.getByRole('dialog', { name: 'Reconcile Account' })).toBeVisible();
+      await expect(page.locator('.calendar')).toBeVisible();
       await audit(page, 'Reconcile Account', violations, DIALOG);
       targets.push(...(await smallTargets(page, 'Reconcile Account', DIALOG)));
+      // The first Esc closes the calendar, the second the dialog (22 §2.2).
+      await page.keyboard.press('Escape');
+      await expect(page.locator('.calendar')).toHaveCount(0);
       await page.keyboard.press('Escape');
       await expect(page.locator(DIALOG)).toHaveCount(0);
       const csv = join(mkdtempSync(join(tmpdir(), 'a11y-')), 'bank.csv');

@@ -1,7 +1,7 @@
 import type { ISODate } from '@shared/domain/types';
 import { flushPromises } from '@vue/test-utils';
 import { describe, expect, it, vi } from 'vitest';
-import { nextTick } from 'vue';
+import { h, nextTick } from 'vue';
 import { liveRegions, resetAnnouncer } from '../../a11y/announcer';
 import { budgetWeekStart } from '../../i18n';
 import { axe, mountApp } from '../../testing/mount';
@@ -11,6 +11,7 @@ import CalculatorPanel from './CalculatorPanel.vue';
 import DateField from './DateField.vue';
 import MoneyInput from './MoneyInput.vue';
 import MonthPicker from './MonthPicker.vue';
+import StandardDialog from './StandardDialog.vue';
 
 const key = (target: Element, k: string, init: KeyboardEventInit = {}): KeyboardEvent => {
   const e = new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true, ...init });
@@ -307,7 +308,7 @@ describe('DateField (11 §3, 22 §4.4)', () => {
     document.querySelector<HTMLButtonElement>('[aria-label="Choose date"]')?.click();
     await flushPromises();
     expect(document.querySelector('[role="grid"]')).not.toBeNull();
-    expect(document.activeElement?.getAttribute('aria-label')).toContain('October 15');
+    expect(document.activeElement?.getAttribute('aria-label')).toBe('Thursday, October 15, 2026');
     expect(await axe(document.body)).toHaveNoViolations();
     key(document.activeElement ?? document.body, 'ArrowDown');
     await flushPromises();
@@ -336,6 +337,223 @@ describe('DateField (11 §3, 22 §4.4)', () => {
     } finally {
       budgetWeekStart.value = null;
     }
+  });
+
+  describe('calendar on focus (11 §3)', () => {
+    const props = {
+      modelValue: '2026-10-15' as ISODate,
+      label: 'Date',
+      dateFormat: 'MM/dd/yyyy',
+      today,
+    };
+    const grid = (): Element | null => document.querySelector('[role="grid"]');
+    const active = (): Element => document.activeElement ?? document.body;
+
+    /** A field in a parent that records the Esc presses reaching it, focused with its calendar open. */
+    async function focusedField(onEsc: () => void = vi.fn(), extra: Record<string, unknown> = {}) {
+      const wrapper = mountApp(() =>
+        h(
+          'div',
+          {
+            onKeydown: (e: KeyboardEvent) => {
+              if (e.key === 'Escape') onEsc();
+            },
+          },
+          h(DateField, { ...props, ...extra }),
+        ),
+      );
+      const input = wrapper.find('input');
+      input.element.focus();
+      await flushPromises();
+      return input;
+    }
+
+    /** A field as the only input of a modal dialog, which focuses it on opening. */
+    async function fieldInDialog(onCancel: () => void): Promise<void> {
+      mountApp(() =>
+        h(StandardDialog, { title: 'Dialog', onCancel }, { default: () => h(DateField, props) }),
+      );
+      await flushPromises();
+    }
+
+    /** Whether the calendar stopped a mouse press from moving focus. */
+    function pressKeepsFocus(el: Element | null): boolean {
+      const e = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
+      el?.dispatchEvent(e);
+      return e.defaultPrevented;
+    }
+
+    it('opens when focus enters the field and closes on Tab', async () => {
+      const input = await focusedField();
+      expect(grid()).not.toBeNull();
+      expect(document.activeElement).toBe(input.element);
+      expect(await axe(document.body)).toHaveNoViolations();
+      key(input.element, 'Tab');
+      await flushPromises();
+      expect(grid()).toBeNull();
+    });
+
+    it('stays closed when disabled', async () => {
+      const wrapper = mountApp(DateField, { props: { ...props, disabled: true } });
+      wrapper.find('input').element.focus();
+      await flushPromises();
+      expect(grid()).toBeNull();
+    });
+
+    it('takes two Escs to reach the form: close, then cancel (11 §1 step 4)', async () => {
+      const onEsc = vi.fn();
+      const input = await focusedField(onEsc);
+      key(input.element, 'Escape');
+      await flushPromises();
+      expect(grid()).toBeNull();
+      expect(onEsc).not.toHaveBeenCalled();
+      key(input.element, 'Escape');
+      expect(onEsc).toHaveBeenCalledOnce();
+    });
+
+    it('never takes more than two Escs: the first also reverts typed text', async () => {
+      const onEsc = vi.fn();
+      const onTyped = vi.fn();
+      const input = await focusedField(onEsc, { onTyped });
+      await input.setValue('3/4');
+      key(input.element, 'Escape');
+      await flushPromises();
+      expect(grid()).toBeNull();
+      expect(input.element.value).toBe('10/15/2026');
+      expect(onTyped).toHaveBeenLastCalledWith('2026-10-15');
+      expect(onEsc).not.toHaveBeenCalled();
+      key(input.element, 'Escape');
+      expect(onEsc).toHaveBeenCalledOnce();
+    });
+
+    it('in a modal, the first Esc closes only the calendar and the second the dialog', async () => {
+      const onCancel = vi.fn();
+      await fieldInDialog(onCancel);
+      expect(grid()).not.toBeNull();
+      key(active(), 'Escape');
+      await flushPromises();
+      expect(grid()).toBeNull();
+      expect(onCancel).not.toHaveBeenCalled();
+      key(active(), 'Escape');
+      expect(onCancel).toHaveBeenCalledOnce();
+    });
+
+    it('in a modal, Esc also closes it with focus in the calendar', async () => {
+      const onCancel = vi.fn();
+      await fieldInDialog(onCancel);
+      document.querySelector<HTMLElement>('.calendar__nav')?.focus();
+      key(active(), 'Escape');
+      await flushPromises();
+      expect(grid()).toBeNull();
+      expect(onCancel).not.toHaveBeenCalled();
+      expect(active().tagName).toBe('INPUT');
+    });
+
+    it('opens again when the user comes back after an Esc', async () => {
+      const input = await focusedField();
+      key(input.element, 'Escape');
+      await flushPromises();
+      input.element.blur();
+      await flushPromises();
+      input.element.focus();
+      await flushPromises();
+      expect(grid()).not.toBeNull();
+    });
+
+    it('stays closed when a pick returns focus to the field', async () => {
+      await focusedField();
+      const nav = document.querySelector<HTMLElement>('.calendar__nav');
+      nav?.focus();
+      document.querySelector<HTMLElement>('.calendar__day.is-selected')?.click();
+      await flushPromises();
+      expect(grid()).toBeNull();
+      expect(active().tagName).toBe('INPUT');
+    });
+
+    it('stays closed when an invalid date keeps focus in the field', async () => {
+      const input = await focusedField();
+      await input.setValue('13/45');
+      input.element.blur();
+      await flushPromises();
+      expect(document.querySelector('.callout')).not.toBeNull();
+      expect(document.activeElement).toBe(input.element);
+      expect(grid()).toBeNull();
+    });
+
+    it('stays closed when focus returns from another window', async () => {
+      const input = await focusedField();
+      // Leaving the window blurs the input but leaves it the active element.
+      input.element.dispatchEvent(new FocusEvent('blur'));
+      await flushPromises();
+      expect(grid()).toBeNull();
+      input.element.dispatchEvent(new FocusEvent('focus'));
+      await flushPromises();
+      expect(grid()).toBeNull();
+    });
+
+    it('stays closed when focus returns from a dialog opened over the field', async () => {
+      const input = await focusedField();
+      const dialog = document.createElement('div');
+      dialog.setAttribute('aria-modal', 'true');
+      const button = document.createElement('button');
+      dialog.append(button);
+      document.body.append(dialog);
+      input.element.blur();
+      input.element.dispatchEvent(new FocusEvent('blur', { relatedTarget: button }));
+      await flushPromises();
+      expect(grid()).toBeNull();
+      input.element.focus();
+      await flushPromises();
+      expect(grid()).toBeNull();
+    });
+
+    it('keeps focus in the field on clicks in the calendar, and keeps it open', async () => {
+      const input = await focusedField();
+      expect(pressKeepsFocus(document.querySelector('.calendar__month'))).toBe(true);
+      expect(pressKeepsFocus(document.querySelector('.calendar__nav'))).toBe(true);
+      expect(document.activeElement).toBe(input.element);
+      expect(grid()).not.toBeNull();
+    });
+
+    it('with focus in the calendar, a control may take a click but blank space may not', async () => {
+      mountApp(DateField, { props });
+      document.querySelector<HTMLButtonElement>('[aria-label="Choose date"]')?.click();
+      await flushPromises();
+      expect(pressKeepsFocus(document.querySelector('.calendar__nav'))).toBe(false);
+      expect(pressKeepsFocus(document.querySelector('.calendar__month'))).toBe(true);
+    });
+
+    it('commits typed text on an outside click when focus is in the calendar', async () => {
+      const onCommit = vi.fn();
+      const input = await focusedField(vi.fn(), { onCommit });
+      await input.setValue('3/4');
+      document.querySelector<HTMLElement>('.calendar__nav')?.focus();
+      await flushPromises();
+      document.body.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+      await flushPromises();
+      expect(grid()).toBeNull();
+      expect(onCommit).toHaveBeenLastCalledWith('2026-03-04');
+    });
+
+    it('Tab past either end of the calendar closes it and returns to the field', async () => {
+      const input = await focusedField();
+      document.querySelector<HTMLElement>('.calendar__day[tabindex="0"]')?.focus();
+      expect(key(active(), 'Tab').defaultPrevented).toBe(true);
+      await flushPromises();
+      expect(grid()).toBeNull();
+      expect(document.activeElement).toBe(input.element);
+
+      document.querySelector<HTMLButtonElement>('[aria-label="Choose date"]')?.click();
+      await flushPromises();
+      const first = document.querySelector<HTMLElement>('.calendar__nav');
+      first?.focus();
+      expect(key(active(), 'Tab').defaultPrevented).toBe(false);
+      expect(grid()).not.toBeNull();
+      expect(key(active(), 'Tab', { shiftKey: true }).defaultPrevented).toBe(true);
+      await flushPromises();
+      expect(grid()).toBeNull();
+      expect(document.activeElement).toBe(input.element);
+    });
   });
 });
 

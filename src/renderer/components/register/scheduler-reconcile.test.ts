@@ -506,6 +506,84 @@ describe('the Reconcile Account dialog (13 §6.1)', () => {
       ?.trigger('click');
     expect(w.emitted('close')?.[0]).toEqual([{ statementDate: '2026-10-20', target: -2500 }]);
   });
+  describe('with a date still typed in the field', () => {
+    type Dialog = ReturnType<typeof mountDialog>;
+    const dateInput = (w: Dialog) => w.findComponent(DateField).get('input');
+    const button = (w: Dialog, name: string) => {
+      const found = w.findAll('button').find((b) => b.text() === name);
+      if (!found) throw new Error(`no button "${name}"`);
+      return found;
+    };
+    const fill = async (date: string): Promise<Dialog> => {
+      const w = mountDialog();
+      await flushPromises();
+      await w.get('input[inputmode="decimal"]').setValue('25');
+      await dateInput(w).setValue(date);
+      return w;
+    };
+    const submitters: [string, (w: Dialog) => Promise<void>][] = [
+      ['Enter', (w) => dateInput(w).trigger('keydown', { key: 'Enter' })],
+      ['the Begin button', (w) => button(w, 'Begin Reconciliation').trigger('click')],
+    ];
+
+    it.each(submitters)('%s begins with the typed date', async (_, submit) => {
+      const w = await fill('10/10/2026');
+      await submit(w);
+      expect(w.emitted('close')?.[0]).toEqual([{ statementDate: '2026-10-10', target: 2500 }]);
+    });
+    it.each(submitters)('%s refuses an invalid date and stays open', async (_, submit) => {
+      const w = await fill('99/99/9999');
+      await submit(w);
+      await flushPromises();
+      expect(w.emitted('close')).toBeUndefined();
+      expect(dateInput(w).attributes('aria-invalid')).toBe('true');
+    });
+    it('"Use this amount." recalculates for a typed date instead of using the old amount', async () => {
+      const w = await fill('10/10/2026');
+      await button(w, 'Use this amount.').trigger('click');
+      await flushPromises();
+      expect(w.emitted('close')).toBeUndefined();
+      expect(host.calls('reconcile.clearedThrough').at(-1)).toEqual({
+        accountId: 'chk',
+        date: '2026-10-10',
+      });
+    });
+    it('"Use this amount." refuses an invalid date and stays open', async () => {
+      const w = await fill('99/99/9999');
+      await button(w, 'Use this amount.').trigger('click');
+      await flushPromises();
+      expect(w.emitted('close')).toBeUndefined();
+      expect(dateInput(w).attributes('aria-invalid')).toBe('true');
+    });
+    it.each(['Begin Reconciliation', 'Use this amount.'])(
+      'pressing "%s" leaves focus in the field, so no blur commits the date first',
+      async (name) => {
+        const w = await fill('10/10/2026');
+        const press = new MouseEvent('mousedown', { bubbles: true, cancelable: true });
+        button(w, name).element.dispatchEvent(press);
+        expect(press.defaultPrevented).toBe(true);
+      },
+    );
+  });
+  it('keeps the hint line while the cleared balance reloads, so the buttons stay put', async () => {
+    const pending = new Map<string, (value: number) => void>();
+    host = mockHost(
+      responses({
+        'reconcile.clearedThrough': (p: { date: string }) =>
+          new Promise<number>((resolve) => pending.set(p.date, resolve)),
+      }),
+    );
+    const w = mountDialog();
+    await flushPromises();
+    expect(w.find('.rec__hint').exists()).toBe(true);
+    pending.get('2026-10-20')?.(6000);
+    await flushPromises();
+    expect(w.get('.rec__hint').text()).toContain('Use this amount.');
+    w.findComponent(DateField).vm.$emit('update:modelValue', '2026-10-10');
+    await flushPromises();
+    expect(w.find('.rec__hint').exists()).toBe(true);
+    expect(w.get('.rec__hint').text()).not.toContain('Use this amount.');
+  });
   it("keeps the current date's cleared balance when an earlier date's answer comes late", async () => {
     const pending = new Map<string, (value: number) => void>();
     host = mockHost(

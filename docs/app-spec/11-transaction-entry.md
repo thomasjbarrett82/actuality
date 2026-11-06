@@ -17,7 +17,7 @@ Component: `<TransactionEditor>`, bound to an `EditableTransaction` (a deep clon
    - *Changed*: a click on another row or anywhere outside the editor is blocked, and the editor's button row glows blue (`10` §9). Actions that leave the edit another way run the commit pipeline (§6) first. These are a keyboard-started new edit (Enter/F2, Ctrl+N, the Add and Transfer toolbar buttons), switching account or screen, starting a search, and quitting. If the commit fails or is cancelled, the action doesn't happen and the editor stays open.
 2. Focus goes to the control under the pointer (the Date field for keyboard-started edits).
 3. **Commit**: **Done**, **Save**, Enter (= default button), Ctrl+Enter (§9) or the approve buttons → §6. For a new transaction, saving with no check #, payee, category, notes and amount just closes the editor.
-4. **Cancel**: the **Cancel** button or Esc. The first Esc reverts the *focused field* if it changed. A second Esc (field unchanged) cancels the whole edit. Leaving the edit by other means follows the rule in step 1.
+4. **Cancel**: the **Cancel** button or Esc. The first Esc closes the Date field's calendar if it's open (§3) and reverts the *focused field* if it changed. A second Esc (calendar closed, field unchanged) cancels the whole edit. Leaving the edit by other means follows the rule in step 1.
 5. One edit at a time per grid. While a modal dialog is open, commit and cancel requests are refused.
 
 Visuals: 1 px `--row-edit-border`, background `--row-edit-bg`. Inputs are borderless, separated by the column borders. Gray placeholders: "payee", "category", "notes", "outflow", "inflow".
@@ -54,6 +54,11 @@ Buttons are `--control-h-sm` tall, 600 `body`, pill-shaped, gap `--space-2`. Sav
 
 - Displays the budget's short date format (`dateFormat`).
 - Loose parsing: the separators `/. - '` (or the locale separator) are interchangeable. Without separators: 6 digits = three 2-digit parts; 8 digits = `MMDDYYYY`/`DDMMYYYY` (or `YYYYMMDD` for year-first formats). A missing year → the current year. Two-digit years: `> 70` → 19xx, else 20xx. The order (MDY / DMY / YMD) follows `dateFormat`.
+- Calendar drop-down: opens when the user moves focus into the field (Tab, a click, or an editor or dialog that opens on it), so a day can be picked without reaching for the calendar button, which also toggles it. It sits above the field when there's room, because the next field in the tab order is usually below.
+  - It closes on a pick, on Enter, on an invalid date, when focus leaves the field and on a click outside it. A click inside it keeps it open and keeps any typed text.
+  - Focus coming back on its own doesn't reopen it: after a pick or Esc, after an invalid date, on returning to the window, or when a dialog opened over the field closes.
+  - Esc closes it and reverts typed text, wherever focus is. This comes before the form's own Esc, in the editor (§1 step 4) and in a modal dialog (`22` §2.2), so cancelling takes one more Esc.
+  - Inside it, Tab past the last control or Shift+Tab before the first closes it and returns focus to the field.
 - Keyboard (Quicken-style):
 
   | Key | Effect |

@@ -28,7 +28,7 @@ New transactions use the date you entered last, so a batch of receipts from the 
 
 ## Edit a transaction
 
-Click a transaction to select it, then click it again (or press **Enter** or **F2**) to edit it. Change what you need and select **Done** (or press **Enter**). **Esc** undoes your change to the current field; press it again to cancel the whole edit. **Ctrl+Enter** saves from any field.
+Click a transaction to select it, then click it again (or press **Enter** or **F2**) to edit it. Change what you need and select **Done** (or press **Enter**). **Esc** undoes your change to the current field (in **Date**, it also closes the calendar); press it again to cancel the whole edit. **Ctrl+Enter** saves from any field.
 
 While you have unsaved changes, clicking elsewhere in the list is blocked and the buttons glow, so you don't lose your edit by accident.
 
@@ -47,6 +47,8 @@ Dates use your budget's date format, but Actuality is relaxed about what you typ
 | **Y** / **Shift+Y** | the first / last day of the year |
 
 Dates must be within ten years of today.
+
+A calendar opens when you move into a date field. Select a day, or ignore it and keep typing: **Tab** closes it and moves to the next field. **Esc** closes it and undoes anything you typed; press **Esc** again to cancel the edit or dialog. The calendar button next to the field opens and closes it too.
 
 ## Payees
 

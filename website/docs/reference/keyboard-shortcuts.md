@@ -92,6 +92,8 @@ These work while the list of transactions has focus.
 | First / last day of the month | **M** / **Shift+M** |
 | First / last day of the year | **Y** / **Shift+Y** |
 
+A calendar opens when you move into a date field. **Tab** closes it and moves to the next field. **Esc** closes it and undoes what you typed; press **Esc** again to cancel the edit or dialog.
+
 ## Sidebar
 
 | Action | Keys |

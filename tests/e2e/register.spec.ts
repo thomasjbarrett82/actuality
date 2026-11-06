@@ -52,6 +52,9 @@ test.describe('register', () => {
         await page.keyboard.press('Enter');
       }
       await expect(page.locator('[data-editor] [data-field="date"] input')).toBeFocused();
+      // Date opens its calendar: the first Esc closes it, the second cancels the edit (11 §1 step 4).
+      await page.keyboard.press('Escape');
+      await expect(page.locator('[data-editor]')).toHaveCount(1);
       await page.keyboard.press('Escape');
       await expect(page.locator('[data-editor]')).toHaveCount(0);
 
