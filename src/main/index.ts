@@ -59,7 +59,7 @@ import { buildMenu } from './menu';
 import { registerPrintHandlers, showPreview } from './print';
 import { SecretsStore } from './secrets';
 import { SettingsStore } from './settings-store';
-import { backgroundColor, boundsToSave, createMainWindow } from './window';
+import { backgroundColor, boundsToSave, createMainWindow, relayoutMenuBar } from './window';
 
 app.setName(APP_NAME);
 // Windows groups the taskbar button and notifications by this id; it matches electron-builder's appId.
@@ -289,6 +289,7 @@ function start(): void {
         quit: requestQuit,
       }),
     );
+    relayoutMenuBar(mainWindow);
   };
   rebuildMenu();
 

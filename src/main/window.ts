@@ -59,6 +59,18 @@ function windowIcon(): { icon?: string } {
   return {};
 }
 
+/**
+ * Lays the native menu bar out again after the menu is rebuilt (06 §4). At fractional display scales the
+ * rebuilt buttons are one device pixel taller than the bar, which leaves a step under the menu items. Hiding
+ * and showing in one tick repeats the layout. A bar that is already hidden stays hidden (full screen), and
+ * macOS has no bar on the window.
+ */
+export function relayoutMenuBar(win: BrowserWindow): void {
+  if (process.platform === 'darwin' || win.isDestroyed() || !win.isMenuBarVisible()) return;
+  win.setMenuBarVisibility(false);
+  win.setMenuBarVisibility(true);
+}
+
 export function createMainWindow(settings: AppSettings): BrowserWindow {
   const bounds = restoredBounds(
     settings.window,
