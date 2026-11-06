@@ -210,8 +210,9 @@ Hooks can be skipped with `--no-verify`, so they're a convenience, not the gate.
 | `build` | windows-latest, macos-latest, ubuntu-latest | `build`, then package (`electron-builder`) | every push and pull request, after `check` |
 | `website` | ubuntu-latest | in `website/`: `npm ci`, `typecheck`, `build` (broken links and anchors fail it) | every push and pull request, after `check` |
 | `e2e` | ubuntu-latest (smoke on windows and macos) | `test:e2e` on the packaged app, including the axe, keyboard-only, zoom and target-size suites (`22` §7) | nightly and before release (`21` §1) |
+| `build`, `deploy` (`docs-deploy.yml`) | ubuntu-latest | in `website/`: `npm ci`, `build`; then publish `website/build/` to GitHub Pages at `https://actualitydesktop.org` | pushes to `main` that change the site, its icons or the Node version, and on demand |
 
-**Branch protection on `main`:** pull requests only, and `check`, `test`, `integration` and `build` must pass before merging. No direct pushes, and no bypass for administrators.
+**Branch protection on `main`:** pull requests only, and `check`, `test`, `integration`, `build` and `website` must pass before merging. No direct pushes, and no bypass for administrators.
 
 ## 6. Security
 
