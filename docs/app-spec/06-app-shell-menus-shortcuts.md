@@ -39,7 +39,7 @@ App.vue
 
 ## 4. Menus (Electron native `Menu`)
 
-Built in `main/menu.ts` from a declarative template. Labels are i18n keys, translated in main with the shared `t()` (`20` §3.4), and the menu is rebuilt when `language` changes. Enabled/visible state is pushed from the renderer (`shell.setMenuState({...})`) whenever the relevant state changes. Clicks are sent to the renderer as `menu:command` `{ id }` and handled by a central command dispatcher (also used by shortcuts).
+Built in `main/menu.ts` from a declarative template. Labels are i18n keys, translated in main with the shared `t()` (`20` §3.4), and the menu is rebuilt when `language` changes. Enabled/visible state is pushed from the renderer (`shell.setMenuState({...})`) whenever the relevant state changes. Clicks are sent to the renderer as `menu:command` `{ id }` and handled by a central command dispatcher (also used by shortcuts). On Windows and Linux, main lays the menu bar out again after every rebuild, unless the bar is hidden: at fractional display scales the rebuilt buttons are otherwise one device pixel taller than the bar, which leaves a step under the menu items.
 
 macOS adds the app menu ("About Actuality", "Settings…" ⌘,, Services, Hide ⌘H, Hide Others, Show All, "Quit Actuality" ⌘Q) and a standard **Window** menu. On macOS, File ▸ Preferences/Exit are omitted. About is also available from the app menu.
 
