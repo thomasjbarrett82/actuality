@@ -10,7 +10,8 @@
       "integration (latest)",
       "build (windows-latest)",
       "build (macos-latest)",
-      "build (ubuntu-latest)"
+      "build (ubuntu-latest)",
+      "website"
     ]
   },
   "enforce_admins": true,
