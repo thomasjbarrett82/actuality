@@ -1,6 +1,7 @@
 <script setup lang="ts">
 // Date entry (11 §3): the budget's short date format, loose parsing, Quicken-style keys and a calendar
-// drop-down. Invalid input reverts, keeps focus and shows the "Invalid date" callout (announced, 22 §4.5).
+// drop-down that opens when the user enters the field. Invalid input reverts, keeps focus and shows the
+// "Invalid date" callout (announced, 22 §4.5).
 import { autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
 import {
   addDays,
@@ -18,12 +19,14 @@ import { CalendarDays } from 'lucide-vue-next';
 import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { announce } from '../../a11y/announcer';
+import { focusables, keyboard } from '../../keyboard/dispatcher';
 import CalendarGrid from './CalendarGrid.vue';
 import Callout from './Callout.vue';
 import RichText from './RichText.vue';
 
 const MAX_RANGE_DAYS = 3650;
 const INPUT_PREVIEW = 12;
+const MODAL = '[aria-modal="true"]';
 
 const props = withDefaults(
   defineProps<{
@@ -94,6 +97,12 @@ function set(date: ISODate): void {
   emit('commit', date);
 }
 
+/** Drops the typed text for the committed date. */
+function revert(): void {
+  text.value = shown(props.modelValue);
+  emit('typed', props.modelValue);
+}
+
 /** Commits the typed text. Returns false (and shows the callout) when it's invalid. */
 function commit(): boolean {
   const raw = text.value;
@@ -112,6 +121,7 @@ function commit(): boolean {
       'assertive',
     );
     text.value = shown(props.modelValue);
+    closeCalendar(false);
     void nextTick(() => input.value?.select());
     return false;
   }
@@ -198,42 +208,73 @@ function onKeydown(e: KeyboardEvent): void {
   if (k === 'Enter') {
     if (!commit()) e.preventDefault();
     closeCalendar(false);
-  } else if (k === 'Escape' && open.value) {
-    e.preventDefault();
-    e.stopPropagation();
-    closeCalendar(true);
   } else if (k === 'Escape' && text.value !== shown(props.modelValue)) {
     // The first Esc reverts the field; a second one is left to the form (11 §1 step 4).
     e.preventDefault();
     e.stopPropagation();
-    text.value = shown(props.modelValue);
+    revert();
   } else if (k === 'Tab' && !commit()) {
     e.preventDefault();
+  } else if (k === 'Tab') {
+    closeCalendar(false);
   } else if (k.length === 1 && !/[\d/.\-']/.test(k) && k !== sep) {
     e.preventDefault();
   }
 }
 
+/** Set when focus will come back without the user entering the field, which opens no calendar (11 §3). */
+let skipAutoOpen = false;
+
+/** Leaving for another window (the input stays active) or a dialog over the field: focus returns by itself. */
+function focusWillReturn(next: Element | null): boolean {
+  if (document.activeElement === input.value) return true;
+  const dialog = next?.closest(MODAL);
+  return !!dialog && dialog !== input.value?.closest(MODAL);
+}
+
 function onBlur(e: FocusEvent): void {
-  const next = e.relatedTarget as Node | null;
+  const next = e.relatedTarget instanceof Element ? e.relatedTarget : null;
   if (next && (wrapper.value?.contains(next) || popup.value?.contains(next))) return;
-  if (!commit()) void nextTick(() => input.value?.focus());
+  closeCalendar(false);
+  skipAutoOpen = focusWillReturn(next);
+  if (!commit()) {
+    skipAutoOpen = true;
+    void nextTick(() => input.value?.focus());
+  }
+}
+
+function onFocus(): void {
+  if (skipAutoOpen) skipAutoOpen = false;
+  else openCalendarPopup();
 }
 
 let stop: (() => void) | null = null;
+
+/**
+ * Esc closes the calendar before anything else sees it, inside a modal too (22 §2.2). A scope, because the
+ * dispatcher takes the key in the capture phase, wherever focus is.
+ */
+function onCalendarKey(e: KeyboardEvent): boolean {
+  if (e.key !== 'Escape') return false;
+  revert();
+  closeCalendar(true);
+  return true;
+}
 
 function openCalendarPopup(focusGrid = false): void {
   if (props.disabled) return;
   open.value = true;
   focusInGrid.value = focusGrid;
+  // After the tick: a dialog focuses its field before pushing its own modal scope, which must stay below ours.
   void nextTick(() => {
     const anchor = wrapper.value;
     const el = popup.value;
     if (!anchor || !el) return;
     stop?.();
-    stop = autoUpdate(anchor, el, () => {
+    const stopPosition = autoUpdate(anchor, el, () => {
+      // Above the field when there's room: below it is the next field in the tab order (11 §3).
       void computePosition(anchor, el, {
-        placement: props.scheduler ? 'top-start' : 'bottom-start',
+        placement: 'top-start',
         strategy: 'fixed',
         middleware: [offset(2), flip(), shift()],
       }).then(({ x, y }) => {
@@ -241,6 +282,11 @@ function openCalendarPopup(focusGrid = false): void {
         el.style.top = `${String(y)}px`;
       });
     });
+    const popScope = keyboard.push(onCalendarKey);
+    stop = () => {
+      stopPosition();
+      popScope();
+    };
   });
 }
 
@@ -250,7 +296,10 @@ function closeCalendar(refocus: boolean): void {
   stop?.();
   stop = null;
   open.value = false;
-  if (refocus) void nextTick(() => input.value?.focus());
+  if (refocus && document.activeElement !== input.value) {
+    skipAutoOpen = true;
+    void nextTick(() => input.value?.focus());
+  }
 }
 
 function pick(date: ISODate): void {
@@ -261,10 +310,29 @@ function pick(date: ISODate): void {
 
 function onPopupPointer(e: PointerEvent): void {
   const target = e.target as Node | null;
-  if (open.value && target && !popup.value?.contains(target) && !wrapper.value?.contains(target))
-    closeCalendar(false);
+  if (!open.value || !target || popup.value?.contains(target) || wrapper.value?.contains(target))
+    return;
+  closeCalendar(false);
+  // With focus out of the input, no blur is coming to commit what was typed.
+  if (document.activeElement !== input.value) commit();
 }
 document.addEventListener('pointerdown', onPopupPointer, true);
+
+/** Clicks in the calendar leave focus in the field, and off its controls never drop it to the body (22 §3). */
+function onPopupMousedown(e: MouseEvent): void {
+  const onControl = e.target instanceof Element && e.target.closest('button') !== null;
+  if (!onControl || document.activeElement === input.value) e.preventDefault();
+}
+
+/** The calendar sits at the end of the body: Tab past its ends goes back to the field, not out of a modal. */
+function onPopupKeydown(e: KeyboardEvent): void {
+  if (e.key !== 'Tab' || !popup.value) return;
+  const stops = focusables(popup.value).filter((el) => el.getAttribute('tabindex') !== '-1');
+  if (e.target === (e.shiftKey ? stops[0] : stops.at(-1))) {
+    e.preventDefault();
+    closeCalendar(true);
+  }
+}
 onBeforeUnmount(() => {
   stop?.();
   document.removeEventListener('pointerdown', onPopupPointer, true);
@@ -290,6 +358,7 @@ defineExpose({
       :aria-invalid="error ? 'true' : undefined"
       :disabled="disabled"
       @keydown="onKeydown"
+      @focus="onFocus"
       @blur="onBlur"
       @input="onInput"
     />
@@ -307,13 +376,19 @@ defineExpose({
     </button>
   </span>
   <Teleport to="body">
-    <div v-if="open" ref="popup" class="date-field__popup">
+    <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -- keeps focus and Tab in order around the calendar's own controls -->
+    <div
+      v-if="open"
+      ref="popup"
+      class="date-field__popup"
+      @mousedown="onPopupMousedown"
+      @keydown="onPopupKeydown"
+    >
       <CalendarGrid
         :model-value="modelValue ?? today"
         :today="today"
         :focus-on-mount="focusInGrid"
         @pick="pick"
-        @close="closeCalendar(true)"
       />
     </div>
   </Teleport>

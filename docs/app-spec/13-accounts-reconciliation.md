@@ -80,8 +80,9 @@ Triggered by **Reconcile Account** (not in All Accounts, not offline).
 ```
 
 - The date defaults to today. When continuing, it's the in-progress date and the button reads **Continue Reconciliation**.
-- The hint line shows the cleared balance *through the chosen date* (`reconcile.clearedThrough`) and is recalculated when the date changes. It counts what the footer's "Cleared balance as of {statement date}" counts (§6.2): every reconciled transaction, whatever its date, plus the cleared ones dated on or before. So "Use this amount." always starts with a difference of 0. "Use this amount." fills it in and **immediately begins** reconciliation.
-- Invalid → "Invalid Balance" / "'{value}' is not a valid number". "Learn more" opens the help URL.
+- The hint line shows the cleared balance *through the chosen date* (`reconcile.clearedThrough`) and is recalculated when the date changes. It counts what the footer's "Cleared balance as of {statement date}" counts (§6.2): every reconciled transaction, whatever its date, plus the cleared ones dated on or before. So "Use this amount." always starts with a difference of 0. "Use this amount." fills it in and **immediately begins** reconciliation. The line keeps its place while the amount is recalculated, so the buttons below it don't move under the pointer.
+- **Begin Reconciliation**, **Continue Reconciliation** and Enter in either field use the date typed in the field, committed first. An invalid date shows its callout (`11` §3) and the dialog stays open, because beginning with another date would change which transactions are reconciled. "Use this amount." also commits a typed date first; if that changes the date, the hint recalculates and reconciliation doesn't begin, because the amount shown was for the old date.
+- Invalid balance → "Invalid Balance" / "'{value}' is not a valid number". "Learn more" opens the help URL.
 - The amount is taken as typed, with its sign. A balance owed is typed as a negative number.
 - On Begin: store `{statementDate, target}` in the register's session state (not persisted) and switch the register to reconcile mode. **Adjust Statement** reopens the dialog in continue mode.
 

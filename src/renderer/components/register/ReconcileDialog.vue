@@ -15,6 +15,7 @@ import { useBudgetFormat } from '../../queries/budget-data';
 import { host } from '../../rpc/host-client';
 import { showUnexpected } from '../../session';
 import DateField from '../common/DateField.vue';
+import type { DateFieldApi } from '../common/exposed';
 import StandardDialog from '../common/StandardDialog.vue';
 import UiButton from '../common/UiButton.vue';
 import UiLink from '../common/UiLink.vue';
@@ -31,6 +32,7 @@ const id = useId();
 const format = useBudgetFormat();
 
 const date = ref<ISODate>(props.current?.statementDate ?? props.today);
+const field = ref<DateFieldApi | null>(null);
 const text = ref(props.current ? currencyPlain(props.current.target, format.value.money) : '');
 // Privacy mode (06 §7): the statement balance stays masked until the user clicks or types in it.
 const { shown, attrs, onInput, onPointerdown, onKeydown, onBlur } = useMaskedField(text);
@@ -62,6 +64,8 @@ function finish(target: Money): void {
 }
 
 async function begin(): Promise<void> {
+  // The dialog takes Enter before the date field sees it, so the typed date is committed here.
+  if (!field.value?.commit()) return;
   const raw = text.value.trim();
   const value = parse(raw, format.value.money);
   if (value === null) {
@@ -71,9 +75,19 @@ async function begin(): Promise<void> {
   finish(value);
 }
 
+/** Pressing these controls leaves focus in the date field, so their click commits the date, not a blur. */
+const keepsFocus = {
+  onMousedown: (e: MouseEvent): void => {
+    e.preventDefault();
+  },
+};
+
 /** "Use this amount.": fills in the cleared balance and begins (13 §6.1). */
 function useAmount(): void {
   if (cleared.value === null) return;
+  // The amount belongs to the committed date: a newly typed date recalculates it first.
+  const amountDate = date.value;
+  if (!field.value?.commit() || date.value !== amountDate) return;
   text.value = currencyPlain(cleared.value, format.value.money);
   finish(cleared.value);
 }
@@ -94,6 +108,7 @@ function useAmount(): void {
       <div class="rec__field">
         <span>{{ t('app.recDateLabel') }}</span>
         <DateField
+          ref="field"
           :model-value="date"
           :label="t('app.recDateLabel')"
           :date-format="format.dateFormat"
@@ -117,16 +132,18 @@ function useAmount(): void {
           @blur="onBlur"
         />
       </div>
-      <p v-if="cleared !== null" class="rec__hint">
-        {{
-          t('app.recClearedHint', { amount: moneyText(cleared, format.money, { symbol: true }) })
-        }}
-        <UiLink @click="useAmount">{{ t('app.recUseAmount') }}</UiLink>
+      <p class="rec__hint">
+        <template v-if="cleared !== null">
+          {{
+            t('app.recClearedHint', { amount: moneyText(cleared, format.money, { symbol: true }) })
+          }}
+          <UiLink v-bind="keepsFocus" @click="useAmount">{{ t('app.recUseAmount') }}</UiLink>
+        </template>
       </p>
     </form>
     <template #footer>
       <UiButton @click="emit('close', null)">{{ t('taskDialog.CancelLabel') }}</UiButton>
-      <UiButton primary @click="begin">{{
+      <UiButton v-bind="keepsFocus" primary @click="begin">{{
         current ? t('app.recContinue') : t('app.recBegin')
       }}</UiButton>
     </template>
@@ -145,7 +162,9 @@ function useAmount(): void {
   margin: 0;
 }
 
+/* Keeps its line while the amount reloads, so a click on the buttons below doesn't miss (13 §6.1). */
 .rec__hint {
+  min-height: 1lh;
   color: var(--text-subtle);
   font-size: var(--font-sm);
 }

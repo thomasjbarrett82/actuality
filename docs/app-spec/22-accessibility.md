@@ -119,7 +119,7 @@ Each common component (`17`) follows the WAI-ARIA Authoring Practices pattern be
 | Help callout | non-modal `dialog` named by its title |
 | `AutoComplete` (payee, category) | combobox with a `listbox` popup; `aria-activedescendant` follows the highlighted item; group headers are `group`s |
 | `MoneyInput` | text field labelled by its column ("Outflow"); the calculator result is announced (§4.5) |
-| `DateField` | text field + a button ("Choose date") opening a calendar dialog whose days are a `grid` (arrow keys move by day/week, PageUp/PageDown by month, Shift+PageUp/PageDown by year, Home/End to the configured week's start/end, using the budget's `firstDayOfWeekIdx` or the UI locale when unset; `07` §4); its arrow buttons are "Previous month", "Next month", "Previous year", "Next year" |
+| `DateField` | text field + a button ("Choose date"). A calendar dialog opens when the user enters the field and the button toggles it (`11` §3). Its days are a `grid` (arrow keys move by day/week, PageUp/PageDown by month, Shift+PageUp/PageDown by year, Home/End to the configured week's start/end, using the budget's `firstDayOfWeekIdx` or the UI locale when unset; `07` §4); its arrow buttons are "Previous month", "Next month", "Previous year", "Next year" |
 | `MonthPicker` | combobox with a listbox |
 | `Calculator` | `dialog` named "Calculator"; its display is a `status` region. Keys whose label is a symbol are named: "Clear" (C), "Change sign" (+/-), "Backspace" (<--), "Divide", "Multiply", "Subtract", "Add", "Equals", "Decimal point" |
 | Tooltip directive | `aria-describedby` on the target (§4.6) |

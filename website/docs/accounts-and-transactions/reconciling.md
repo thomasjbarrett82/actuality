@@ -12,9 +12,9 @@ Reconciling checks an account against a statement from your bank, so you know Ac
 1. Open the account and select **Reconcile Account** in the footer. (You can't reconcile in All Accounts, or while offline.)
 2. Enter the statement's date in **What date do you want to reconcile against?**.
 3. Enter the statement's balance on that date in **What is your account balance on that date?**. For a credit card or loan, enter what you owe as a negative number.
-4. Select **Begin Reconciliation**.
+4. Select **Begin Reconciliation**, or press Enter. If the date isn't valid, Actuality shows **Invalid date** and stays on the dialog.
 
-The dialog also shows your cleared balance in Actuality for that date. If it already matches your statement, select **Use this amount.** to start straight away.
+The dialog also shows your cleared balance in Actuality for that date. If it already matches your statement, select **Use this amount.** to start straight away. If you've just typed a new date, the first selection updates the amount for that date. Check it and select **Use this amount.** again to start.
 
 ## Match your statement
 

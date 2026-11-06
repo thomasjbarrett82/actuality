@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // The DateField's calendar (11 §3, 05 §6): month/year arrows over a `grid` of days (22 §4.4). One Tab
 // stop for the grid; arrows move by day/week, PageUp/PageDown by month (Shift: by year), Home/End to the
-// week's start/end, Enter/Space picks, Esc closes. Month and weekday names come from the UI language; the
-// first weekday from the budget, else the UI language (07 §4).
+// week's start/end, Enter/Space picks; DateField owns Esc. Month and weekday names come from the UI
+// language; the first weekday from the budget, else the UI language (07 §4).
 import {
   addDays,
   addMonths,
@@ -26,7 +26,7 @@ const props = withDefaults(
     focusOnMount: true,
   },
 );
-const emit = defineEmits<{ pick: [date: ISODate]; close: [] }>();
+const emit = defineEmits<{ pick: [date: ISODate] }>();
 const { t } = useI18n();
 const id = useId();
 const active = ref<ISODate>(props.modelValue);
@@ -62,9 +62,12 @@ const weeks = computed((): (ISODate | null)[][] => {
   return Array.from({ length: cells.length / 7 }, (_, w) => cells.slice(w * 7, w * 7 + 7));
 });
 
+/** The full date, with the day as the plain number the button shows: "1", not "1st" (WCAG 2.5.3). */
 function longLabel(date: ISODate): string {
   const { y, m, d } = parts(date);
-  return formatDate(new Date(y, m - 1, d), 'PPPP', { locale: dateLocale.value });
+  return new Intl.DateTimeFormat(dateLocale.value.code, { dateStyle: 'full' }).format(
+    new Date(y, m - 1, d),
+  );
 }
 
 function shiftMonths(n: number): void {
@@ -103,10 +106,6 @@ function onKey(e: KeyboardEvent): void {
   } else if (e.key === 'Enter' || e.key === ' ') {
     e.preventDefault();
     emit('pick', active.value);
-  } else if (e.key === 'Escape') {
-    e.preventDefault();
-    e.stopPropagation();
-    emit('close');
   }
 }
 
