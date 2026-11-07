@@ -31,8 +31,8 @@ Each report has filters above it:
 - **Categories**, **Payees** and **Accounts** open a list with a search box, **Select All** and **Select None**. Tick what you want and select **Done**; **Cancel** or **Esc** leaves the filter as it was. Off-budget accounts can be added in **Accounts**. Closed accounts are never included.
 - **Timeframe** offers **This Month**, **Latest 3 Months**, **This Year**, **Last Year** and **All Dates**, or a range of whole months chosen with **From:** and **To:**.
 
-![Header list of report filter options](/img/accounts/filters-light.png#light)
-![Header list of report filter options](/img/accounts/filters-dark.png#dark)
+![Header list of report filter options](/img/reports/filters-light.png#light)
+![Header list of report filter options](/img/reports/filters-dark.png#dark)
 
 ### Linked filters
 

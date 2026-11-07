@@ -7,8 +7,8 @@ description: Every setting in Preferences, and which settings are stored where.
 
 Choose **File ▸ Preferences…** (**Ctrl+,**). On macOS, choose **Actuality ▸ Settings…** (**⌘,**). Select **Done** when you're finished.
 
-![Preferences screen with all system-wide options](/img/accounts/preferences-light.png#light)
-![Preferences screen with all system-wide options](/img/accounts/preferences-dark.png#dark)
+![Preferences screen with all system-wide options](/img/reference/preferences-light.png#light)
+![Preferences screen with all system-wide options](/img/reference/preferences-dark.png#dark)
 
 | Section | Settings |
 | --- | --- |

@@ -7,8 +7,8 @@ description: How the budget screen is laid out, and what each number in the mont
 
 Select **Budget** in the sidebar (**Ctrl+B**). The budget screen is a spreadsheet of your categories down the left and one or more months across. Widen the window to see more months side by side.
 
-![Full budget screen with header, categories, and example data](/img/accounts/budget-light.png#light)
-![Full budget screen with header, categories, and example data](/img/accounts/budget-dark.png#dark)
+![Full budget screen with header, categories, and example data](/img/budgets/budget-light.png#light)
+![Full budget screen with header, categories, and example data](/img/budgets/budget-dark.png#dark)
 
 Actuality supports envelope budgeting: each month, you give the money you have a job by budgeting it to categories, and each category's balance is what's left to spend.
 

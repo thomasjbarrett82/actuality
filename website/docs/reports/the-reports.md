@@ -7,8 +7,8 @@ description: What each of the five reports shows.
 
 ## Summary
 
-![Summary dashboard report with multiple widgets](/img/accounts/summary-light.png#light)
-![Summary dashboard report with multiple widgets](/img/accounts/summary-dark.png#dark)
+![Summary dashboard report with multiple widgets](/img/reports/summary-light.png#light)
+![Summary dashboard report with multiple widgets](/img/reports/summary-dark.png#dark)
 
 Summary shows nine figures for the timeframe and filters you choose:
 
@@ -26,8 +26,8 @@ Months with no transactions, and months still to come, count when working out av
 
 ## Spending Breakdown
 
-![Spending breakdown report with column graph over a report grid](/img/accounts/spending-breakdown-light.png#light)
-![Spending breakdown report with column graph over a report grid](/img/accounts/spending-breakdown-dark.png#dark)
+![Spending breakdown report with column graph over a report grid](/img/reports/spending-breakdown-light.png#light)
+![Spending breakdown report with column graph over a report grid](/img/reports/spending-breakdown-dark.png#dark)
 
 Spending Breakdown shows your spending as a stacked bar chart, with a table of the same numbers.
 
@@ -40,8 +40,8 @@ Select a category group in the chart, its legend or the table to look inside it,
 
 ## Spending Comparison
 
-![Spending comparison report with line graph over a treeview grid](/img/accounts/spending-comparison-light.png#light)
-![Spending comparison report with line graph over a treeview grid](/img/accounts/spending-comparison-dark.png#dark)
+![Spending comparison report with line graph over a treeview grid](/img/reports/spending-comparison-light.png#light)
+![Spending comparison report with line graph over a treeview grid](/img/reports/spending-comparison-dark.png#dark)
 
 Spending Comparison shows how much you've spent so far in a period against the same point in the period before, as two lines that climb as you spend: solid for the current period, dashed for the previous one.
 
@@ -53,8 +53,8 @@ The table lists each category group (expand it for its categories) with **Curren
 
 ## Inflow vs Outflow
 
-![Inflow vs Outflow report with a treeview grid of inflow accounts vs outflow accounts](/img/accounts/inflow-outflow-light.png#light)
-![Inflow vs Outflow report with a treeview grid of inflow accounts vs outflow accounts](/img/accounts/inflow-outflow-dark.png#dark)
+![Inflow vs Outflow report with a treeview grid of inflow accounts vs outflow accounts](/img/reports/inflow-outflow-light.png#light)
+![Inflow vs Outflow report with a treeview grid of inflow accounts vs outflow accounts](/img/reports/inflow-outflow-dark.png#dark)
 
 Inflow vs Outflow is a table with a column for each month, plus **Average** and **Total**:
 
@@ -66,8 +66,8 @@ Rows with nothing in them are hidden.
 
 ## Net Worth
 
-![Net worth report with a line graph above a report grid](/img/accounts/net-worth-light.png#light)
-![Net worth report with a line graph above a report grid](/img/accounts/net-worth-dark.png#dark)
+![Net worth report with a line graph above a report grid](/img/reports/net-worth-light.png#light)
+![Net worth report with a line graph above a report grid](/img/reports/net-worth-dark.png#dark)
 
 Net Worth shows the balance of your accounts over time. Choose which accounts to include in **Accounts**; off-budget accounts such as investments and loans can be added there. Closed accounts are never included.
 
