@@ -13,6 +13,9 @@ Select **Scheduled Transactions** in the register's footer to open the pane unde
 
 The pane lists each schedule's next **Date**, its **Frequency**, payee, category, notes and amount. In **All Accounts** it lists every schedule.
 
+![Scheduled transactions panel with examples and buttons](/img/accounts/scheduled-transactions-light.png#light)
+![Scheduled transactions panel with examples and buttons](/img/accounts/scheduled-transactions-dark.png#dark)
+
 ## Create a schedule
 
 1. In the pane, select **Add** (or **Transfer** for a scheduled transfer). The **Add Schedule** dialog opens.
@@ -24,6 +27,9 @@ The pane lists each schedule's next **Date**, its **Frequency**, payee, category
    - **Date**: for a one-time transaction, untick **Repeats** and choose the date. For a recurring one, leave **Repeats** ticked and choose a **Frequency** and the date it **Starts**.
 3. Check **Upcoming dates**, which lists the next five dates.
 4. Select **Add**.
+
+![Scheduled transaction editor with multiple options and rules](/img/accounts/add-schedule-light.png#light)
+![Scheduled transaction editor with multiple options and rules](/img/accounts/add-schedule-dark.png#dark)
 
 The frequencies are Daily, Weekly, Every other week, Twice a month, Every 4 weeks, Monthly, Every other month, Every 3 months, Every 4 months, Twice a year, Yearly and Every other year. For anything else, use **Repeat every**, **Add specific days** (such as the 15th, or the last Friday of each month), **Ends** (never, after a number of times, or on a date), and **Move the date when it falls on a weekend**.
 

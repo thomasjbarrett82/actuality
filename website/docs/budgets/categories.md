@@ -7,6 +7,9 @@ description: Add, rename, hide, move and delete categories and category groups.
 
 Categories are grouped into **master categories** (category groups). You manage both on the budget screen. Changing categories needs a connection to your server.
 
+![List of example budget categories](/img/accounts/categories-light.png#light)
+![List of example budget categories](/img/accounts/categories-dark.png#dark)
+
 ## Add a category group
 
 1. Select **+** next to **Categories** at the top of the category column ("Add new Master Category").

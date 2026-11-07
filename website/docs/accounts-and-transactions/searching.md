@@ -35,6 +35,9 @@ Search words aren't case-sensitive. The English words always work, whatever lang
 
 Use the **date filter** next to the search box to limit the list to **This Month**, **Latest 3 Months**, **This Year** or **Last Year**, or choose a range of months in **From:** and **Through:**. Choose **All Dates** to see everything. The date filter works on its own or together with a search.
 
+![Search by date popup with presets and selectors](/img/accounts/search-date-light.png#light)
+![Search by date popup with presets and selectors](/img/accounts/search-date-dark.png#dark)
+
 ## Splits in search results
 
 A split transaction is shown if it, or any of its lines, matches. Lines that don't match are shown struck through, so you can see the whole transaction. The **Search Total** in the footer counts only the matching lines.

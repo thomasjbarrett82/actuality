@@ -63,7 +63,7 @@ Pin the exact latest stable versions when scaffolding. Record them in `package.j
 ## 3. Repository layout
 
 ```text
-actual-desktop/
+actuality/
 ├─ package.json, electron.vite.config.ts, electron-builder.yml, tsconfig*.json, .nvmrc
 ├─ eslint.config.ts, stylelint.config.mjs, prettier.config.mjs, .prettierignore, knip.jsonc,
 │  commitlint.config.mjs, .markdownlint-cli2.jsonc, .editorconfig, .gitattributes

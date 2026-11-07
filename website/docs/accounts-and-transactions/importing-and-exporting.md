@@ -20,6 +20,9 @@ To import:
 3. For each bank account in the file, Actuality shows how many transactions it will import, with a preview. Check the account it will go **into**, or choose **Skip this account**.
 4. Select **Import** (or **Next** if the file has more accounts).
 
+![Import data dialog with import options](/img/accounts/import-light.png#light)
+![Import data dialog with import options](/img/accounts/import-dark.png#dark)
+
 Actuality then shows how many transactions were imported, matched or skipped, and opens the account.
 
 ### What happens to imported transactions
@@ -63,6 +66,9 @@ Choose **File ▸ Export…** (**Ctrl+E**) and choose:
 - **Export to CSV**: two files, one with your transactions (Register) and one with your budget (Budget), for Excel and other spreadsheet programs.
 - **Export to QIF**: your transactions, one file per account, for other financial programs. Budget data isn't included.
 - **Export Budget to CSV** (from the budget screen): just the budget.
+
+![Export data dialog with export options](/img/accounts/export-light.png#light)
+![Export data dialog with export options](/img/accounts/export-dark.png#dark)
 
 From a register, tick **Export current register view only** to export just the account and transactions you're looking at. Then choose a folder. Exports work offline.
 

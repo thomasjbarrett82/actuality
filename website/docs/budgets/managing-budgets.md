@@ -13,6 +13,9 @@ Choose **File ▸ Budget Properties…** to change:
 - the **Currency**, number format (**Which Format?**), **Date Format** and **Hide decimal places**,
 - the **First day of week**, which sets the first column of every calendar and how weekly reports are grouped.
 
+![Options screen for budget-specific properties](/img/accounts/budget-properties-light.png#light)
+![Options screen for budget-specific properties](/img/accounts/budget-properties-dark.png#dark)
+
 Select **Save Changes**. These settings are stored in the budget, so they apply on every computer and in Actual's web app.
 
 While offline, Budget Properties opens read-only. On a server with several users, you can't rename a budget someone else owns.
@@ -49,6 +52,9 @@ To restore a backup, choose **File ▸ Open…**, then **Open another budget** a
 2. Check where the backup will be saved. Actuality always saves a backup of your budget first; select **Change…** to save it somewhere else.
 3. Select **Wipe the Slate Clean**, then confirm.
 4. When it's done, open each account and [reconcile](../accounts-and-transactions/reconciling.md) it to enter its current balance.
+
+![Dialog that explains wiping the slate clean and a backup location](/img/accounts/wipe-slate-light.png#light)
+![Dialog that explains wiping the slate clean and a backup location](/img/accounts/wipe-slate-dark.png#dark)
 
 On a large budget this can take several minutes. It can't be undone, except by restoring the backup.
 

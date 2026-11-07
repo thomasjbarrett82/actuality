@@ -22,6 +22,9 @@ Accounts have no type: a credit card or loan is simply an account with a negativ
 4. Enter the **Balance** the account has today. For money you owe, type a negative number.
 5. Select **Create Account**.
 
+![New account dialog with create and cancel buttons](/img/accounts/new-account-light.png#light)
+![New account dialog with create and cancel buttons](/img/accounts/new-account-dark.png#dark)
+
 Actuality opens the account's register. If the balance isn't zero, Actual adds a transaction for it, dated today, marked cleared, with the payee "Starting Balance". In a budget account, it's categorized as **Starting Balances** income, so the money is available to budget.
 
 ## Rename an account or add a note
@@ -30,6 +33,9 @@ Open the account's register. Its name is at the top, with two buttons that appea
 
 - **Rename**: type the new name and press **Enter**, or **Esc** to cancel.
 - **Notes**: write a note about the account, such as its account number or interest rate. The note shows in the sidebar tooltip and in Actual's web app.
+
+![Rename account buttons](/img/accounts/rename-account-light.png#light)
+![Rename account buttons](/img/accounts/rename-account-dark.png#dark)
 
 The same commands are on the account's right-click menu in the sidebar and in the **Edit** menu.
 
@@ -42,6 +48,9 @@ Open the account and choose **Close Account** from the **⋯** menu at the top r
 - **No transactions:** the account is deleted.
 - **Transactions and a zero balance:** the account is closed. You can re-open it later.
 - **A remaining balance:** choose an account to transfer the balance to in **Transfer to:**. When moving money from a budget account to an off-budget account, also choose a **Category:**.
+
+![Close account dialog with close and cancel buttons](/img/accounts/close-account-light.png#light)
+![Close account dialog with close and cancel buttons](/img/accounts/close-account-dark.png#dark)
 
 To re-open a closed account, open it and choose **Re-open Account** from the **⋯** menu.
 
@@ -58,3 +67,6 @@ Accounts can't be dragged between groups: an account's group follows from whethe
 ## Balances in the sidebar
 
 Each account shows its **working balance**: everything in the account, cleared or not. Hover over an account to see its name, balance and note. Totals are shown for each group, and **All Accounts** shows the total of every account, including off-budget and closed ones.
+
+![Sidebar with on and off budget examples and balances](/img/accounts/sidebar-balances-light.png#light)
+![Sidebar with on and off budget examples and balances](/img/accounts/sidebar-balances-dark.png#dark)
