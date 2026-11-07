@@ -16,13 +16,13 @@ export const actualApiImport = createRule({
     type: 'problem',
     docs: { description: 'Restrict how and where @actual-app/api is loaded' },
     schema: [],
+    defaultOptions: [],
     messages: {
       outside: '@actual-app/api may only be loaded in src/host/actual.ts.',
       static:
         'Load @actual-app/api with a dynamic import() after the fetch wrapper is installed, never with a static import.',
     },
   },
-  defaultOptions: [],
   create(context) {
     const filename = context.filename.replaceAll('\\', '/');
     const inActualTs = /(^|\/)src\/host\/actual\.ts$/.test(filename);
