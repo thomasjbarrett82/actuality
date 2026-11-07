@@ -28,10 +28,14 @@ nsis:
   oneClick: false
   perMachine: false
   allowToChangeInstallationDirectory: true
+  # Ship an architecture-specific installer instead of one installer containing both app payloads.
+  buildUniversalInstaller: false
+  artifactName: '${productName} Setup ${version} ${arch}.${ext}'
 
 mac:
   category: public.app-category.finance
   icon: icons/macos/actuality.icns
+  artifactName: '${productName} ${version} ${arch}.${ext}'
   hardenedRuntime: true
   gatekeeperAssess: false
   notarize: true # credentials come from CI secrets (APPLE_API_KEY, APPLE_API_KEY_ID, APPLE_API_ISSUER)
@@ -45,6 +49,7 @@ mac:
 
 linux:
   category: Office
+  artifactName: '${productName}-${version}-${arch}.${ext}'
   # One PNG, installed as-is. A folder would need flat {size}x{size}.png names, not the hicolor tree.
   icon: icons/png/actuality-icon-512.png
   # Matches desktopName in package.json, so desktops link the running window to its launcher entry.

@@ -152,7 +152,7 @@ Main applies the same rules to `shell.openExternal` from the host as from the re
 ## 5. Build & packaging
 
 - `electron-builder` targets:
-  - **Windows:** NSIS installer (per-user, x64 + arm64). MSI is optional.
+  - **Windows:** separate per-user NSIS installers for x64 and arm64. Each installer contains only its target architecture. MSI is optional.
   - **macOS:** DMG + zip (universal or separate x64/arm64), hardened runtime, notarization via `notarytool` (CI secrets).
   - **Linux:** AppImage, deb and rpm (x64 + arm64).
 - **Native modules (checked against `@actual-app/api@26.10.0`):** the only native module is **`better-sqlite3@13.0.3`**. Its `.node` binary must be loaded from outside the asar archive.
