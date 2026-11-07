@@ -351,9 +351,7 @@ function start(): void {
   });
   handle(IPC.secretsAvailable, () => secrets.available());
   handle(IPC.secretsHas, (_e, key: unknown) => secrets.has(String(key)));
-  handle(IPC.secretsForget, (_e, key: unknown) => {
-    secrets.delete(String(key));
-  });
+  handle(IPC.secretsForget, (_e, key: unknown) => secrets.delete(String(key)));
   handle(IPC.systemLanguages, () => systemLanguages);
   handle(IPC.setTitle, (_e, title: unknown) => {
     if (typeof title === 'string') mainWindow.setTitle(title);

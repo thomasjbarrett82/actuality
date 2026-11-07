@@ -71,7 +71,8 @@ async function sessionTokens(app: ElectronApplication, userData: string): Promis
       .filter(([k]) => k.startsWith('server:'))
       .map(([, b64]) =>
         app.evaluate(
-          ({ safeStorage }, v) => safeStorage.decryptString(Buffer.from(v, 'base64')),
+          async ({ safeStorage }, v) =>
+            (await safeStorage.decryptStringAsync(Buffer.from(v, 'base64'))).result,
           b64,
         ),
       ),

@@ -20,6 +20,7 @@ export const noFloatMoney = createRule({
       description: 'Disallow floating-point operations on Money values outside shared/money.ts',
     },
     schema: [],
+    defaultOptions: [],
     messages: {
       operand:
         'Money is an integer in minor units: use shared/money.ts instead of `{{op}}` on a Money value.',
@@ -27,7 +28,6 @@ export const noFloatMoney = createRule({
         'Money is an integer in minor units: parse with shared/money.ts `parse()`, not `{{op}}`.',
     },
   },
-  defaultOptions: [],
   create(context) {
     const services = ESLintUtils.getParserServices(context);
     const checker = services.program.getTypeChecker();

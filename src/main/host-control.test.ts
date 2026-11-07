@@ -19,9 +19,10 @@ function ctx(): ControlContext & { opened: string[]; focused: number } {
   const c = {
     settings: new SettingsStore(dir),
     secrets: new SecretsStore(dir, {
-      isEncryptionAvailable: () => true,
-      encryptString: (s: string) => Buffer.from(s).reverse(),
-      decryptString: (b: Buffer) => Buffer.from(b).reverse().toString(),
+      isAsyncEncryptionAvailable: () => Promise.resolve(true),
+      encryptStringAsync: (s: string) => Promise.resolve(Buffer.from(s).reverse()),
+      decryptStringAsync: (b: Buffer) =>
+        Promise.resolve({ result: Buffer.from(b).reverse().toString(), shouldReEncrypt: false }),
     }),
     opened: [] as string[],
     focused: 0,
