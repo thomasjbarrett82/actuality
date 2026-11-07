@@ -109,7 +109,7 @@
     "@vitest/eslint-plugin": "1.6.27",
     "@vue/test-utils": "2.5.1",
     "axe-core": "4.14.0",
-    "electron": "44.9.1",
+    "electron": "45.2.1",
     "electron-builder": "26.15.3",
     "electron-vite": "6.0.0",
     "eslint": "10.13.0",
