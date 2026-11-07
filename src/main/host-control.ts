@@ -112,13 +112,13 @@ export async function handleControl(
     case 'secrets.get':
       return ctx.secrets.get(str('key'));
     case 'secrets.set':
-      ctx.secrets.set(str('key'), str('value'));
+      await ctx.secrets.set(str('key'), str('value'));
       return null;
     case 'secrets.delete':
-      ctx.secrets.delete(str('key'));
+      await ctx.secrets.delete(str('key'));
       return null;
     case 'secrets.clear':
-      ctx.secrets.clear(p['prefix'] === undefined ? undefined : str('prefix'));
+      await ctx.secrets.clear(p['prefix'] === undefined ? undefined : str('prefix'));
       return null;
     case 'settings.getApp':
       return ctx.settings.getApp();

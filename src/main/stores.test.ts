@@ -8,10 +8,12 @@ import { SecretsStore, type Cipher } from './secrets';
 import { migrate, renameRetrying, SettingsStore } from './settings-store';
 
 /** A reversible fake cipher: the file must not contain the plain value. */
+const xor = (b: Buffer): Buffer => Buffer.from([...b].map((x) => x ^ 0x5a));
 const cipher: Cipher = {
-  isEncryptionAvailable: () => true,
-  encryptString: (s) => Buffer.from([...Buffer.from(s, 'utf8')].map((b) => b ^ 0x5a)),
-  decryptString: (b) => Buffer.from([...b].map((x) => x ^ 0x5a)).toString('utf8'),
+  isAsyncEncryptionAvailable: () => Promise.resolve(true),
+  encryptStringAsync: (s) => Promise.resolve(xor(Buffer.from(s, 'utf8'))),
+  decryptStringAsync: (b) =>
+    Promise.resolve({ result: xor(b).toString('utf8'), shouldReEncrypt: false }),
 };
 
 let dir: string;
@@ -109,55 +111,103 @@ describe('SettingsStore (19)', () => {
 });
 
 describe('SecretsStore (19 §4)', () => {
-  it('stores values encrypted, readable after a restart', () => {
+  it('stores values encrypted, readable after a restart', async () => {
     const s = new SecretsStore(dir, cipher);
-    s.set('server:https://x', 'token-123');
+    await s.set('server:https://x', 'token-123');
     const file = readFileSync(join(dir, 'secrets.json'), 'utf8');
     expect(file).not.toContain('token-123');
     const again = new SecretsStore(dir, cipher);
-    expect(again.get('server:https://x')).toBe('token-123');
-    expect(again.has('server:https://x')).toBe(true);
-    expect(again.get('missing')).toBeNull();
+    await expect(again.get('server:https://x')).resolves.toBe('token-123');
+    await expect(again.has('server:https://x')).resolves.toBe(true);
+    await expect(again.get('missing')).resolves.toBeNull();
   });
 
-  it('deletes one, a prefix, or all', () => {
+  it('deletes one, a prefix, or all', async () => {
     const s = new SecretsStore(dir, cipher);
-    s.set('server:a', '1');
-    s.set('e2e:b', '2');
-    s.set('e2e:c', '3');
-    s.delete('server:a');
-    s.delete('server:a');
-    expect(s.has('server:a')).toBe(false);
-    s.clear('e2e:');
-    expect(s.has('e2e:b')).toBe(false);
-    s.set('server:z', '9');
-    s.clear();
-    expect(s.has('server:z')).toBe(false);
+    await s.set('server:a', '1');
+    await s.set('e2e:b', '2');
+    await s.set('e2e:c', '3');
+    await s.delete('server:a');
+    await s.delete('server:a');
+    await expect(s.has('server:a')).resolves.toBe(false);
+    await s.clear('e2e:');
+    await expect(s.has('e2e:b')).resolves.toBe(false);
+    await s.set('server:z', '9');
+    await s.clear();
+    await expect(s.has('server:z')).resolves.toBe(false);
   });
 
-  it('refuses to store without secure storage, and reads nothing', () => {
-    const off: Cipher = { ...cipher, isEncryptionAvailable: () => false };
+  it('applies calls in order, so a later delete wins over a set still encrypting', async () => {
+    let release = (): void => undefined;
+    const gate = new Promise<void>((resolve) => {
+      release = resolve;
+    });
+    const slow: Cipher = {
+      ...cipher,
+      encryptStringAsync: async (v) => {
+        await gate;
+        return xor(Buffer.from(v, 'utf8'));
+      },
+    };
+    const s = new SecretsStore(dir, slow);
+    const set = s.set('e2e:b', 'pw');
+    const del = s.delete('e2e:b');
+    const has = s.has('e2e:b');
+    release();
+    await Promise.all([set, del]);
+    await expect(has).resolves.toBe(false);
+    expect(JSON.parse(readFileSync(join(dir, 'secrets.json'), 'utf8'))).toEqual({});
+  });
+
+  it('re-encrypts a value when the OS asks for it', async () => {
+    await new SecretsStore(dir, cipher).set('server:a', 'tok');
+    const rotated: Cipher = {
+      ...cipher,
+      encryptStringAsync: (v) => Promise.resolve(Buffer.from(`v2:${v}`, 'utf8')),
+      decryptStringAsync: (b) =>
+        Promise.resolve({ result: xor(b).toString('utf8'), shouldReEncrypt: true }),
+    };
+    await expect(new SecretsStore(dir, rotated).get('server:a')).resolves.toBe('tok');
+    const after = JSON.parse(readFileSync(join(dir, 'secrets.json'), 'utf8')) as {
+      'server:a': string;
+    };
+    expect(after['server:a']).toBe(Buffer.from('v2:tok', 'utf8').toString('base64'));
+  });
+
+  it('keeps the old value when re-encryption fails', async () => {
+    await new SecretsStore(dir, cipher).set('server:a', 'tok');
+    const before = readFileSync(join(dir, 'secrets.json'), 'utf8');
+    const failing: Cipher = {
+      ...cipher,
+      encryptStringAsync: () => Promise.reject(new Error('locked')),
+      decryptStringAsync: (b) =>
+        Promise.resolve({ result: xor(b).toString('utf8'), shouldReEncrypt: true }),
+    };
+    await expect(new SecretsStore(dir, failing).get('server:a')).resolves.toBe('tok');
+    expect(readFileSync(join(dir, 'secrets.json'), 'utf8')).toBe(before);
+  });
+
+  it('refuses to store without secure storage, and reads nothing', async () => {
+    await new SecretsStore(dir, cipher).set('server:a', '1');
+    const off: Cipher = { ...cipher, isAsyncEncryptionAvailable: () => Promise.resolve(false) };
     const s = new SecretsStore(dir, off);
-    expect(s.available()).toBe(false);
-    expect(() => {
-      s.set('server:a', '1');
-    }).toThrow();
-    expect(s.get('server:a')).toBeNull();
+    await expect(s.available()).resolves.toBe(false);
+    await expect(s.set('server:b', '1')).rejects.toThrow();
+    await expect(s.get('server:a')).resolves.toBeNull();
+    await expect(s.has('server:b')).resolves.toBe(false);
   });
 
-  it('ignores a damaged file and undecryptable values', () => {
+  it('ignores a damaged file and undecryptable values', async () => {
     writeFileSync(join(dir, 'secrets.json'), '[1,2');
-    expect(new SecretsStore(dir, cipher).has('x')).toBe(false);
+    await expect(new SecretsStore(dir, cipher).has('x')).resolves.toBe(false);
     writeFileSync(join(dir, 'secrets.json'), JSON.stringify({ 'server:a': 'zz', bad: 3 }));
     const broken: Cipher = {
       ...cipher,
-      decryptString: () => {
-        throw new Error('nope');
-      },
+      decryptStringAsync: () => Promise.reject(new Error('nope')),
     };
     const s = new SecretsStore(dir, broken);
-    expect(s.get('server:a')).toBeNull();
-    expect(s.has('bad')).toBe(false);
+    await expect(s.get('server:a')).resolves.toBeNull();
+    await expect(s.has('bad')).resolves.toBe(false);
   });
 });
 
