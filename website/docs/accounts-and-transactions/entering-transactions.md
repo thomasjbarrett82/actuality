@@ -22,6 +22,9 @@ Transactions are entered and edited right in the register. You need a connection
    - **Save** saves and closes the row.
    - **Cancel** (or **Esc** twice) discards it.
 
+![Add transaction dialog in the register screen with editable fields](/img/accounts/add-transaction-light.png#light)
+![Add transaction dialog in the register screen with editable fields](/img/accounts/add-transaction-dark.png#dark)
+
 In **All Accounts**, an **Account** field comes first, so you can choose which account the transaction belongs to.
 
 New transactions use the date you entered last, so a batch of receipts from the same day is quick to enter.

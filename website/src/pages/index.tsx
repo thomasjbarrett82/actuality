@@ -35,7 +35,7 @@ const features: Feature[] = [
   {
     title: 'Reports',
     description:
-      'Summary, Spending Breakdown, Spending Comparison, Inflow vs Outflow and Net Worth, with linked filters, saved filters, Money Age, CSV and Print.',
+      'Summary, Spending Breakdown, Spending Comparison, Inflow vs Outflow and Net Worth, with linked filters, saved filters, Money Age, CSV exports, and Print.',
     to: '/docs/reports/overview',
   },
   {
@@ -47,7 +47,7 @@ const features: Feature[] = [
   {
     title: 'Safe when offline',
     description:
-      "Everything is saved to your server as you go. When the server can't be reached, Actuality shows your budget read-only and tells you why.",
+      "Everything is saved to your Actual server as you go. When the server can't be reached, Actuality shows your budget read-only and tells you why.",
     to: '/docs/troubleshooting/connection-problems',
   },
 ];

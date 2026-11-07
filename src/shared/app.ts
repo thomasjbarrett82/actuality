@@ -5,7 +5,7 @@ export const APP_NAME = 'Actuality';
 export const APP_ID = 'com.actuality.app';
 
 /** Existing Actuality learn-more destination. The Help menu's Actuality links are not published yet. */
-export const APP_HELP_URL = 'https://github.com/thomasjbarrett82/actual-desktop#readme';
+export const APP_HELP_URL = 'https://github.com/thomasjbarrett82/actuality#readme';
 
 /** Help ▸ Actual Budget resources (06 §4). */
 export const ACTUAL_DOCS_URL = 'https://actualbudget.org/docs/';

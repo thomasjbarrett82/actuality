@@ -14,6 +14,9 @@ To enter one:
 1. Open either account and select **Transfer** in the toolbar. The payee field starts with `Transfer:` and lists your other accounts.
 2. Choose the other account, enter the date and amount, and save.
 
+![Transfer dialog in the register screen with editable fields](/img/accounts/transfer-light.png#light)
+![Transfer dialog in the register screen with editable fields](/img/accounts/transfer-dark.png#dark)
+
 You can also type `Transfer:` followed by the account name in any transaction's payee field.
 
 The other side appears in the other account automatically. Changes to the amount, payee, notes, tags or check number are copied to both sides, and changing the date updates the other side too. Each side has its own cleared state, because each account clears separately. Select the transfer icon in the Payee column to jump to the other side.
@@ -33,6 +36,9 @@ Split a transaction when it covers several categories, such as a supermarket rec
 2. On each line, choose a category, and optionally add notes, then enter the line's amount.
 3. **Add a new sub-transaction** adds a line. Entering an amount in the last line adds one automatically. The trash button deletes a line.
 4. **Amount remaining to assign** shows what's left to split. When it reaches zero, save the transaction.
+
+![Split transaction dialog in the register screen with editable fields](/img/accounts/split-light.png#light)
+![Split transaction dialog in the register screen with editable fields](/img/accounts/split-dark.png#dark)
 
 If the lines don't add up to the total when you save, Actuality asks how to handle the difference:
 

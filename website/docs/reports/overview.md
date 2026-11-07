@@ -31,6 +31,9 @@ Each report has filters above it:
 - **Categories**, **Payees** and **Accounts** open a list with a search box, **Select All** and **Select None**. Tick what you want and select **Done**; **Cancel** or **Esc** leaves the filter as it was. Off-budget accounts can be added in **Accounts**. Closed accounts are never included.
 - **Timeframe** offers **This Month**, **Latest 3 Months**, **This Year**, **Last Year** and **All Dates**, or a range of whole months chosen with **From:** and **To:**.
 
+![Header list of report filter options](/img/accounts/filters-light.png#light)
+![Header list of report filter options](/img/accounts/filters-dark.png#dark)
+
 ### Linked filters
 
 Normally, the filters are shared: change the Categories, Timeframe, Payees or Accounts on one report and the other reports use them too. Options that only make sense for one report, such as Spending Breakdown's grouping, Spending Comparison's period and Net Worth's display, stay with their report.

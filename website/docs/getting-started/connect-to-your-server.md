@@ -20,7 +20,7 @@ When you're connected, Actuality shows your budgets. Continue with [Open or crea
 
 :::tip Don't have a server yet?
 
-The link **Don't have a server? Learn how to set one up.** opens Actual's guide to installing a server.
+**[Learn how to set one up](https://actualbudget.org/docs/install/)** using Actual's guide to installing a server.
 
 :::
 

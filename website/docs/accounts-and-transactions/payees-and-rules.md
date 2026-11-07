@@ -21,11 +21,17 @@ Open **Payee Settings** with **View ▸ Go to Payee Settings** (**Ctrl+Y**), **E
 - **Rename imported transactions to (this payee) if payee:** [rename rules](#rename-the-payee-names-your-bank-uses) for imports.
 - **Associated rules**: a link to the payee's [rules](#rules), or **Create a New Rule**.
 
+![Payee window with several examples](/img/accounts/payee-light.png#light)
+![Payee window with several examples](/img/accounts/payee-dark.png#dark)
+
 Changes are saved as you make them. Select **Close** when you're done.
 
 ### Combine payees
 
 Select several payees with their check boxes. Under **Combine and Rename Selected Payees?**, type the **New Payee Name** and select **Combine Now**. Their transactions move to one payee, and rename rules are added so future imports use it. You can also switch several payees on or off at once with **Disable for Selected Payees** / **Enable for Selected Payees**.
+
+![Combine payee options and text describing the function](/img/accounts/payee-combine-light.png#light)
+![Combine payee options and text describing the function](/img/accounts/payee-combine-dark.png#dark)
 
 ### Auto-fill for all payees
 
@@ -50,6 +56,9 @@ Select a transaction and choose **Rename like payees...**. Type the **New payee 
 ## Rules
 
 Rules are Actual's way of changing transactions automatically as they arrive. They can rename payees, set categories, add notes, split transactions and more. Your rename and auto-categorize settings are rules too, as are the rules behind your schedules.
+
+![Rules window with several examples](/img/accounts/rules-light.png#light)
+![Rules window with several examples](/img/accounts/rules-dark.png#dark)
 
 Open the rules list with **View ▸ Go to Rules** (**Ctrl+U**). Rules are listed in the order they run, with their stage and a description such as "If imported payee contains "KROGER" then set payee to Kroger". Type in **Filter rules** to find one.
 

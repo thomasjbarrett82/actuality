@@ -14,6 +14,9 @@ Reconciling checks an account against a statement from your bank, so you know Ac
 3. Enter the statement's balance on that date in **What is your account balance on that date?**. For a credit card or loan, enter what you owe as a negative number.
 4. Select **Begin Reconciliation**, or press Enter. If the date isn't valid, Actuality shows **Invalid date** and stays on the dialog.
 
+![Reconcile transactions starting screen to select date and amount](/img/accounts/reconcile-light.png#light)
+![Reconcile transactions starting screen to select date and amount](/img/accounts/reconcile-dark.png#dark)
+
 The dialog also shows your cleared balance in Actuality for that date. If it already matches your statement, select **Use this amount.** to start straight away. If you've just typed a new date, the first selection updates the amount for that date. Check it and select **Use this amount.** again to start.
 
 ## Match your statement
@@ -29,6 +32,9 @@ While reconciling, the register lists only transactions dated on or before the s
 | Difference between Actuality and your statement | What's still to find. |
 
 Go through your statement and select the **C** on each transaction that appears on it, so it's cleared. Add any transaction that's on the statement but missing from Actuality. When the difference reaches zero, Actuality says "Great job! Your account is now reconciled".
+
+![Reconcile transactions finishing screen with balances](/img/accounts/reconcile-finish-light.png#light)
+![Reconcile transactions finishing screen with balances](/img/accounts/reconcile-finish-dark.png#dark)
 
 Then select **Finish Reconciliation**. Every cleared transaction in the list becomes **reconciled** (shown with a lock) and the account records today as its last reconciliation, which Actual's web app shows too.
 

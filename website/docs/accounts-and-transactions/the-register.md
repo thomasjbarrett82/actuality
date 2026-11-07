@@ -16,6 +16,9 @@ From top to bottom, the register has:
 - a footer with the account's balances, the **Scheduled Transactions** button and **Reconcile Account**,
 - the [scheduled transactions](./scheduled-transactions.md) pane, when it's open.
 
+![Register screen view with multiple examples and columns visible](/img/accounts/register-light.png#light)
+![Register screen view with multiple examples and columns visible](/img/accounts/register-dark.png#dark)
+
 ## Columns
 
 | Column | Shows |
@@ -32,6 +35,9 @@ From top to bottom, the register has:
 | C | Whether the transaction has cleared your bank. |
 
 Right-click any column header (or press **Shift+F10** on it) to show or hide **Check**, **Cleared**, **Notes** and **Running Balance**. Choose **Apply current settings to all existing accounts** to use the same columns everywhere. Drag the edge of the Account, Check #, Payee, Category or Notes header to resize it. Actuality remembers the columns for each account.
+
+![Column header with column options and current state](/img/accounts/columns-menu-light.png#light)
+![Column header with column options and current state](/img/accounts/columns-menu-dark.png#dark)
 
 ## Sorting
 
@@ -79,6 +85,9 @@ Select Cleared Balance or Uncleared Transactions to list those transactions. Whe
 
 Hover over a running balance for a breakdown of the account on that date.
 
+![Running balance hover text with account breakdown](/img/accounts/running-balance-light.png#light)
+![Running balance hover text with account breakdown](/img/accounts/running-balance-dark.png#dark)
+
 ## Selecting transactions
 
 - Click a transaction to select it. Click it again to edit it.
@@ -87,3 +96,6 @@ Hover over a running balance for a breakdown of the account on that date.
 - **↑** / **↓** (or **K** / **J**) move the selection.
 
 Right-click a selected transaction for the actions menu. For every key, see [Keyboard shortcuts](../reference/keyboard-shortcuts.md#register).
+
+![Full list of actions that can be applied to selected transactions](/img/accounts/transaction-menu-light.png#light)
+![Full list of actions that can be applied to selected transactions](/img/accounts/transaction-menu-dark.png#dark)

@@ -27,6 +27,9 @@ Transactions imported from your bank, and transactions entered by a [schedule](.
 - **Reject (Delete)** deletes them.
 - While editing one, **Approve and find next** approves it and opens the next one waiting.
 
+![Approve transaction popup with approve or delete options](/img/accounts/approve-transaction-light.png#light)
+![Approve transaction popup with approve or delete options](/img/accounts/approve-transaction-dark.png#dark)
+
 Changing a waiting transaction and saving it also approves it. You can also select the icon in the **!** column for the same choices.
 
 ## Fixing missing categories
@@ -45,6 +48,9 @@ Choose **Move to account ▸** (**A**) and pick the account. A transfer into tha
 ## Changing the date of several transactions
 
 With two or more selected, choose **Change Date…** (**E**), enter the new date and select **Change Date**. Only the date changes. The other side of a transfer moves with it.
+
+![Change date dialog with date picker](/img/accounts/change-date-light.png#light)
+![Change date dialog with date picker](/img/accounts/change-date-dark.png#dark)
 
 ## Matching two transactions
 

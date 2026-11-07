@@ -33,6 +33,9 @@ While editing a Budgeted cell, press **F2** or select the arrow at the right of 
 - **Balance to 0.00**: the amount that brings the category's balance to exactly zero.
 - **Show calculator**
 
+![List of quick budget items for a category](/img/accounts/quick-budget-category-light.png#light)
+![List of quick budget items for a category](/img/accounts/quick-budget-category-dark.png#dark)
+
 ## Quick Budget for a whole month
 
 Select the Quick Budget icon on the right of a month's header ("Click for Quick Budget options") to fill in many categories at once:
@@ -40,6 +43,9 @@ Select the Quick Budget icon on the right of a month's header ("Click for Quick 
 - **Fill in all empty budget cells with:** last month's budgeted amounts, last month's outflows, average outflows, or total scheduled outflows. These change only categories with nothing budgeted yet.
 - **Balance to 0.00** changes every category's budgeted amount so its balance is zero.
 - **Fill in all budget cells with: 0.00** clears every budgeted amount in the month.
+
+![List of quick budget items for a month](/img/accounts/quick-budget-month-light.png#light)
+![List of quick budget items for a month](/img/accounts/quick-budget-month-dark.png#dark)
 
 Hidden categories and Uncategorized Transactions are never changed. Actuality asks before it fills anything in, and the change can't be undone.
 
