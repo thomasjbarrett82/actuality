@@ -73,7 +73,7 @@ If you enter an outflow in an income category, Actuality checks with you ("Just 
 
 ## Amounts
 
-Type the amount in **Outflow** or **Inflow**; filling one clears the other. A negative outflow becomes an inflow, and the other way round. Type **+**, **-**, **\*** or **/** to open the calculator.
+Type the amount in **Outflow** or **Inflow**; filling one clears the other. A negative outflow becomes an inflow, and the other way round. Type **+**, **-**, **\*** or **/** to open the calculator. Selecting anywhere else closes it, and the amount you had typed before opening it stays.
 
 ## Tags
 

@@ -5,7 +5,7 @@
 import { autoUpdate, computePosition } from '@floating-ui/dom';
 import { onBeforeUnmount, onMounted, ref, useId } from 'vue';
 import { useI18n } from 'vue-i18n';
-import { focusables, keyboard } from '../../keyboard/dispatcher';
+import { focusables, inFieldPopup, keyboard } from '../../keyboard/dispatcher';
 import {
   calloutMiddleware,
   DEFAULT_TAILS,
@@ -86,7 +86,13 @@ async function position(): Promise<void> {
 
 function onDocumentPointer(e: PointerEvent): void {
   const target = e.target as Node | null;
-  if (!target || panel.value?.contains(target) || props.anchor.contains(target)) return;
+  if (
+    !target ||
+    panel.value?.contains(target) ||
+    props.anchor.contains(target) ||
+    inFieldPopup(target)
+  )
+    return;
   if (props.closeOnClickOutside) close('clickOutside', false);
 }
 

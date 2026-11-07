@@ -69,7 +69,7 @@ Non-modal panels anchored to an element. Component `<Callout>`, service `useCall
 | `tail` | about 3 × 1.4 rem, offset `--space-2`, `--space-4` from the edge |
 | `placements` | ordered preference list of the 12 tail positions: `top, topLeft, topRight, bottom, bottomLeft, bottomRight, left, leftTop, leftBottom, right, rightTop, rightBottom`. The first that fits the viewport wins (Floating UI `flip` with a custom fallback order). Default: `bottom, top, left, right, bottomLeft, bottomRight, topLeft, topRight, leftTop, leftBottom, rightTop, rightBottom`. **A tail name is the edge of the callout that carries the tail, so `top*` means the callout opens *below* its anchor, `bottom*` *above*, `left*` to the *right* of it and `right*` to the *left*** (the tail always points at the anchor). Every `placements` list in the app follows this reading (see "Placement rules" below). |
 | `closeOnRollOut` | default **false** in this app (the original's callouts in scope set it false). If true, it closes 350 ms after the pointer leaves both the anchor and the callout. |
-| `closeOnClickOutside` | default true. Result `'clickOutside'`, which note editors treat as save. |
+| `closeOnClickOutside` | default true. Result `'clickOutside'`, which note editors treat as save. A click in the calculator of a field inside the callout isn't outside (`09` §5.4). |
 | `closeOnEsc` | default true |
 | `width` | default `--popover-w` |
 

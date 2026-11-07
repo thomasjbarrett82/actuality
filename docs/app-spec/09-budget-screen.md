@@ -219,7 +219,12 @@ A popup list (as wide as its longest label plus the widest amount, at least 16 r
 6. "Balance to 0.00: " → `budgeted − balance`
 7. "Show calculator" (calculator icon)
 
-Click or Enter on the highlighted row sets the budgeted amount. Esc or an outside click closes it. Typing `+ * /` opens the calculator with that operator.
+Click or Enter on the highlighted row sets the budgeted amount. Typing `+ * /` opens the calculator with that operator.
+
+The list never stays open once the user has moved on:
+
+- Esc, Tab, a click on the field or a click on the dropdown arrow closes it and returns focus to the field, with the editor still open.
+- A click outside the cell, or focus moving out of the list by any other route (including switching to another application), closes it without setting an amount. The editor then commits its text and closes, as for any click outside (rule 3), and focus goes to whatever was clicked.
 
 #### Calculator popup (`<Calculator>`, shared with the register)
 
@@ -236,6 +241,13 @@ Sized by its buttons (about 15 × 17 rem), `--panel-bg`, 1 px solid `--tooltip-b
 ```
 
 The `.` key shows the locale decimal separator. Keyboard: digits, `.`/`,`/locale decimal, `+ - * /`, `=`, Backspace (remove last char), `C` clear, `F` negate, Enter = calculate and **OK** (writes the result into the cell, **commits it immediately** via `budget.setAmount` so Balance and the totals update at once, and reopens the cell editor on the new value), Esc = cancel. Positioned right-aligned under the cell, or above it if it doesn't fit. 0/0 = 0. A non-finite result shows "Error". Results are rounded to minor units (half away from zero). The display holds at most 30 characters. Evaluation is left-to-right (calculator semantics, not operator precedence), done on scaled integers/decimal strings, never floats.
+
+The calculator's keys and clicks are its own, whatever holds the field. Enter and Esc act on the calculator and never reach a dialog or callout behind it, so they can't save or cancel that dialog, and a click in the calculator isn't a click outside a callout that holds the field.
+
+The calculator never stays open once the user has moved on, wherever it was opened. It closes by the same rules as the Quick Budget list, and closing it this way discards the calculation like Cancel, so the field's own text is what commits:
+
+- A click on its field, or on that cell's dropdown arrow, closes it and returns focus to the field. Nothing commits yet.
+- A click elsewhere, or focus moving out of it by any other route (including switching to another application), closes it and commits the field. In a budget cell the editor then closes. In other money fields (`11` §2) only the calculator closes, and whatever holds the field decides what happens next: a click outside a changed register edit is still blocked (`10` §9).
 
 ### 5.5 Quick Budget (month level)
 

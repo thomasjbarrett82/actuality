@@ -3,7 +3,8 @@
 // (canEdit only) turns it into a right-aligned field with the text selected and a dropdown arrow:
 // Enter / Tab / ↓ commit and move to the next visible category in the month (↑ / Shift+Tab: previous,
 // wrapping); Esc discards; F2 opens the Quick Budget list; `+ * /` (and `-` on a non-zero value) open the
-// calculator, whose OK writes the result into the field and commits it at once. A click outside commits.
+// calculator, whose OK writes the result into the field and commits it at once. A click outside commits,
+// and it or focus moving elsewhere closes an open popup first.
 import { autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
 import type { Operator } from '@shared/calculator';
 import type { Money } from '@shared/domain/types';
@@ -20,6 +21,7 @@ import { attempt, tr } from '../../register/dialogs';
 import { host } from '../../rpc/host-client';
 import CalculatorPanel from '../common/CalculatorPanel.vue';
 import MoneyAmount from '../common/MoneyAmount.vue';
+import { usePopupDismissal } from '../common/popup-dismissal';
 import QuickBudgetList from './QuickBudgetList.vue';
 
 const props = defineProps<{
@@ -59,7 +61,10 @@ const pop = ref<
 watch(
   editing,
   async (on) => {
-    if (!on) return;
+    if (!on) {
+      if (pop.value) closePopup(false);
+      return;
+    }
     text.value = plain(props.budgeted);
     await nextTick();
     input.value?.focus();
@@ -132,11 +137,38 @@ async function pick(id: string): Promise<void> {
 }
 
 function closePopup(refocus = true): void {
-  stopPlace?.();
-  stopPlace = null;
+  stopPopup?.();
+  stopPopup = null;
   pop.value = null;
   if (refocus) void nextTick(() => input.value?.focus());
 }
+
+/** Leaving the cell commits the field and closes the editor. */
+function leave(): void {
+  void commit().then(() => {
+    close(false);
+  });
+}
+
+/** The arrow is part of the cell, so an outside press leaves it alone and its click does the closing. */
+function toggleList(): void {
+  if (pop.value?.kind === 'list') closePopup();
+  else void openList();
+}
+
+const dismissal = usePopupDismissal({
+  popup,
+  anchor: box,
+  isOpen: () => pop.value !== null,
+  onReturn: () => {
+    closePopup();
+  },
+  // The input's blur is ignored while a popup is open, so closing it here also has to leave the cell (09 §5.4).
+  onLeave: () => {
+    closePopup(false);
+    leave();
+  },
+});
 
 /** OK commits the result at once, so Balance and the totals update; the editor stays open (09 §5.4). */
 async function calcDone(value: Money | null): Promise<void> {
@@ -149,14 +181,14 @@ async function calcDone(value: Money | null): Promise<void> {
   if (!ok && editing.value && text.value === shown) text.value = plain(props.budgeted);
 }
 
-let stopPlace: (() => void) | null = null;
+let stopPopup: (() => void) | null = null;
 async function place(): Promise<void> {
   await nextTick();
   const anchor = box.value;
   const el = popup.value;
   if (!anchor || !el) return;
-  stopPlace?.();
-  stopPlace = autoUpdate(anchor, el, () => {
+  stopPopup?.();
+  const stopUpdate = autoUpdate(anchor, el, () => {
     void computePosition(anchor, el, {
       placement: 'bottom-end',
       strategy: 'fixed',
@@ -166,6 +198,11 @@ async function place(): Promise<void> {
       el.style.top = `${String(y)}px`;
     });
   });
+  const stopListening = dismissal.listen();
+  stopPopup = () => {
+    stopUpdate();
+    stopListening();
+  };
 }
 
 function onKeydown(e: KeyboardEvent): void {
@@ -206,9 +243,7 @@ function onBlur(e: FocusEvent): void {
   if (pop.value) return;
   const to = e.relatedTarget as Node | null;
   if (to && box.value?.contains(to)) return;
-  void commit().then(() => {
-    close(false);
-  });
+  leave();
 }
 
 function start(): void {
@@ -218,7 +253,7 @@ function start(): void {
 }
 
 onBeforeUnmount(() => {
-  stopPlace?.();
+  stopPopup?.();
 });
 
 defineExpose({ start });
@@ -277,7 +312,7 @@ defineExpose({ start });
         tabindex="-1"
         :aria-label="tr('a11y.quickBudget')"
         @mousedown.prevent
-        @click.stop="openList"
+        @click.stop="toggleList"
       >
         <ChevronDown aria-hidden="true" />
       </button>
@@ -286,7 +321,7 @@ defineExpose({ start });
       ><MoneyAmount :value="budgeted" :settings="b.format.money" blank-zero
     /></span>
     <Teleport to="body">
-      <div v-if="pop" ref="popup" class="budgeted__popup" @focusout.stop>
+      <div v-if="pop" ref="popup" class="budgeted__popup" @focusout.stop="dismissal.onFocusout">
         <QuickBudgetList
           v-if="pop.kind === 'list'"
           :items="pop.items"

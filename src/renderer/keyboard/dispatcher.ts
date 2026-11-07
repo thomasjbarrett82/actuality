@@ -43,6 +43,14 @@ export function isTextInput(target: EventTarget | null): boolean {
   return false;
 }
 
+/**
+ * In a popup that a field opened, such as the calculator (09 §5.4). It is teleported out of whatever holds
+ * the field, so a dialog or callout can't tell by containment that its keys and clicks aren't for it.
+ */
+export function inFieldPopup(target: EventTarget | null): boolean {
+  return target instanceof Element && target.closest('[data-field-popup]') !== null;
+}
+
 export class KeyboardDispatcher {
   private readonly scopes: Scope[] = [];
   private readonly regions: Region[] = [];
@@ -105,6 +113,8 @@ export class KeyboardDispatcher {
       if (this.openContextMenu()) e.preventDefault();
       return;
     }
+    // This listener runs first, so a modal's Enter or Esc would otherwise beat the popup's own.
+    if (inFieldPopup(e.target)) return;
     const top = [...this.scopes].reverse();
     const modalIndex = top.findIndex((s) => s.modal);
     const active = modalIndex === -1 ? top : top.slice(0, modalIndex + 1);

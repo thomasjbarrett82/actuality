@@ -64,6 +64,25 @@ describe('keyboard dispatcher (06 §6, 22 §2)', () => {
     expect(handler).not.toHaveBeenCalled();
   });
 
+  it('leaves keys in a field popup to the popup, even under a modal (09 §5.4)', () => {
+    const modal = vi.fn(() => true);
+    keys.push(modal, { modal: true });
+    const popup = document.createElement('div');
+    popup.setAttribute('data-field-popup', '');
+    const key = document.createElement('button');
+    popup.append(key);
+    document.body.append(popup);
+    try {
+      expect(press('Enter', {}, popup).defaultPrevented).toBe(false);
+      expect(press('Escape', {}, key).defaultPrevented).toBe(false);
+      expect(modal).not.toHaveBeenCalled();
+      press('Escape');
+      expect(modal).toHaveBeenCalledOnce();
+    } finally {
+      popup.remove();
+    }
+  });
+
   describe('F6 region cycling (22 §2.1)', () => {
     function regions() {
       document.body.innerHTML = `

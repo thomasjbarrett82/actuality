@@ -19,7 +19,7 @@ You can only change budgeted amounts while Actuality is connected to your server
 
 While you're editing a Budgeted cell (or an amount in the register), type **+**, **\***, **/** or **-** to open a calculator that starts from the current amount. (In an empty cell, **-** just types a minus sign.) For example, select a cell holding 100.00 and type **+25** to make it 125.00.
 
-The calculator works left to right, like a pocket calculator. Press **Enter** or select **OK** to put the result in the cell. In the budget, the result is saved straight away. **Esc** or **Cancel** closes it without changes. **C** clears it and **F** changes the sign.
+The calculator works left to right, like a pocket calculator. Press **Enter** or select **OK** to put the result in the cell. In the budget, the result is saved straight away. **Esc** or **Cancel** closes it without changes, and in a dialog these keys act only on the calculator. Selecting anywhere else or switching to another app also closes it: the calculation is discarded, and the amount you had before opening it stays. **C** clears it and **F** changes the sign.
 
 ## Quick Budget for one category
 
@@ -35,6 +35,8 @@ While editing a Budgeted cell, press **F2** or select the arrow at the right of 
 
 ![List of quick budget items for a category](/img/budgets/quick-budget-category-light.png#light)
 ![List of quick budget items for a category](/img/budgets/quick-budget-category-dark.png#dark)
+
+To close the list without choosing an amount, press **Esc** or select the arrow again. Selecting anywhere else or switching to another app also closes it, and saves whatever you typed in the cell.
 
 ## Quick Budget for a whole month
 

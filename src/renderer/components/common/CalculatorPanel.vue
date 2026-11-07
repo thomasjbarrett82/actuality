@@ -109,6 +109,7 @@ const keys = computed((): { key: string; label: string; aria?: string }[][] => [
     role="dialog"
     :aria-label="t('a11y.calculator')"
     tabindex="-1"
+    data-field-popup
     @keydown="onKey"
   >
     <div class="calc__display" role="status">{{ shown }}</div>

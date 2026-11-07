@@ -353,6 +353,156 @@ describe('Budget screen (09)', () => {
       await flushPromises();
       expect(setAmountCalls()).toEqual([{ month: OCT, categoryId: 'c-groceries', amount: 38_000 }]);
     });
+
+    describe('closing the popup without a selection (09 §5.4)', () => {
+      const popup = () => document.querySelector<HTMLElement>('.budgeted__popup');
+      const list = () => document.querySelector<HTMLElement>('.budgeted__popup [role="listbox"]');
+      const calculator = () => document.querySelector<HTMLElement>('.budgeted__popup .calc');
+      const settle = async (): Promise<void> => {
+        await flushPromises();
+        await flushPromises();
+      };
+      const press = async (target: Element): Promise<void> => {
+        target.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+        await settle();
+      };
+      /** Starts editing Fuel (70.00) with the list open. */
+      async function openList(): Promise<VueWrapper> {
+        const w = await open();
+        await edit(w, 'c-fuel');
+        await key(w, 'F2');
+        expect(list()).not.toBeNull();
+        return w;
+      }
+
+      it('an outside click closes it, sets no amount from the list and leaves the cell', async () => {
+        const w = await openList();
+        await press(document.body);
+        expect(popup()).toBeNull();
+        expect(input(w).exists()).toBe(false);
+        expect(setAmountCalls()).toEqual([]);
+      });
+
+      it('an outside click commits what was typed in the field', async () => {
+        const w = await open();
+        await edit(w, 'c-fuel');
+        await input(w).setValue('99');
+        await key(w, 'F2');
+        await press(document.body);
+        expect(popup()).toBeNull();
+        expect(setAmountCalls()).toEqual([{ month: OCT, categoryId: 'c-fuel', amount: 9_900 }]);
+      });
+
+      it('clicking another Budgeted cell closes it and edits that cell', async () => {
+        const w = await openList();
+        const other = budgeted(w, 'c-groceries');
+        if (!other) throw new Error('no Groceries cell');
+        await press(other.element);
+        await edit(w, 'c-groceries');
+        expect(popup()).toBeNull();
+        expect(
+          input(w)
+            .element.closest('[data-row-index]')
+            ?.querySelector('[data-budget-name="c:c-groceries"]'),
+        ).not.toBeNull();
+      });
+
+      it('focus moving to another control closes it and leaves the cell', async () => {
+        const w = await openList();
+        const other = document.createElement('button');
+        document.body.append(other);
+        try {
+          list()?.dispatchEvent(
+            new FocusEvent('focusout', { bubbles: true, relatedTarget: other }),
+          );
+          await settle();
+          expect(popup()).toBeNull();
+          expect(input(w).exists()).toBe(false);
+        } finally {
+          other.remove();
+        }
+      });
+
+      it('switching to another application closes it', async () => {
+        const w = await openList();
+        // The OS window lost focus: activeElement doesn't change, and focusout has no relatedTarget.
+        const hasFocus = vi.spyOn(document, 'hasFocus').mockReturnValue(false);
+        try {
+          list()?.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+          await settle();
+          expect(popup()).toBeNull();
+          expect(input(w).exists()).toBe(false);
+        } finally {
+          hasFocus.mockRestore();
+        }
+      });
+
+      it('focus moving back to the field closes it and keeps editing', async () => {
+        const w = await openList();
+        list()?.dispatchEvent(
+          new FocusEvent('focusout', { bubbles: true, relatedTarget: input(w).element }),
+        );
+        await settle();
+        expect(popup()).toBeNull();
+        expect(input(w).exists()).toBe(true);
+        expect(document.activeElement).toBe(input(w).element);
+      });
+
+      it('the arrow closes the list it opened and keeps editing', async () => {
+        const w = await open();
+        await edit(w, 'c-fuel');
+        const arrow = w.get('.budgeted__arrow');
+        await arrow.trigger('click');
+        await settle();
+        expect(list()).not.toBeNull();
+        await press(arrow.element);
+        expect(list()).not.toBeNull();
+        await arrow.trigger('click');
+        await settle();
+        expect(popup()).toBeNull();
+        expect(document.activeElement).toBe(input(w).element);
+      });
+
+      it('a press inside it keeps it open', async () => {
+        await openList();
+        const option = list()?.querySelector('[role="option"]');
+        if (!option) throw new Error('no options');
+        await press(option);
+        expect(list()).not.toBeNull();
+      });
+
+      it('stays open when the list gives way to the calculator', async () => {
+        await openList();
+        const items = list()?.querySelectorAll<HTMLElement>('[role="option"]');
+        const list0 = list();
+        items?.[items.length - 1]?.click();
+        // Removing the focused list drops focus with no relatedTarget.
+        list0?.dispatchEvent(new FocusEvent('focusout', { bubbles: true }));
+        await settle();
+        expect(calculator()).not.toBeNull();
+      });
+
+      it('an outside click closes the calculator and discards the calculation', async () => {
+        const w = await open();
+        await edit(w, 'c-fuel');
+        await key(w, '+');
+        calculator()?.dispatchEvent(new KeyboardEvent('keydown', { key: '5', bubbles: true }));
+        await press(document.body);
+        expect(popup()).toBeNull();
+        expect(input(w).exists()).toBe(false);
+        expect(setAmountCalls()).toEqual([]);
+      });
+
+      it('Esc returns to the field, and later presses no longer act for the closed popup', async () => {
+        const w = await openList();
+        list()?.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        await settle();
+        expect(popup()).toBeNull();
+        expect(document.activeElement).toBe(input(w).element);
+        await press(document.body);
+        expect(input(w).exists()).toBe(true);
+      });
+    });
   });
 
   it('fills empty cells from the month Quick Budget menu after the confirmation (09 §5.5)', async () => {

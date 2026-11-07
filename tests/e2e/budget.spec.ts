@@ -80,6 +80,27 @@ test.describe('journey 3: budget a month', () => {
       const average = page.getByRole('option', { name: /Average outflows for last 3 months/ });
       const amount = ((await average.textContent()) ?? '').replace(/^.*months:/, '').trim();
       await page.keyboard.press('Escape');
+      await expect(average).toBeHidden();
+
+      // Focus moving within the popup keeps it open: the list giving way to the calculator, then a key.
+      await page.keyboard.press('F2');
+      await page.getByRole('option', { name: 'Show calculator' }).click();
+      const calculator = page.getByRole('dialog', { name: 'Calculator' });
+      await expect(calculator).toBeVisible();
+      await calculator.getByRole('button', { name: '7', exact: true }).click();
+      await expect(calculator).toBeVisible();
+      await page.keyboard.press('Escape');
+      await expect(calculator).toBeHidden();
+
+      // Clicking another cell closes the list without a selection and edits that cell (09 §5.4).
+      await page.keyboard.press('F2');
+      await expect(average).toBeVisible();
+      // The next month's cell: the list opens under this one, right-aligned, so it can't cover that.
+      const nextMonth = row(page, 'Restaurants').locator('[data-budget-cell="budgeted"]').nth(1);
+      await nextMonth.click();
+      await expect(average).toBeHidden();
+      await expect(nextMonth.locator('.budgeted__input')).toBeFocused();
+      await expect(budgetedCell(page, 'Restaurants').locator('.budgeted__input')).toHaveCount(0);
       await page.keyboard.press('Escape');
 
       await answerMenu(app, 'average3');
