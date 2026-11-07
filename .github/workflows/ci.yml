@@ -115,15 +115,76 @@ jobs:
           APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
           CSC_IDENTITY_AUTO_DISCOVERY: ${{ secrets.CSC_LINK != '' }}
       - uses: actions/upload-artifact@v7
+        if: matrix.os == 'windows-latest'
         with:
-          name: installers-${{ matrix.os }}
-          path: |
-            release/*.exe
-            release/*.dmg
-            release/*.zip
-            release/*.AppImage
-            release/*.deb
-            release/*.rpm
+          name: installer-windows-x64
+          path: release/* x64.exe
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        if: matrix.os == 'windows-latest'
+        with:
+          name: installer-windows-arm64
+          path: release/* arm64.exe
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        if: matrix.os == 'macos-latest'
+        with:
+          name: installer-macos-x64-dmg
+          path: release/* x64.dmg
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        if: matrix.os == 'macos-latest'
+        with:
+          name: installer-macos-x64-zip
+          path: release/* x64.zip
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        if: matrix.os == 'macos-latest'
+        with:
+          name: installer-macos-arm64-dmg
+          path: release/* arm64.dmg
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        if: matrix.os == 'macos-latest'
+        with:
+          name: installer-macos-arm64-zip
+          path: release/* arm64.zip
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        if: matrix.os == 'ubuntu-latest'
+        with:
+          name: installer-linux-x64-appimage
+          path: release/*-x64.AppImage
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        if: matrix.os == 'ubuntu-latest'
+        with:
+          name: installer-linux-x64-deb
+          path: release/*-x64.deb
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        if: matrix.os == 'ubuntu-latest'
+        with:
+          name: installer-linux-x64-rpm
+          path: release/*-x64.rpm
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        if: matrix.os == 'ubuntu-latest'
+        with:
+          name: installer-linux-arm64-appimage
+          path: release/*-arm64.AppImage
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        if: matrix.os == 'ubuntu-latest'
+        with:
+          name: installer-linux-arm64-deb
+          path: release/*-arm64.deb
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v7
+        if: matrix.os == 'ubuntu-latest'
+        with:
+          name: installer-linux-arm64-rpm
+          path: release/*-arm64.rpm
           if-no-files-found: error
 
   # The user guide site (website/, 02 §3): its own lockfile, typecheck and Docusaurus build. Broken links

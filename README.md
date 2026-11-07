@@ -97,7 +97,7 @@ sign-in limit is too strict for the full suite.
 
 | OS      | Targets                                                     |
 | ------- | ----------------------------------------------------------- |
-| Windows | NSIS installer (x64, arm64)                                 |
+| Windows | Separate NSIS installers for x64 and arm64                  |
 | macOS   | dmg and zip (x64, arm64), hardened runtime, notarized in CI |
 | Linux   | AppImage, deb and rpm (x64, arm64)                          |
 
