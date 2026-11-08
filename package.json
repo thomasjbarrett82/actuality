@@ -40,7 +40,8 @@
     "test:e2e": "install-electron && npm run build && playwright test",
     "fixtures:build": "tsx --tsconfig tsconfig.node.json tests/fixtures/build-fixture.ts",
     "demo:build": "tsx --tsconfig tsconfig.node.json tests/fixtures/build-demo.ts",
-    "prepare": "simple-git-hooks"
+    "prepare": "simple-git-hooks",
+    "release:preview": "commit-and-tag-version --dry-run --skip.commit --skip.tag"
   },
   "simple-git-hooks": {
     "pre-commit": "npx lint-staged --max-arg-length 4096 && npm run typecheck",
@@ -109,6 +110,7 @@
     "@vitest/eslint-plugin": "1.6.28",
     "@vue/test-utils": "2.5.1",
     "axe-core": "4.14.0",
+    "commit-and-tag-version": "13.3.0",
     "electron": "45.2.1",
     "electron-builder": "26.15.3",
     "electron-vite": "6.0.0",

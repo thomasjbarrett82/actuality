@@ -124,7 +124,7 @@ Project rules live in `eslint-rules/` as a small local plugin, with their own un
 - **`.gitattributes`:** `* text=auto eol=lf`, with `binary` for images, fonts, `.ico`/`.icns`, zips, PDFs and `.node` binaries. Every text file is LF in the repo and in working copies on every OS, except Windows scripts (`.bat`, `.cmd`, `.ps1`), which keep CRLF.
 - **`.editorconfig`:** UTF-8, LF, 2-space indent, final newline, trim trailing whitespace (except in Markdown, where two trailing spaces can be a line break).
 - **Prettier** (`prettier.config.mjs`), pinned settings so upgrades don't reformat the codebase: `printWidth: 100`, `singleQuote: true`, `semi: true`, `trailingComma: "all"`, `arrowParens: "always"`, `endOfLine: "lf"`, `vueIndentScriptAndStyle: false`, plugin `prettier-plugin-organize-imports`. Markdown uses `proseWrap: "preserve"`, so spec paragraphs aren't rewrapped.
-- **`.prettierignore`:** `out/`, `dist/`, `release/`, `coverage/`, `test-results/`, `playwright-report/`, the lockfile, `*.tsbuildinfo`, generated files (the `en-XA` pseudo-locale, `20` §3.6; the theme swatches, `theme-palettes.md` tables), test fixtures that must stay byte-exact (`tests/fixtures/`), the local-only `references/`, and `docs/`: the spec chapters are kept in shape by markdownlint (§4.5), because Prettier would rewrite their hand-aligned tables. Markdown outside `docs/` (READMEs) is formatted by Prettier.
+- **`.prettierignore`:** `out/`, `dist/`, `release/`, `coverage/`, `test-results/`, `playwright-report/`, the lockfile, `*.tsbuildinfo`, generated files (the `en-XA` pseudo-locale, `20` §3.6; the theme swatches, `theme-palettes.md` tables; `CHANGELOG.md`, `02` §5.1), test fixtures that must stay byte-exact (`tests/fixtures/`), the local-only `references/`, and `docs/`: the spec chapters are kept in shape by markdownlint (§4.5), because Prettier would rewrite their hand-aligned tables. Markdown outside `docs/` (READMEs) is formatted by Prettier.
 - A Prettier upgrade that changes output lands as its own commit containing only the reformat, and that commit is listed in `.git-blame-ignore-revs` (created with the first such commit).
 
 ### 4.4 Dead code
@@ -133,7 +133,7 @@ Project rules live in `eslint-rules/` as a small local plugin, with their own un
 
 ### 4.5 Docs checks
 
-- **markdownlint-cli2** on `docs/**/*.md` and the user guide's `website/docs/**/*.md` (`.markdownlint-cli2.jsonc`): the default rules, with line length (`MD013`) off because spec tables are wide, and inline HTML allowed only for the swatch images in `theme-palettes.md`.
+- **markdownlint-cli2** on `docs/**/*.md` and the user guide's `website/docs/**/*.md` (`.markdownlint-cli2.jsonc`): the default rules, with line length (`MD013`) off because spec tables are wide, and inline HTML allowed only for the swatch images in `theme-palettes.md`. The generated `CHANGELOG.md` is ignored: it repeats its section headings in every release.
 - **`scripts/docs-check.ts`** fails when:
   - a cross-reference `` `NN` §x.y `` names a chapter that doesn't exist or a section heading that chapter doesn't have (a bare `§x.y` is checked against its own chapter);
   - a CSS token (`--name`) named in a chapter isn't defined in `05`, or in `src/renderer/styles/tokens.css` once that exists;
@@ -194,6 +194,6 @@ So the host query cost is about 10% of the register budget. The remaining time g
 
 1. The packaged-app smoke tests pass on macOS and Linux, including opening a budget in the packaged host.
 2. The integration suite passes against the **minimum supported Actual server version, `26.2.0`** and against the latest release. Record it in About and the README. The app shows "This server runs Actual {v}. Actuality needs Actual {min} or newer." when `getServerVersion` is lower.
-3. Packages are signed (Windows Authenticode, macOS notarized). AppImage, deb and rpm smoke-tested on Ubuntu LTS and Fedora.
+3. Packages are signed (Windows Authenticode, macOS notarized), required from the `1.0.0` release on. Before `1.0.0`, releases may ship unsigned: Windows SmartScreen warns about the installer, and macOS opens the app only after the user allows it in System Settings ▸ Privacy & Security. AppImage, deb and rpm smoke-tested on Ubuntu LTS and Fedora.
 4. The manual screen-reader pass (`22` §7) on NVDA + Windows and VoiceOver + macOS, with Orca + Linux as a smoke test; include all five Reports tabs, charts/tables, filters, saved filters, loading/errors, and exports. Record results in the release notes. The axe and keyboard-only suites pass.
 5. A manual OpenID sign-in on each OS against a test server with an OpenID provider: the browser opens, the callback reaches the loopback listener, and the budget list loads (`03` §7).

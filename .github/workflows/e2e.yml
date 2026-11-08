@@ -1,4 +1,4 @@
-# E2E on the built app: nightly and before release (02 §5.1, 21 §1).
+# E2E on the built app: nightly, on demand, and in the CI run of a release merge (02 §5.1, 21 §1).
 # Full suite on Linux; smoke tests on Windows and macOS.
 name: E2E
 
@@ -6,8 +6,7 @@ on:
   schedule:
     - cron: '0 3 * * *'
   workflow_dispatch:
-  push:
-    tags: ['v*']
+  workflow_call:
 
 permissions:
   contents: read

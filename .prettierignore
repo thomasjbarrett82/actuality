@@ -14,6 +14,7 @@ website/build/
 src/shared/i18n/en-XA/
 docs/app-spec/swatches/
 docs/app-spec/theme-palettes.md
+CHANGELOG.md
 
 # Fixtures and golden files that must stay byte-exact
 tests/fixtures/

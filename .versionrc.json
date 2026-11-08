@@ -1,0 +1,19 @@
+{
+  "header": "# Changelog\n\nThe user-visible changes in each release of Actuality. Changes before 0.2.0 are in the git history.\n",
+  "types": [
+    { "type": "feat", "section": "Features" },
+    { "type": "fix", "section": "Bug fixes" },
+    { "type": "perf", "section": "Performance" },
+    { "type": "revert", "section": "Reverts" },
+    { "type": "docs", "section": "Documentation" },
+    { "type": "refactor", "hidden": true },
+    { "type": "test", "hidden": true },
+    { "type": "build", "hidden": true },
+    { "type": "ci", "hidden": true },
+    { "type": "chore", "hidden": true }
+  ],
+  "releaseCommitMessageFormat": "chore: release v{{currentTag}}",
+  "commitUrlFormat": "https://github.com/thomasjbarrett82/actuality/commit/{{hash}}",
+  "compareUrlFormat": "https://github.com/thomasjbarrett82/actuality/compare/{{previousTag}}...{{currentTag}}",
+  "issueUrlFormat": "https://github.com/thomasjbarrett82/actuality/issues/{{id}}"
+}
