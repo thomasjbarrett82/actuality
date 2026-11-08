@@ -190,7 +190,7 @@ electron-vite builds with Vite (Rolldown and Oxc), which strip types without che
 | `docs:site` / `docs:site:build` | the user guide site (§3): the Docusaurus dev server / its typecheck, then `docusaurus build` into `website/build/`. Run `npm --prefix website ci` first. |
 | `check` | `format:check`, `lint`, `lint:css`, `typecheck`, `i18n:check` (`20` §3.7), `deadcode`, `docs:check`, in that order, stopping at the first failure |
 | `build` | `typecheck`, then `electron-vite build`. A type error fails the build. |
-| `test` / `test:int` / `test:e2e` | unit and component (Vitest) / integration (`21` §1) / `build`, then E2E (Playwright), because `dev` leaves `out/` without a renderer |
+| `test` / `test:int` / `test:e2e` | unit and component (Vitest) / integration (`21` §1) / `install-electron` (so a missing binary fails once, before the build, not in every test), `build`, then E2E (Playwright), because `dev` leaves `out/` without a renderer |
 
 **Git hooks** (installed by `simple-git-hooks` on `npm install`; `lint-staged` for staged files):
 
@@ -209,7 +209,7 @@ Hooks can be skipped with `--no-verify`, so they're a convenience, not the gate.
 | `integration` | ubuntu-latest | `test:int` against the Docker test server matrix (`21` §1) | every push and pull request, after `check` |
 | `build` | windows-latest, macos-latest, ubuntu-latest | `build`, then package (`electron-builder`) | every push and pull request, after `check` |
 | `website` | ubuntu-latest | in `website/`: `npm ci`, `typecheck`, `build` (broken links and anchors fail it) | every push and pull request, after `check` |
-| `e2e` | ubuntu-latest (smoke on windows and macos) | `test:e2e` on the packaged app, including the axe, keyboard-only, zoom and target-size suites (`22` §7) | nightly and before release (`21` §1) |
+| `e2e` | ubuntu-latest (smoke on windows and macos) | `install-electron` (up to five tries, because the GitHub release download can time out), then `test:e2e` on the packaged app, including the axe, keyboard-only, zoom and target-size suites (`22` §7) | nightly and before release (`21` §1) |
 | `build`, `deploy` (`docs-deploy.yml`) | ubuntu-latest | in `website/`: `npm ci`, `build`; then publish `website/build/` to GitHub Pages at `https://actualitydesktop.org` | pushes to `main` that change the site, its icons or the Node version, and on demand |
 
 **Branch protection on `main`:** pull requests only, and `check`, `test`, `integration`, `build` and `website` must pass before merging. No direct pushes, and no bypass for administrators.

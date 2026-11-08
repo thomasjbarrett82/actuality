@@ -32,6 +32,17 @@ jobs:
           node-version-file: .nvmrc
           cache: npm
       - run: npm ci
+      # Electron has no install script, so npm ci leaves its binary out and every launch would try to
+      # download it. Fetch it once here, and retry, because the GitHub release download can time out (504).
+      - name: Download the Electron binary
+        shell: bash
+        run: |
+          for attempt in 1 2 3 4 5; do
+            npx --no install-electron && exit 0
+            echo "Electron download failed (attempt $attempt of 5), retrying in $((attempt * 20)) s"
+            sleep $((attempt * 20))
+          done
+          exit 1
       - name: Start the Actual test server (journeys, 21 §3)
         if: runner.os == 'Linux'
         run: docker compose -f tests/int/docker-compose.yml up -d --wait

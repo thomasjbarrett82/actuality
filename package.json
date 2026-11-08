@@ -37,7 +37,7 @@
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
     "test:int": "vitest run --config vitest.int.config.ts",
-    "test:e2e": "npm run build && playwright test",
+    "test:e2e": "install-electron && npm run build && playwright test",
     "fixtures:build": "tsx --tsconfig tsconfig.node.json tests/fixtures/build-fixture.ts",
     "demo:build": "tsx --tsconfig tsconfig.node.json tests/fixtures/build-demo.ts",
     "prepare": "simple-git-hooks"
