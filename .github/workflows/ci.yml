@@ -1,20 +1,27 @@
-# CI (02 §5.1). check runs first; test, integration, build and website follow in parallel.
+# CI (02 §5.1). check runs first; test, integration, build and website follow in parallel. On a release
+# merge to main (opened by release.yml), e2e runs too, and then release tags the commit and drafts its
+# GitHub release with the installers from build.
 name: CI
 
+# Branch pushes only: a tag push would start a second full run for the same commit.
 on:
   push:
+    branches: ['**']
   pull_request:
 
 permissions:
   contents: read
 
+# A run on main is never cancelled partway through, so a release run always gets to tag its commit.
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   check:
     runs-on: ubuntu-latest
+    outputs:
+      release-version: ${{ steps.release.outputs.version }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -23,6 +30,19 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
+      - name: Release merge
+        id: release
+        if: >-
+          github.event_name == 'push' && github.ref == 'refs/heads/main' &&
+          startsWith(github.event.head_commit.message, 'chore: release v')
+        env:
+          MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          case "$MESSAGE" in
+            "chore: release v$VERSION"*) echo "version=$VERSION" >> "$GITHUB_OUTPUT" ;;
+            *) echo "::error::The release commit doesn't name package.json's version ($VERSION)"; exit 1 ;;
+          esac
       - run: npm ci
       - run: npm run check
       - name: Commit messages (pull requests)
@@ -186,6 +206,70 @@ jobs:
           name: installer-linux-arm64-rpm
           path: release/*-aarch64.rpm
           if-no-files-found: error
+
+  # E2E before a release (21 §1), on the release merge only.
+  e2e:
+    needs: check
+    if: needs.check.outputs.release-version
+    uses: ./.github/workflows/e2e.yml
+
+  # A release merge: tag the commit and draft its GitHub release with the installers from build. Safe to
+  # re-run: an existing tag on this commit and an existing release are reused.
+  release:
+    needs: [check, test, integration, build, website, e2e]
+    if: needs.check.outputs.release-version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.check.outputs.release-version }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      # No install scripts: `prepare` would install the git hooks, and nothing here runs the app.
+      - run: npm ci --ignore-scripts
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: installer-*
+          path: installers
+          merge-multiple: true
+      # Twelve installer-* uploads in the build job: change both together.
+      - name: Check the installers
+        run: |
+          count=$(find installers -type f | wc -l)
+          if [ "$count" -ne 12 ]; then
+            echo "::error::Expected 12 installers (2 Windows, 4 macOS, 6 Linux), found $count"
+            ls -la installers
+            exit 1
+          fi
+      - run: npx tsx scripts/release-notes.ts "$VERSION" > notes.md
+      - name: Tag the release commit
+        run: |
+          if git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null; then
+            if [ "$(git rev-list -n 1 "v$VERSION")" != "$GITHUB_SHA" ]; then
+              echo "::error::v$VERSION already exists on another commit"
+              exit 1
+            fi
+          else
+            git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+              tag -a "v$VERSION" -m "Actuality $VERSION" "$GITHUB_SHA"
+            git push origin "v$VERSION"
+          fi
+      - name: Draft the GitHub release
+        run: |
+          if gh release view "v$VERSION" >/dev/null 2>&1; then
+            gh release upload "v$VERSION" installers/* --clobber
+          else
+            gh release create "v$VERSION" installers/* --draft --verify-tag \
+              --title "Actuality $VERSION" --notes-file notes.md
+          fi
+          echo "Draft release v$VERSION is ready: finish the release checklist, then publish it." >> "$GITHUB_STEP_SUMMARY"
 
   # The user guide site (website/, 02 §3): its own lockfile, typecheck and Docusaurus build. Broken links
   # and anchors fail the build. Deploying it is a separate workflow.

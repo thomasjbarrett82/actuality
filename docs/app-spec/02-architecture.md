@@ -155,6 +155,7 @@ Main applies the same rules to `shell.openExternal` from the host as from the re
   - **Windows:** separate per-user NSIS installers for x64 and arm64. Each installer contains only its target architecture. MSI is optional.
   - **macOS:** DMG + zip (universal or separate x64/arm64), hardened runtime, notarization via `notarytool` (CI secrets).
   - **Linux:** AppImage, deb and rpm (x64 + arm64).
+- **Signing:** Windows Authenticode and macOS notarization use the CI signing secrets when they are set. Without them the build is unsigned. Signed installers are required from the `1.0.0` release on (`21` §7); `0.x` releases may ship unsigned.
 - **Native modules (checked against `@actual-app/api@26.10.0`):** the only native module is **`better-sqlite3@13.0.3`**. Its `.node` binary must be loaded from outside the asar archive.
   - It is an **N-API** addon (`NAPI_VERSION=10`, `node-addon-api`). Its binary is ABI-stable across Node and Electron, so **`@electron/rebuild` is not used**.
   - The npm tarball ships prebuilt binaries for `win32-x64/arm64`, `darwin-x64/arm64`, `linux-x64/arm64` and `linuxmusl-x64/arm64`, with no install script and no compile step. Packaging never compiles native code.
@@ -204,15 +205,19 @@ Hooks can be skipped with `--no-verify`, so they're a convenience, not the gate.
 
 | Job | Runs on | Steps | When |
 | --- | --- | --- | --- |
-| `check` | ubuntu-latest | `check` (format, lint, stylelint, typecheck, i18n, dead code, docs); on pull requests also `commitlint --from <base> --to HEAD`, `docs:sync` from base to head (`21` §4.5) and a check of the pull request title (`21` §4.6) | every push and pull request |
+| `check` | ubuntu-latest | `check` (format, lint, stylelint, typecheck, i18n, dead code, docs); on pull requests also `commitlint --from <base> --to HEAD`, `docs:sync` from base to head (`21` §4.5) and a check of the pull request title (`21` §4.6); on a release merge, reads the version from `package.json` and fails when the commit names another | every push and pull request |
 | `test` | windows-latest, macos-latest, ubuntu-latest | `test` | every push and pull request, after `check` |
 | `integration` | ubuntu-latest | `test:int` against the Docker test server matrix (`21` §1) | every push and pull request, after `check` |
 | `build` | windows-latest, macos-latest, ubuntu-latest | `build`, then package (`electron-builder`) | every push and pull request, after `check` |
 | `website` | ubuntu-latest | in `website/`: `npm ci`, `typecheck`, `build` (broken links and anchors fail it) | every push and pull request, after `check` |
-| `e2e` | ubuntu-latest (smoke on windows and macos) | `install-electron` (up to five tries, because the GitHub release download can time out), then `test:e2e` on the packaged app, including the axe, keyboard-only, zoom and target-size suites (`22` §7) | nightly and before release (`21` §1) |
+| `e2e` | ubuntu-latest (smoke on windows and macos) | `install-electron` (up to five tries, because the GitHub release download can time out), then `test:e2e` on the packaged app, including the axe, keyboard-only, zoom and target-size suites (`22` §7) | nightly, on demand, and in the CI run of a release merge (`21` §1) |
+| `release` | ubuntu-latest | tags the commit `v{version}` and drafts its GitHub release with the 12 installers from `build` and the version's `CHANGELOG.md` section (`scripts/release-notes.ts`); a re-run reuses the tag and the draft | pushes to `main` whose commit is a release merge (`chore: release v{version}`), after every other job and `e2e` pass |
+| `pull-request` (`release.yml`) | ubuntu-latest | `commit-and-tag-version` bumps `package.json` and the lockfile and writes `CHANGELOG.md` from the conventional commits since the last tag, then opens the release pull request with auto-merge (squash) | on demand: Actions ▸ Release ▸ Run workflow, choosing patch, minor or major |
 | `build`, `deploy` (`docs-deploy.yml`) | ubuntu-latest | in `website/`: `npm ci`, `build`; then publish `website/build/` to GitHub Pages at `https://actualitydesktop.org` | pushes to `main` that change the site, its icons or the Node version, and on demand |
 
-**Branch protection on `main`:** pull requests only, and `check`, `test`, `integration`, `build` and `website` must pass before merging. No direct pushes, and no bypass for administrators.
+CI runs on branch pushes and pull requests, not on tags. A newer push cancels a run in progress, except on `main`, so a release run always finishes. The release jobs install with `npm ci --ignore-scripts` and commit with `--no-verify`, so the git hooks never run in CI. A release is a **draft** until a person has done the manual items of the release checklist (`21` §7), recorded them in its notes, and published it.
+
+**Branch protection on `main`:** pull requests only, and `check`, `test`, `integration`, `build` and `website` must pass before merging. No direct pushes, and no bypass for administrators. Squash merging only, so each pull request is one commit and `CHANGELOG.md` lists it once. Auto-merge is allowed. The release pull request is opened with a personal access token (the `RELEASE_TOKEN` secret), because GitHub starts no workflows for a pull request that `GITHUB_TOKEN` opens, and its required checks would never run.
 
 ## 6. Security
 

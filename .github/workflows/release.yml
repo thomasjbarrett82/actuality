@@ -1,0 +1,66 @@
+# Release (02 §5.1), step 1 of 2: Actions ▸ Release ▸ Run workflow. Bumps the version, writes the new
+# CHANGELOG.md section and opens the release pull request with auto-merge on. When its required checks pass
+# it merges, and the CI run on main for that merge (ci.yml, `release` job) tags it and drafts the GitHub
+# release with the installers.
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version bump
+        required: true
+        type: choice
+        options: [patch, minor, major]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  pull-request:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # The whole history and the tags: the changelog covers the commits since the last tag.
+          fetch-depth: 0
+          # Not GITHUB_TOKEN: GitHub runs no workflows for a pull request that GITHUB_TOKEN opens, so the
+          # required checks would never start and auto-merge would wait forever.
+          token: ${{ secrets.RELEASE_TOKEN }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      # No install scripts: `prepare` would install the git hooks, and nothing here runs the app.
+      - run: npm ci --ignore-scripts
+      - name: Bump the version and write CHANGELOG.md
+        env:
+          BUMP: ${{ inputs.bump }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          npx commit-and-tag-version --release-as "$BUMP" --skip.tag --no-verify
+          VERSION=$(node -p "require('./package.json').version")
+          if git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null; then
+            echo "::error::v$VERSION is already tagged"
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+      - name: Open the release pull request
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        run: |
+          git push --no-verify origin "HEAD:refs/heads/release/v$VERSION"
+          {
+            npx tsx scripts/release-notes.ts "$VERSION"
+            echo
+            echo "Merging this tags \`v$VERSION\` and drafts its GitHub release with the installers."
+          } > body.md
+          gh pr create --base main --head "release/v$VERSION" --title "chore: release v$VERSION" --body-file body.md
+          gh pr merge "release/v$VERSION" --auto --squash --subject "chore: release v$VERSION"
+          echo "Release pull request for v$VERSION opened; it merges when the checks pass." >> "$GITHUB_STEP_SUMMARY"

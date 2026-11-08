@@ -45,7 +45,16 @@ than password and OpenID. Actuality leaves that data alone. It doesn't edit it, 
 
 ## Installing
 
-There are no published releases yet. To build installers yourself, see [Packaging](#packaging).
+Download the installer for your computer from
+[GitHub Releases](https://github.com/thomasjbarrett82/actuality/releases):
+
+| System  | Files                                                          |
+| ------- | -------------------------------------------------------------- |
+| Windows | `Actuality Setup {version} x64.exe` or `… arm64.exe`           |
+| macOS   | `.dmg` or `.zip`, for Intel (`x64`) or Apple silicon (`arm64`) |
+| Linux   | AppImage, `.deb` or `.rpm`, for `x64` or `arm64`               |
+
+To build installers yourself, see [Packaging](#packaging).
 
 ## Development
 
@@ -129,7 +138,8 @@ rules for anyone, human or agent, changing the code.
 
 ## Status
 
-Version 0.1.0. Every feature in the specification is implemented. The remaining release work (signed
+Every feature in the specification is implemented. Releases, with their installers and changes, are on
+[GitHub Releases](https://github.com/thomasjbarrett82/actuality/releases). The remaining release work (signed
 packages, smoke tests of the packaged app on each OS, the manual screen-reader and OpenID passes, and
 performance checks on the packaged build) is tracked in
 [`docs/release-checklist.md`](docs/release-checklist.md).
