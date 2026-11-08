@@ -34,7 +34,7 @@ Visuals: 1 px `--row-edit-border`, background `--row-edit-bg`. Inputs are border
 | ! | error icon | click → resolution popover (`10` §6.3) |
 | Category | `<AutoComplete>` | §4.2. Not shown for off-budget accounts. |
 | Notes | text | |
-| Outflow / Inflow | `<MoneyInput>` with calculator | The transaction holds one signed amount. Committing either field sets the amount (inflow = +value, outflow = −value) and clears the other. Then if `amount ≥ 0`, inflow shows the value and outflow is blank, else the reverse (so a negative outflow becomes an inflow). Locale-aware decimal input. `+ - * /` open the calculator (`09` §5.4). A transfer line *created from a split elsewhere* can't change its amount here: "You can't change this transaction amount." / "This transaction is a transfer from a split transaction. You must change this inflow/outflow cell value from within the split transaction." |
+| Outflow / Inflow | `<MoneyInput>` with calculator | The transaction holds one signed amount. Committing either field sets the amount (inflow = +value, outflow = −value) and clears the other. Then if `amount ≥ 0`, inflow shows the value and outflow is blank, else the reverse (so a negative outflow becomes an inflow). Locale-aware decimal input. `+ - * /` open the calculator, which closes once the user moves on and leaves the field's text to commit (`09` §5.4). A transfer line *created from a split elsewhere* can't change its amount here: "You can't change this transaction amount." / "This transaction is a transfer from a split transaction. You must change this inflow/outflow cell value from within the split transaction." |
 | Running Balance | read-only | |
 | Cleared | toggle | Uncleared ↔ Cleared (also approves) |
 

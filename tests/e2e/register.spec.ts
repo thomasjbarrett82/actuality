@@ -74,6 +74,61 @@ test.describe('register', () => {
     }
   });
 
+  test('the amount calculator closes once the user moves on (09 §5.4, 11 §2)', async () => {
+    const cloudFileId = (
+      JSON.parse(serverFixture('upload', 'typical.zip')) as { cloudFileId: string }
+    ).cloudFileId;
+    const app = await launchApp(newUserData());
+    try {
+      const page = await app.firstWindow();
+      await connectAndOpen(page, SERVER, PASSWORD, FIXTURE_NAMES.typical);
+      await expect(account(page, 'Savings')).toBeVisible({ timeout: 180_000 });
+      await account(page, 'Savings').click();
+      await expect(page.getByRole('heading', { name: 'Savings', level: 1 })).toBeFocused();
+      await page.keyboard.press('Control+n');
+      // Date opens its calendar, which could cover the fields: Esc closes it (11 §1 step 4).
+      await expect(page.locator('[data-editor] [data-field="date"] input')).toBeFocused();
+      await page.keyboard.press('Escape');
+
+      const outflow = page.locator('[data-editor] [data-field="outflow"] input');
+      const notes = page.locator('[data-editor] [data-field="notes"] input');
+      const calculator = page.getByRole('dialog', { name: 'Calculator' });
+      const openCalculator = async (): Promise<void> => {
+        await outflow.click();
+        await page.keyboard.press('+');
+        await expect(calculator).toBeVisible();
+      };
+
+      // A key inside it keeps it open.
+      await outflow.click();
+      await page.keyboard.type('25');
+      await page.keyboard.press('+');
+      await calculator.getByRole('button', { name: '7', exact: true }).click();
+      await expect(calculator).toBeVisible();
+
+      // Another field of the edit: closed, the calculation gone, the typed amount kept, focus on the click.
+      await notes.click();
+      await expect(calculator).toBeHidden();
+      await expect(outflow).toHaveValue('25.00');
+      await expect(notes).toBeFocused();
+
+      // The field itself: closed, and focus stays in it.
+      await openCalculator();
+      await outflow.click();
+      await expect(calculator).toBeHidden();
+      await expect(outflow).toBeFocused();
+
+      // Outside the register: closed, and the edit stays open with the amount.
+      await openCalculator();
+      await page.getByRole('heading', { name: 'Savings', level: 1 }).click();
+      await expect(calculator).toBeHidden();
+      await expect(outflow).toHaveValue('25.00');
+    } finally {
+      await app.close();
+      serverFixture('delete', cloudFileId);
+    }
+  });
+
   test('meets the performance targets with 20,000 transactions (21 §5)', async () => {
     const cloudFileId = (
       JSON.parse(serverFixture('upload', 'large.zip')) as { cloudFileId: string }

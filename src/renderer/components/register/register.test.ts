@@ -687,6 +687,22 @@ describe('the editor (11 §1–3, §9)', () => {
     expect(editor(w).exists()).toBe(true);
     expect(editor(w).find('.editor__buttons.is-glowing').exists()).toBe(true);
   });
+  it('a click outside closes the amount calculator; the typed amount then blocks it as a change (09 §5.4, 10 §9)', async () => {
+    const w = await open();
+    await startEdit(w, 't2');
+    const outflow = field(w, 'outflow');
+    await type(outflow, '25.00');
+    await outflow.trigger('keydown', { key: '+' });
+    await flushPromises();
+    const calculator = () => document.querySelector('[role="dialog"][aria-label="Calculator"]');
+    expect(calculator()).not.toBeNull();
+    await cell(w, 't1', 'payee').trigger('pointerdown');
+    await flushPromises();
+    expect(calculator()).toBeNull();
+    expect((outflow.element as HTMLInputElement).value).toBe('25.00');
+    expect(editor(w).exists()).toBe(true);
+    expect(editor(w).find('.editor__buttons.is-glowing').exists()).toBe(true);
+  });
   it('keeps the editor and the input when the host refuses the commit offline (11 §10 criterion 4)', async () => {
     host.spy.mockImplementation((method, params) => {
       if (method === 'transactions.commit')

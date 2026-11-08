@@ -2,7 +2,8 @@
 // Money entry (11 §2, 09 §5.4): a text field labelled by its column (22 §4.4). Allowed characters are
 // digits, `. , + - * /` and the locale decimal separator. Commit (Enter / blur) parses with
 // shared/money.ts; invalid text reverts. `+ * /` open the calculator with the current value and that
-// operator; `-` does too when the value isn't 0, otherwise it types a minus sign.
+// operator; `-` does too when the value isn't 0, otherwise it types a minus sign. The calculator closes once
+// the user moves on, discarding its calculation; the field then commits what it holds, as on blur.
 import { autoUpdate, computePosition, flip, offset, shift } from '@floating-ui/dom';
 import type { Operator } from '@shared/calculator';
 import type { Money } from '@shared/domain/types';
@@ -13,9 +14,10 @@ import {
   separators,
   type MoneySettings,
 } from '@shared/money';
-import { computed, nextTick, ref, watch } from 'vue';
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue';
 import { useMaskedField } from '../../money-display';
 import CalculatorPanel from './CalculatorPanel.vue';
+import { usePopupDismissal } from './popup-dismissal';
 
 const props = withDefaults(
   defineProps<{
@@ -113,7 +115,8 @@ async function placePopup(): Promise<void> {
   const anchor = input.value;
   const el = popup.value;
   if (!anchor || !el) return;
-  stop = autoUpdate(anchor, el, () => {
+  stop?.();
+  const stopUpdate = autoUpdate(anchor, el, () => {
     void computePosition(anchor, el, {
       placement: 'bottom-end',
       strategy: 'fixed',
@@ -123,18 +126,45 @@ async function placePopup(): Promise<void> {
       el.style.top = `${String(y)}px`;
     });
   });
+  const stopListening = dismissal.listen();
+  stop = () => {
+    stopUpdate();
+    stopListening();
+  };
 }
 
-function closeCalc(value: Money | null): void {
+function removeCalc(): void {
   stop?.();
   stop = null;
   calc.value = null;
+}
+
+function closeCalc(value: Money | null): void {
+  removeCalc();
   if (value !== null) {
     text.value = display(value);
     commit();
   }
   void nextTick(() => input.value?.focus());
 }
+
+const dismissal = usePopupDismissal({
+  popup,
+  anchor: input,
+  isOpen: () => calc.value !== null,
+  onReturn: () => {
+    closeCalc(null);
+  },
+  // The blur that would have committed was ignored while the calculator was open.
+  onLeave: () => {
+    removeCalc();
+    commit();
+  },
+});
+
+onBeforeUnmount(() => {
+  stop?.();
+});
 
 defineExpose({
   focus: () => input.value?.focus(),
@@ -162,7 +192,7 @@ defineExpose({
     @blur="(mask.onBlur(), calc === null && !readonly && commit())"
   />
   <Teleport to="body">
-    <div v-if="calc" ref="popup" class="money-input__popup">
+    <div v-if="calc" ref="popup" class="money-input__popup" @focusout="dismissal.onFocusout">
       <CalculatorPanel
         :initial="calc.initial"
         :operator="calc.operator"
