@@ -1,6 +1,7 @@
 // The renderer→main bridge, `window.app.shell` (02 §4): main-process services over ipcRenderer.invoke.
 // Secrets are limited to available/has/forget: no value ever reaches the renderer (02 §4, 19 §4).
 import type { LogEntry } from './aspects/log-entry';
+import type { NewsFeed } from './news/feed';
 import type {
   AppSettings,
   BudgetSettings,
@@ -32,6 +33,7 @@ export const MENU_COMMANDS = [
   'view.goRules',
   'view.toggleSidebar',
   'help.keyboardShortcuts',
+  'help.notifications',
   'help.about',
 ] as const;
 
@@ -170,6 +172,16 @@ export interface ShellApi {
   };
   /** Shows the print preview window (16 §3); one at a time. */
   printPreview(doc: PrintDocument): Promise<void>;
+  /** The news feed (24 §4.2). Main makes the request: the renderer's CSP allows no remote hosts. */
+  news: {
+    /** The validated feed; null when it's off, can't be reached, or doesn't match the contract. */
+    getFeed(): Promise<NewsFeed | null>;
+  };
+  /** The update check (24 §3.1). */
+  updates: {
+    /** The latest published version as `X.Y.Z`; null when it's off or unknown. */
+    getLatest(): Promise<string | null>;
+  };
   onMenuCommand(listener: (command: MenuCommand) => void): () => void;
   onHostStatus(listener: (status: HostStatus) => void): () => void;
   /** Window close / quit (06 §5): main asks first; the renderer runs its checks, then calls `quit()`. */
@@ -217,6 +229,8 @@ export const IPC = {
   showInFolder: 'shell:files:showInFolder',
   saveSampleImport: 'shell:files:saveSampleImport',
   printPreview: 'shell:printPreview',
+  newsGetFeed: 'shell:news:getFeed',
+  updatesGetLatest: 'shell:updates:getLatest',
 } as const;
 
 /** The message preload posts to the page with the host MessagePort attached (02 §4). */

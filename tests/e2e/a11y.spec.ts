@@ -10,7 +10,7 @@ import { createRequire } from 'node:module';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { FIXTURE_NAMES } from '../fixtures/fixture-facts';
-import { launchApp, newUserData, serverFixture, type PageGlobals } from './launch';
+import { launchApp, NEWS_FIXTURE, newUserData, serverFixture, type PageGlobals } from './launch';
 
 const SERVER = process.env['ACTUAL_TEST_SERVER_URL'] ?? '';
 const PASSWORD = process.env['ACTUAL_TEST_PASSWORD'] ?? '';
@@ -190,7 +190,8 @@ test.describe('accessibility audit (22 §7)', () => {
     const cloudFileId = (
       JSON.parse(serverFixture('upload', 'typical.zip')) as { cloudFileId: string }
     ).cloudFileId;
-    const app = await launchApp(newUserData());
+    // The news feed fixture, so the bell and the Notifications dialog have entries (24 §4).
+    const app = await launchApp(newUserData(), { ACTUAL_DESKTOP_NEWS_URL: NEWS_FIXTURE });
     const violations: Violation[] = [];
     const layout: string[] = [];
     const targets: string[] = [];
@@ -241,6 +242,13 @@ test.describe('accessibility audit (22 §7)', () => {
       await menuCommand(app, 'help.about');
       await expect(page.getByRole('dialog', { name: /About/ })).toBeVisible();
       await audit(page, 'About', violations, DIALOG);
+      await page.keyboard.press('Escape');
+      await menuCommand(app, 'help.notifications');
+      await expect(
+        page.getByRole('dialog', { name: 'Notifications' }).getByRole('heading', { level: 3 }),
+      ).toHaveCount(2);
+      await audit(page, 'Notifications', violations, DIALOG);
+      targets.push(...(await smallTargets(page, 'Notifications', DIALOG)));
       await page.keyboard.press('Escape');
       await menuCommand(app, 'file.slateWipe');
       await expect(page.getByRole('dialog', { name: 'Wipe the Slate Clean' })).toBeVisible();

@@ -1,6 +1,6 @@
 # 08 — Sidebar (Navigation & Accounts)
 
-The left navigation strip on the blue background: three section buttons (Budget, Reports, All Accounts), three collapsible account groups, the Add Account row, and the bottom row with the privacy toggle, the server web link, the server connection indicator and the collapse toggle.
+The left navigation strip on the blue background: three section buttons (Budget, Reports, All Accounts), three collapsible account groups, the Add Account row, and the bottom row with the notifications bell, the privacy toggle, the server web link, the server connection indicator and the collapse toggle.
 
 ## 1. Layout
 
@@ -20,7 +20,8 @@ The left navigation strip on the blue background: three section buttons (Budget,
 │ ▶ Closed Accounts      $0.00  │ ← collapsed by default
 │ [+ Add Account]               │ ← --row-h
 │            (flex space)       │
-│ (◉) (⊕) (●) Connected    [«]  │ ← privacy, server web link, connection indicator, « collapses sidebar (§2.4)
+│ (♢²)(◉)(⊕)(●) Connected  [«]  │ ← notifications bell (♢) with its unread badge, privacy, server web
+│                               │   link, connection indicator, « collapses sidebar (§2.4)
 │  (space-4)                    │
 └──────────────────────────────────┘
 ```
@@ -31,7 +32,7 @@ The left navigation strip on the blue background: three section buttons (Budget,
 | Collapsed width | buttons `--sidebar-w-compact` (same paddings) |
 | Heights | section buttons `--row-h-lg`; account buttons and group headers `--row-h` |
 | Animation | buttons 200 ms (fade + height); group expand/collapse 100 ms (collapse: fade then shrink; expand: grow then fade); a whole group showing/hiding 250 ms |
-| Scrolling | When content is taller than the space, a slim `--scrollbar-w` scrollbar appears. It hides again once the content fits with `--space-4` to spare. Fade masks one `--row-h-lg` tall at the top (when scrolled) and bottom (when more content is below). While the scrollbar shows, the privacy toggle, server web link and connection indicator move into the Add Account row, left of Add Account, and the collapse toggle moves to the right end of that row. |
+| Scrolling | When content is taller than the space, a slim `--scrollbar-w` scrollbar appears. It hides again once the content fits with `--space-4` to spare. Fade masks one `--row-h-lg` tall at the top (when scrolled) and bottom (when more content is below). While the scrollbar shows, the notifications bell, privacy toggle, server web link and connection indicator move into the Add Account row, left of Add Account, and the collapse toggle moves to the right end of that row. Both rows wrap onto a second line rather than overflow when they don't fit (compact mode, high zoom). |
 
 **Compact (collapsed) mode** labels: "Accounts" (for "All Accounts"), "Budget Accts", "Off-Budget Accts", "Closed Accts", "Add" (for "Add Account"). All balances and group badges are hidden. Toggle tooltip: "Click to collapse the sidebar" / "Click to expand the sidebar". The state is saved as `sidebarExpanded` (`19` §1, default expanded). At 150% zoom and above the sidebar is compact automatically; the toggle's tooltip and state follow what is shown, and it can still expand it (`22` §5).
 
@@ -69,6 +70,7 @@ The left navigation strip on the blue background: three section buttons (Budget,
 ### 2.4 Bottom controls
 
 - **Add Account** (`--row-h`, sized to its label; icon only in compact mode; regular `md` white, plus icon) → Create Account dialog (`13` §2). Disabled when offline.
+- **Notifications bell** (`24` §4.5): an `--icon` bell icon button (`--hit-min` hit area) at the left of the bottom row, left of the privacy toggle (icon only in both modes). It opens the Notifications dialog (`24` §4.6). A pill badge at its top right counts the unread news entries ("9+" from 10); there is none at 0, while loading, or when the feed can't be reached. Tooltip and accessible name: "Notifications", or "Notifications: {n} unread" with the real count; the badge is hidden from assistive technology. Always enabled, including offline. Not shown while "Show in-app notifications" is off (`showNewsFeed`).
 - **Privacy mode toggle**: an `--icon` icon button (`--hit-min` hit area) in the row with the connection indicator, left of it (icon only in both modes). It is a toggle button (`aria-pressed`) with an eye icon when privacy mode is off and an eye-with-slash icon when it's on. Tooltip: "Enable privacy mode" when off, "Disable privacy mode" when on. Accessible name: the fixed "Privacy mode" (the state is in `aria-pressed`, `06` §7). Click toggles privacy mode (`06` §7). Always enabled, including offline, because it only changes how values are displayed.
 - **Server web link**: an `--icon` globe icon button (`--hit-min` hit area) between the privacy toggle and the connection indicator (icon only in both modes). Click opens the current Actual server's address (`connection.info.serverUrl`) in the OS browser through `shell.openExternal` (`02` §6), where the budget can be used in Actual's own web app. Tooltip and accessible name: "Connect to {url} web". Always enabled, including offline: the browser shows whether the server can be reached. Not shown when there is no server address.
 - **Connection indicator** (X6): an `--icon` icon button (`--hit-min` hit area) in the bottom row with a short text label in expanded mode. Driven by the `connection` store (`03` §4):
@@ -86,7 +88,7 @@ Each state has its own icon shape, so the indicator never depends on color alone
 
 Click → Sync Now / Retry / show the details dialog, as appropriate.
 
-- Flexible spacer, then the **collapse/expand** toggle (a `--row-h` square) at the right end of the bottom row, in line with the privacy toggle, server web link and connection indicator.
+- Flexible spacer, then the **collapse/expand** toggle (a `--row-h` square) at the right end of the bottom row, in line with the bell, privacy toggle, server web link and connection indicator.
 
 ## 3. Selection & navigation
 

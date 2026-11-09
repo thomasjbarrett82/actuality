@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // The app root (06 §2): connection banner, the current route, and the overlay hosts. Keeps the window
 // title (06 §1), the menu state (06 §4) and the palette (05 §1.9) in step, announces connection changes
-// (22 §4.5), routes menu commands (06 §4), hosts the session's modals (03 §6.3, §7) and runs the quit flow
-// (06 §5).
+// (22 §4.5), routes menu commands (06 §4), hosts the session's modals (03 §6.3, §7) and the toast stack,
+// runs the update check and news feed effects (24) and runs the quit flow (06 §5).
 import { INITIAL_MENU_STATE } from '@shared/shell-api';
 import { onBeforeUnmount, ref, watch, watchEffect } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -20,12 +20,14 @@ import ConnectionBanner from './components/common/ConnectionBanner.vue';
 import DialogHost from './components/common/DialogHost.vue';
 import LoadingOverlay from './components/common/LoadingOverlay.vue';
 import ModalHost from './components/common/ModalHost.vue';
+import ToastHost from './components/common/ToastHost.vue';
 import TooltipHost from './components/common/TooltipHost.vue';
 import SessionHost from './components/session/SessionHost.vue';
 import { exportData } from './export/export-flow';
 import { budgetWeekStart } from './i18n';
 import { importTransactions } from './import/import-flow';
 import { isTextInput, keyboard } from './keyboard/dispatcher';
+import { openNotifications, useNotificationEffects } from './news/notifications';
 import { useAccounts, useBudgetFormat } from './queries/budget-data';
 import { openPayeeSettings } from './register/payee-dialogs';
 import { host } from './rpc/host-client';
@@ -47,6 +49,7 @@ const dialogs = useDialogs();
 const settings = useSettings();
 
 useTheme(() => settings.app);
+useNotificationEffects();
 
 // The calendars start the week on the budget's chosen day (07 §4).
 const budgetFormat = useBudgetFormat();
@@ -169,6 +172,9 @@ const cleanups = [
   commands.register('help.keyboardShortcuts', async () => {
     await useModals().open(KeyboardShortcutsDialog);
   }),
+  commands.register('help.notifications', async () => {
+    await openNotifications();
+  }),
   // ? opens Keyboard Shortcuts anywhere outside a text field (06 §6.1).
   keyboard.push((e) => {
     if (e.key !== '?' || e.ctrlKey || e.metaKey || e.altKey || isTextInput(e.target)) return false;
@@ -205,6 +211,7 @@ onBeforeUnmount(() => {
   <ConnectionBanner :busy="retrying" @retry="retry" @sign-in="retry" />
   <RouterView />
   <SessionHost />
+  <ToastHost />
   <ModalHost />
   <DialogHost />
   <CalloutHost />

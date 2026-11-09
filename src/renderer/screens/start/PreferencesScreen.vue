@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // Preferences (07 §7): Startup, Server (sign-in, certificate), Offline Cache, Appearance, Tags, Language,
-// Auto-fill, File Associations and Diagnostics. Changes apply at once; Done returns to where it was opened
-// from.
+// Auto-fill, File Associations, Updates and News (24 §2.1) and Diagnostics. Changes apply at once; Done
+// returns to where it was opened from.
 import { availableLocales, LOCALE_META } from '@shared/i18n/locales';
 import type { AppSettings, RendererWritableAppKey } from '@shared/settings';
 import { computed, onMounted, ref } from 'vue';
@@ -259,6 +259,30 @@ const languages = computed(() =>
           />
           {{ t('app.prefsFileAssociationsToggle') }}
         </label>
+      </section>
+
+      <section class="prefs__section" aria-labelledby="prefs-news">
+        <h2 id="prefs-news" class="prefs__heading">{{ t('app.prefsUpdatesAndNews') }}</h2>
+        <label class="check">
+          <input
+            type="checkbox"
+            :checked="settings.app.notifyWhenUpdateIsAvailable"
+            aria-describedby="prefs-updates-hint"
+            @change="set('notifyWhenUpdateIsAvailable', checked($event))"
+          />
+          {{ t('app.prefsNotifyUpdates') }}
+        </label>
+        <p id="prefs-updates-hint" class="prefs__hint">{{ t('app.prefsNotifyUpdatesHint') }}</p>
+        <label class="check">
+          <input
+            type="checkbox"
+            :checked="settings.app.showNewsFeed"
+            aria-describedby="prefs-news-hint"
+            @change="set('showNewsFeed', checked($event))"
+          />
+          {{ t('app.prefsShowNews') }}
+        </label>
+        <p id="prefs-news-hint" class="prefs__hint">{{ t('app.prefsShowNewsHint') }}</p>
       </section>
 
       <section class="prefs__section" aria-labelledby="prefs-diagnostics">

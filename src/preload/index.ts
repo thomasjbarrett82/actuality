@@ -75,6 +75,8 @@ const shell: ShellApi = {
     saveSampleImport: (title: string) => invoke(IPC.saveSampleImport, title),
   },
   printPreview: (doc) => invoke(IPC.printPreview, doc),
+  news: { getFeed: () => invoke(IPC.newsGetFeed) },
+  updates: { getLatest: () => invoke(IPC.updatesGetLatest) },
   onMenuCommand: (listener: (command: MenuCommand) => void) => subscribe(IPC.menuCommand, listener),
   onHostStatus: (listener: (status: HostStatus) => void) => subscribe(IPC.hostStatus, listener),
   // Main asks the page before closing only while it listens (06 §5).

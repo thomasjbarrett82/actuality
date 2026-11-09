@@ -53,7 +53,7 @@ flowchart TB
         subgraph main["MAIN PROCESS (Node) — holds no budget data"]
             lifecycle["App lifecycle · single-instance lock<br/>BrowserWindow · window state"]
             menu["Native Menu · accelerators<br/>menu state ↔ command dispatcher"]
-            shellsvc["Shell services<br/>file dialogs · openExternal · print / printToPDF"]
+            shellsvc["Shell services<br/>file dialogs · openExternal · print / printToPDF<br/>news.ts: news feed + update check (net.fetch)"]
             settings["settings-store.ts<br/>atomic JSON + migrations"]
             secrets["secrets.ts<br/>Electron safeStorage"]
             supervisor["host-supervisor.ts<br/>spawn · restart on crash · broker MessagePort"]
@@ -106,7 +106,7 @@ flowchart TB
 | P3 | Bulk business rules (commit pipeline, import, schedule entry, slate wipe) live in the host's `services/`. Pure rules live in `src/shared/` and are used by both host and renderer. |
 | P4 | Main holds no budget data. Passwords reach the host once, on connect. No secret value ever travels to the renderer: it can only ask whether a secret exists, or forget it. |
 | P5 | If the host crashes (or is stuck on an API call that never settles), main restarts it. The renderer keeps its UI state and shows "Reconnecting…". The new host reopens the session automatically from main's record and the stored secrets, and asks only for what wasn't stored (`03` §6.5). After 3 crashes in 5 min, main gives up and asks the user to restart. |
-| P6 | CSP is `script-src 'self'`. Window-open and external navigation are denied. External links go through `shell.openExternal` (http/https only). |
+| P6 | CSP is `script-src 'self'`. Window-open and external navigation are denied. External links go through `shell.openExternal` (http/https only). The renderer makes no network request: main fetches the news feed and the latest version, each only while its preference is on, and validates the feed (`24` §4.2). |
 | P7 | Main owns settings and secrets. The host reaches them, plus `openExternal`, window focus and the quit handshake, only through the typed **control channel** over `parentPort` (`02` §4.1). |
 
 ---

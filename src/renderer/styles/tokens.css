@@ -107,6 +107,14 @@
   --notifier-error-bg: #ffe4e1;
   --notifier-error-border: #e12c19;
 
+  /* News (24 §4.5–4.6): the bell's unread badge, and the entry type pills */
+  --news-badge: #ffd84d;
+  --news-badge-text: #2f302f;
+  --news-pill-release-bg: #e5f0d3;
+  --news-pill-release-text: #3d6100;
+  --news-pill-post-bg: #ddebf6;
+  --news-pill-post-text: #00507e;
+
   /* Tags */
   --tag-default-bg: #9161c6;
 
@@ -172,6 +180,7 @@
   --bar-h: 2.5rem;
   --bar-h-lg: 3.25rem;
   --badge-h: 1.75rem;
+  --badge-h-sm: 1.1rem;
   --sidebar-w: 19rem;
   --sidebar-w-compact: 10rem;
   --category-col-w: 14.5rem;
@@ -302,6 +311,10 @@
   --badge-text: #ffffff;
   --notifier-error-bg: #3d2420;
   --notifier-error-border: #e85a48;
+  --news-pill-release-bg: #2d3b1c;
+  --news-pill-release-text: #b9de84;
+  --news-pill-post-bg: #1a3347;
+  --news-pill-post-text: #93cff2;
 
   /* Tags */
   --tag-default-bg: #a77dda;

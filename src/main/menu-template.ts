@@ -294,6 +294,12 @@ export function menuTemplate(o: MenuOptions): MenuItemConstructorOptions[] {
     },
     sep,
     { label: t('menu.keyboardShortcuts'), click: cmd('help.keyboardShortcuts') },
+    // The news feed's dialog (24 §4.6), on every screen; hidden while the feed is off.
+    {
+      label: t('menu.notifications'),
+      visible: o.settings.showNewsFeed,
+      click: cmd('help.notifications'),
+    },
     { label: t('menu.showLogsFolder'), click: o.showLogsFolder },
   ];
   help.push({ label: t('menu.about'), click: cmd('help.about') });

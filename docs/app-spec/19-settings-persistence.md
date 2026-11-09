@@ -15,7 +15,7 @@ Rules of the settings store (`src/shared/settings.ts`, `src/main/settings-store.
 
 - **Reading is tolerant, key by key.** A missing, invalid or damaged key falls back to its default, so a partly broken file still yields complete settings and keeps its valid keys. Unknown keys are dropped.
 - **Writing is strict.** A patch is validated against the schema, and an invalid patch is refused without changing the file.
-- **The renderer may write only its own keys.** `shell.settings.set` accepts the user preferences (`RENDERER_WRITABLE_APP_KEYS`: `openLastBudgetOnStartup`, the `lastPicked*` keys, `sidebarExpanded`, `zoomFactor`, `budgetHeaderExpanded`, `privacyMode`, `appearance`, `colorVision`, `language`, the `autofill*` keys, `clearCacheOnExit`, `fileAssociations`, `debugLogging`, `lastExportFolder`, `hints`). The server, budget, user and window keys are written by main and the host. Budget patches from the renderer can't touch `localId`, `lastSyncAt` or `schemaVersion`, which belong to the host. A new key the renderer writes is added to that list here and in the code.
+- **The renderer may write only its own keys.** `shell.settings.set` accepts the user preferences (`RENDERER_WRITABLE_APP_KEYS`: `openLastBudgetOnStartup`, the `lastPicked*` keys, `sidebarExpanded`, `zoomFactor`, `budgetHeaderExpanded`, `privacyMode`, `appearance`, `colorVision`, `language`, the `autofill*` keys, `clearCacheOnExit`, `fileAssociations`, `debugLogging`, `lastExportFolder`, `hints`, `notifyWhenUpdateIsAvailable`, `showNewsFeed`, `lastSeenNewsAt`, `updateNotificationShownForVersion`). The server, budget, user and window keys are written by main and the host. Budget patches from the renderer can't touch `localId`, `lastSyncAt` or `schemaVersion`, which belong to the host. A new key the renderer writes is added to that list here and in the code.
 
 ## 1. App preferences (`settings.json`)
 
@@ -42,8 +42,12 @@ Rules of the settings store (`src/shared/settings.ts`, `src/main/settings-store.
 | `serverUsers` | `{ [serverUrl]: userId }` | {} | the last signed-in server user per server; a change clears the other user's cached budgets (`03` §7.1) |
 | `window` | `{ x, y, width, height, isMaximized }` (device-independent px) \| null | null → centered 1020×700 | `06` §1 |
 | `lastExportFolder` | string \| null | null | `16` §2 |
-| `firstRunVersion`, `lastRunVersion` | string \| null | null | release notes/first-run hints |
+| `firstRunVersion`, `lastRunVersion` | string \| null | null | first-run hints; the release notes don't use them (`24`) |
 | `hints` | `{ [hintId]: true }` | {} | one-time hints |
+| `notifyWhenUpdateIsAvailable` | bool | true | `24` §3: the update check; off, main never contacts GitHub |
+| `showNewsFeed` | bool | true | `24` §4: the news feed, the bell and Help ▸ Notifications…; off, main never fetches the feed |
+| `lastSeenNewsAt` | canonical timestamp (`YYYY-MM-DDTHH:MM:SSZ`) \| null; any other value reads as null | null | `24` §4.4: the news read state, always copied from a feed entry's `date` and only moved forward |
+| `updateNotificationShownForVersion` | `X.Y.Z` \| null; any other value reads as null | null | `24` §3.3: the latest version whose update toast was closed on this device |
 
 ## 2. Per-budget, per-device UI state (`budgets/{cloudFileId}.json`)
 

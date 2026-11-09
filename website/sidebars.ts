@@ -55,7 +55,11 @@ const sidebars: SidebarsConfig = {
     {
       type: 'category',
       label: 'Reference',
-      items: ['reference/keyboard-shortcuts', 'reference/preferences'],
+      items: [
+        'reference/keyboard-shortcuts',
+        'reference/preferences',
+        'reference/updates-and-news',
+      ],
     },
   ],
 };

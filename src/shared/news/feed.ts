@@ -1,8 +1,30 @@
-// The news feed contract (02 §3.1): the JSON document `scripts/news-feed.ts` publishes as
+// The news feed contract (02 §3.1, 24 §4.1): the JSON document `scripts/news-feed.ts` publishes as
 // https://actualitydesktop.org/news.json, built from the blog posts that opt in. The generator validates its
-// output with this schema, and an in-app reader validates what it fetches with the same one, so the two can't
-// drift apart.
+// output with this schema, and the app validates what it fetches with the same one, so the two can't drift
+// apart. The site's addresses live here too, so the generator and the app share them.
 import { z } from 'zod';
+
+/** The published site. Must match `url` in website/docusaurus.config.ts. */
+export const SITE_URL = 'https://actualitydesktop.org';
+
+/** The blog's route, `routeBasePath` in website/docusaurus.config.ts. */
+export const BLOG_ROUTE = 'blog';
+
+/** Where the app fetches the feed (24 §4.2). */
+export const NEWS_FEED_URL = `${SITE_URL}/news.json`;
+
+/** The blog's front page. */
+export const BLOG_URL = `${SITE_URL}/${BLOG_ROUTE}`;
+
+/** Every release's notes: the blog's `release` tag. */
+export const RELEASE_NOTES_URL = `${BLOG_URL}/tags/release`;
+
+/** A release's post on the blog, which links the download page (scripts/release-post.ts). */
+export const releasePostUrl = (version: string): string => `${BLOG_URL}/release-${version}`;
+
+/** GitHub's "latest release": published releases only, never drafts or pre-releases (24 §3.1). */
+export const LATEST_RELEASE_API_URL =
+  'https://api.github.com/repos/thomasjbarrett82/actuality/releases/latest';
 
 /**
  * The feed format version. A reader built for one version rejects a feed with any other, so bump it only for

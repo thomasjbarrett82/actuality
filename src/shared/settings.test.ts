@@ -107,7 +107,32 @@ describe('settings (19)', () => {
     expect(DEFAULT_BUDGET_SETTINGS.budget.categoryColumnWidth).toBe(14.5);
   });
 
+  it('turns both notification subsystems on, with no read state (24 §2)', () => {
+    expect(DEFAULT_APP_SETTINGS.notifyWhenUpdateIsAvailable).toBe(true);
+    expect(DEFAULT_APP_SETTINGS.showNewsFeed).toBe(true);
+    expect(DEFAULT_APP_SETTINGS.lastSeenNewsAt).toBeNull();
+    expect(DEFAULT_APP_SETTINGS.updateNotificationShownForVersion).toBeNull();
+  });
+
+  it('reads a notification key in any other form as its default (24 §2)', () => {
+    const s = parseAppSettings({
+      lastSeenNewsAt: '2026-11-08',
+      updateNotificationShownForVersion: 'v0.2.1',
+      showNewsFeed: 'yes',
+    });
+    expect(s.lastSeenNewsAt).toBeNull();
+    expect(s.updateNotificationShownForVersion).toBeNull();
+    expect(s.showNewsFeed).toBe(true);
+    const kept = parseAppSettings({
+      lastSeenNewsAt: '2026-11-08T21:00:00Z',
+      updateNotificationShownForVersion: '0.2.1',
+    });
+    expect(kept.lastSeenNewsAt).toBe('2026-11-08T21:00:00Z');
+    expect(kept.updateNotificationShownForVersion).toBe('0.2.1');
+  });
+
   it('validates patches strictly', () => {
+    expect(appSettingsPatchSchema.safeParse({ lastSeenNewsAt: '2026-11-08' }).success).toBe(false);
     expect(appSettingsPatchSchema.safeParse({ zoomFactor: 3 }).success).toBe(false);
     expect(appSettingsPatchSchema.safeParse({ nope: true }).success).toBe(false);
     expect(appSettingsPatchSchema.safeParse({ zoomFactor: 1.2 }).success).toBe(true);

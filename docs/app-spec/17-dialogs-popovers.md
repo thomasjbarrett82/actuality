@@ -1,6 +1,6 @@
 # 17 — Dialogs, Popovers (Callouts), Tooltips & Overlays
 
-Three families of transient UI. Each is implemented once as a reusable Vue component plus a composable service, and used everywhere.
+Three families of transient UI, plus toasts (§9). Each is implemented once as a reusable Vue component plus a composable service, and used everywhere.
 
 ## 1. TaskDialog (modal message / decision)
 
@@ -55,7 +55,7 @@ showTaskDialog(opts: {
 
 Modal, centered windows inside the app window (not native windows): a light gradient header (`--bar-h`) with a title and a ✕, white content, and a footer button row (`--bar-h-lg`; Cancel left of the default primary button). Esc → cancel. Enter → default button, unless focus is in a multi-line text area.
 
-Used by: Create Account (`13` §2), Close Account (`13` §4), Reconciliation Statement (`13` §6.1), Payee Settings (`14` §4), the Schedule dialog (`12` §3.1), Rename Payee (`14` §3.1), Add New Category (`11` §4.2), Import Transactions/Import Account (`16` §1), Wipe the Slate Clean (`18` §2), About (`18` §1), Sign-in and Encryption password (`03` §6–7).
+Used by: Create Account (`13` §2), Close Account (`13` §4), Reconciliation Statement (`13` §6.1), Payee Settings (`14` §4), the Schedule dialog (`12` §3.1), Rename Payee (`14` §3.1), Add New Category (`11` §4.2), Import Transactions/Import Account (`16` §1), Wipe the Slate Clean (`18` §2), About (`18` §1), Keyboard Shortcuts (`06` §6.1), Notifications (`24` §4.6), Sign-in and Encryption password (`03` §6–7).
 
 Component: `<StandardDialog title width height @cancel @submit>` with slots for content and footer.
 
@@ -122,3 +122,11 @@ Specified in `03` §4 / `06` §2: `--bar-h`, `--banner-bg` with a `--banner-bord
 ## 8. Error dialogs
 
 Unexpected errors: a TaskDialog "Something went wrong" / `{message}` with **Close** and a "Show Logs Folder" link. Errors are logged by the host and main to `{userData}/logs/app.log` (rotating, 5 × 1 MB). How the three processes log, and the debug logging preference (`07` §7), are specified in `02` §8. There's no crash reporting service.
+
+## 9. Toasts
+
+Non-modal messages at the bottom right of the window, used only by the update check and the news feed (`24` §3.3, §4.7). Store `useToasts()` (`show`, `remove`, `close`), component `<ToastHost>`, mounted once in `App.vue` outside the screens. The full behavior is in `24` §5:
+
+- A toast has a stable id (showing it again replaces it), a title, a message, one action button and a ✕ close button. It uses the callout surface (§3) and sits above the screens, below callouts and modal dialogs; the stack is `inert` while a modal is open.
+- No toast times out. Closing it (✕ or Esc) runs its `onClose`; the app can also remove one without running it.
+- A toast never takes focus: it is announced politely. The stack is the "Messages" region, the last one F6 reaches (`22` §2.1).

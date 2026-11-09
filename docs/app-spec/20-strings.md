@@ -91,6 +91,7 @@ Some text is written into Actual's data, or belongs to a file format or a machin
 | Register search terms (`10` §4) | Shown and suggested in the UI language. The parser also accepts English, so English typed by the user and searches written before a language change keep working. |
 | Import and export file formats: CSV column headers, QIF codes, OFX tags (`16`) | Always English. Exported CSV headers are English in every UI language, so the files can be re-imported anywhere. |
 | Actual's own error `message` | Shown as Actual sends it (§1). |
+| News feed entries: titles, bodies and lists of changes (`24` §4) | Shown as the blog publishes them, in English. The app's own text around them (the dialog, the bell, the toasts, the type pills) goes through i18n, and feed dates are formatted in the UI language (`24` §4.6). |
 | Printed budgets, registers and PDFs | In the UI language. |
 
 ## 4. Actuality message organization

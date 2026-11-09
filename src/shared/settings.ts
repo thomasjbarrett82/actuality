@@ -4,6 +4,7 @@
 import { z } from 'zod';
 import { DATE_FORMATS } from './dates';
 import { NUMBER_FORMATS } from './money';
+import { CANONICAL_TIMESTAMP, RELEASE_VERSION } from './news/feed';
 import { parseSavedFilters, REPORT_PAGES, type SavedFilter } from './reporting/model';
 
 export const SETTINGS_SCHEMA_VERSION = 1;
@@ -51,6 +52,14 @@ export const appSettingsSchema = z.object({
   firstRunVersion: z.string().nullable(),
   lastRunVersion: z.string().nullable(),
   hints: z.record(z.string(), z.literal(true)),
+  /** The update check (24 §3). Off: main never contacts GitHub. */
+  notifyWhenUpdateIsAvailable: z.boolean(),
+  /** The news feed (24 §4). Off: main never fetches it, and the bell and its menu item are hidden. */
+  showNewsFeed: z.boolean(),
+  /** The news read state (24 §4.4): always a feed entry's `date`; any other value reads as null. */
+  lastSeenNewsAt: z.string().regex(CANONICAL_TIMESTAMP).nullable(),
+  /** The latest version whose update toast was closed on this device (24 §3.3). */
+  updateNotificationShownForVersion: z.string().regex(RELEASE_VERSION).nullable(),
 });
 
 export type AppSettings = z.infer<typeof appSettingsSchema>;
@@ -84,6 +93,10 @@ export const DEFAULT_APP_SETTINGS: AppSettings = {
   firstRunVersion: null,
   lastRunVersion: null,
   hints: {},
+  notifyWhenUpdateIsAvailable: true,
+  showNewsFeed: true,
+  lastSeenNewsAt: null,
+  updateNotificationShownForVersion: null,
 };
 
 const column = z.object({ field: z.string(), visible: z.boolean(), width: z.number() });
@@ -212,6 +225,10 @@ export const RENDERER_WRITABLE_APP_KEYS = [
   'debugLogging',
   'lastExportFolder',
   'hints',
+  'notifyWhenUpdateIsAvailable',
+  'showNewsFeed',
+  'lastSeenNewsAt',
+  'updateNotificationShownForVersion',
 ] as const satisfies readonly (keyof AppSettings)[];
 
 export type RendererWritableAppKey = (typeof RENDERER_WRITABLE_APP_KEYS)[number];

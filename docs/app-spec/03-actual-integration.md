@@ -163,7 +163,7 @@ Events to the renderer: `connection:state` `{ state, lastSyncAt, unsyncedChanges
 
   Each query is invalidated by every table it reads, including the fields the host derives from other tables. A remote change reports only the raw table, so a narrower mapping would leave stale names and states on screen.
 
-  Any other or unknown table invalidates everything. Only active queries refetch.
+  Any other or unknown table invalidates every host query. Only active queries refetch. The news feed and update check queries come from main, not the host, so `data:changed` never invalidates them (`24` §4.3).
 
 ### 4.2 Retry
 

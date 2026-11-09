@@ -104,6 +104,7 @@ All Go to items are enabled only with a budget open. **Ctrl+R must not reload th
 | **Actual Budget** ▸ Tour / Blog / Contributions / Discord / Docs / GitHub | opens the official Actual Budget pages in the browser: `https://actualbudget.org/docs/tour/`, `https://actualbudget.org/blog/`, `https://opencollective.com/actual`, `https://discord.com/invite/8JfAXSgfRf`, `https://actualbudget.org/docs/`, `https://github.com/actualbudget/actual` |
 | — | |
 | Keyboard Shortcuts | opens the Keyboard Shortcuts dialog (§6.1); `?` does the same |
+| Notifications… | opens the Notifications dialog (`24` §4.6) on every screen, the start screens included. Visible only while "Show in-app notifications" is on (`showNewsFeed`); main reads the setting, so the item hides and shows as it changes |
 | Show Logs Folder | opens `{userData}/logs` |
 | About Actuality | opens the About dialog |
 
