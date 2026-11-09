@@ -2,6 +2,17 @@
 
 The user-visible changes in each release of Actuality. Changes before 0.2.0 are in the git history.
 
+## [0.3.0](https://github.com/thomasjbarrett82/actuality/compare/v0.2.1...v0.3.0) (2026-11-09)
+
+### Features
+
+* add blog to website and new operations.md doc ([#26](https://github.com/thomasjbarrett82/actuality/issues/26)) ([a4aa462](https://github.com/thomasjbarrett82/actuality/commit/a4aa462f67dd5400aa08ec8e3f6db56ab9c003d1))
+* add notifications system ([#27](https://github.com/thomasjbarrett82/actuality/issues/27)) ([c84a98d](https://github.com/thomasjbarrett82/actuality/commit/c84a98dfd6e5a7b99cd811b9515229f43d6602ed))
+
+### Documentation
+
+* multiple doc fixes for inconsistency and accuracy ([#29](https://github.com/thomasjbarrett82/actuality/issues/29)) ([c40e3e1](https://github.com/thomasjbarrett82/actuality/commit/c40e3e1e8e7026f1af71452f13698b5b70356582))
+
 ## 0.2.1 (2026-11-08)
 
 ### Features
