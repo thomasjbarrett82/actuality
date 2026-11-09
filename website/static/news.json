@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "id": "post-introducing-the-blog",
+      "type": "post",
+      "title": "Introducing the Actuality blog",
+      "date": "2026-11-08T21:00:00Z",
+      "url": "https://actualitydesktop.org/blog/introducing-the-blog",
+      "body": "Actuality now has a blog. It's where each new version is announced, with a short summary of what changed and the full list of changes, and where other news about Actuality is posted.\n\n## Keeping up to date\n\n- **Read it here.** New posts appear at the top of the [blog](https://actualitydesktop.org/blog). The [Release](https://actualitydesktop.org/blog/tags/release) tag lists every version's release notes.\n- **Subscribe to the feed.** Add [the RSS feed](https://actualitydesktop.org/blog/rss.xml) to your feed reader to hear about each new post.\n\nThe [User Guide](https://actualitydesktop.org/docs/intro) is still the place to learn how Actuality works. Release posts link to the guide pages that describe what changed."
+    },
+    {
+      "id": "release-0.2.1",
+      "type": "release",
+      "title": "Actuality 0.2.1",
+      "date": "2026-11-08T20:13:29Z",
+      "version": "0.2.1",
+      "url": "https://actualitydesktop.org/blog/release-0.2.1",
+      "body": "Actuality 0.2.1 makes date fields and the calculator easier to use, and the Windows downloads smaller. Download it for Windows, macOS or Linux from the [releases page](https://github.com/thomasjbarrett82/actuality/releases).\n\n- **A calendar in every date field.** It opens when you move into the field. Select a day, or ignore it and keep typing: **Tab** closes it and moves on, and **Esc** closes it and undoes what you typed. See [Entering transactions](https://actualitydesktop.org/docs/accounts-and-transactions/entering-transactions).\n- **The calculator closes the way you'd expect.** Selecting anywhere else, or switching to another app, closes it everywhere in Actuality and keeps the amount you had before you opened it.\n- **Reconciling** starts when you press **Enter** in the dialog, and an invalid statement date shows **Invalid date** instead of going ahead.\n- **Smaller Windows installers.** There's now a separate installer for x64 and for arm64, so you only download the one your computer needs.",
+      "details": "## Features\n\n- improved date picker handling and bug fixes ([#13](https://github.com/thomasjbarrett82/actuality/issues/13)) ([3bbdf29](https://github.com/thomasjbarrett82/actuality/commit/3bbdf29695b8439ddf4ff833c69c1846dd8ceb77))\n- split installers for smaller files ([#17](https://github.com/thomasjbarrett82/actuality/issues/17)) ([b78192e](https://github.com/thomasjbarrett82/actuality/commit/b78192ea6b1966ffe7d20d92cabe8a0274497628))\n\n## Bug fixes\n\n- calculator popover close behavior fix across the app ([#22](https://github.com/thomasjbarrett82/actuality/issues/22)) ([cf8fb47](https://github.com/thomasjbarrett82/actuality/commit/cf8fb47080a1fb5309d18617a060baed9d5174d5))\n- correct image paths ([#16](https://github.com/thomasjbarrett82/actuality/issues/16)) ([a5da9d7](https://github.com/thomasjbarrett82/actuality/commit/a5da9d7fea5f818b6b07810f251a63596365b7bf))\n- e2e CI change for Electron 45 ([#21](https://github.com/thomasjbarrett82/actuality/issues/21)) ([87e3240](https://github.com/thomasjbarrett82/actuality/commit/87e32402d1853daf2972d00ca4655b563c531e08))\n- remove the 1px step under the native menu items ([#14](https://github.com/thomasjbarrett82/actuality/issues/14)) ([d3a8252](https://github.com/thomasjbarrett82/actuality/commit/d3a8252d1a77ef9df2806fd66e4423a29859cacf))\n- updated Linux artifact name matching ([#18](https://github.com/thomasjbarrett82/actuality/issues/18)) ([d54a3e4](https://github.com/thomasjbarrett82/actuality/commit/d54a3e4c7acaeb557ee79639cc470686727132a6))\n\n## Documentation\n\n- adding website screenshots and updates ([#15](https://github.com/thomasjbarrett82/actuality/issues/15)) ([5150c30](https://github.com/thomasjbarrett82/actuality/commit/5150c30d99d8a17295438d621aefa3eea87c100e))"
+    }
+  ]
+}

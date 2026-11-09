@@ -15,6 +15,8 @@ src/shared/i18n/en-XA/
 docs/app-spec/swatches/
 docs/app-spec/theme-palettes.md
 CHANGELOG.md
+# The news feed (02 §3.1): news:check compares it byte for byte with what the generator writes
+website/static/news.json
 
 # Fixtures and golden files that must stay byte-exact
 tests/fixtures/

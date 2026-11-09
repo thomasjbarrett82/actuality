@@ -24,13 +24,15 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "deadcode": "knip",
-    "docs:check": "markdownlint-cli2 \"docs/**/*.md\" \"website/docs/**/*.md\" && tsx scripts/docs-check.ts",
+    "docs:check": "markdownlint-cli2 \"docs/**/*.md\" \"website/docs/**/*.md\" \"website/blog/**/*.md\" && tsx scripts/docs-check.ts",
     "docs:sync": "tsx scripts/docs-sync.ts",
     "docs:site": "npm --prefix website start",
     "docs:site:build": "npm --prefix website run typecheck && npm --prefix website run build",
+    "news:build": "tsx scripts/news-feed.ts",
+    "news:check": "tsx scripts/news-feed.ts --check",
     "i18n:check": "tsx scripts/i18n-check.ts",
     "i18n:catalog": "tsx scripts/i18n-catalog.ts",
-    "check": "npm run format:check && npm run lint && npm run lint:css && npm run typecheck && npm run i18n:check && npm run deadcode && npm run docs:check",
+    "check": "npm run format:check && npm run lint && npm run lint:css && npm run typecheck && npm run i18n:check && npm run deadcode && npm run docs:check && npm run news:check",
     "build": "npm run typecheck && electron-vite build && npm run licenses",
     "licenses": "tsx scripts/third-party-licenses.ts",
     "package": "electron-builder --config electron-builder.yml",
@@ -150,6 +152,7 @@
     "vue-eslint-parser": "10.4.1",
     "vue-i18n": "11.4.16",
     "vue-router": "5.4.0",
-    "vue-tsc": "3.3.13"
+    "vue-tsc": "3.3.13",
+    "yaml": "2.9.1"
   }
 }

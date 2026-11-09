@@ -40,7 +40,29 @@ const config: Config = {
           sidebarPath: './sidebars.ts',
           editUrl: `${repoUrl}/edit/main/website/`,
         },
-        blog: false,
+        // Release notes and announcements (02 §3.1). Posts with `in_app_notification: true` also go into the
+        // news feed, static/news.json, which `npm run news:build` (in the repo root) writes from them.
+        blog: {
+          path: 'blog',
+          routeBasePath: 'blog',
+          blogTitle: 'Actuality blog',
+          blogDescription: 'Release notes and announcements for Actuality.',
+          blogSidebarTitle: 'Recent posts',
+          blogSidebarCount: 'ALL',
+          showReadingTime: false,
+          editUrl: `${repoUrl}/edit/main/website/`,
+          tags: 'tags.yml',
+          onInlineTags: 'throw',
+          onInlineAuthors: 'throw',
+          onUntruncatedBlogPosts: 'throw',
+          feedOptions: {
+            type: 'rss',
+            title: 'Actuality blog',
+            description: 'Release notes and announcements for Actuality.',
+            copyright: 'Copyright © 2026 the Actuality contributors.',
+            language: 'en',
+          },
+        },
         theme: {
           customCss: './src/css/custom.css',
         },
@@ -67,6 +89,7 @@ const config: Config = {
           position: 'left',
           label: 'Troubleshooting',
         },
+        { to: '/blog', position: 'left', label: 'Blog' },
         { href: repoUrl, position: 'right', label: 'Source code' },
       ],
     },
@@ -95,6 +118,9 @@ const config: Config = {
         {
           title: 'Project',
           items: [
+            { label: 'Blog', to: '/blog' },
+            // A static file, not a page: pathname:// keeps the router and the broken-link check off it.
+            { label: 'RSS feed', href: 'pathname:///blog/rss.xml' },
             { label: 'Source code', href: repoUrl },
             { label: 'Report a problem', href: `${repoUrl}/issues` },
             { label: 'Actual Budget documentation', href: 'https://actualbudget.org/docs/' },
