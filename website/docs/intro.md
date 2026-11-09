@@ -50,4 +50,8 @@ Actuality focuses on polish and stability, and it only does what Actual's offici
 
 New to Actuality? Start with [Connect to your server](./getting-started/connect-to-your-server.md), then follow the [Quick start](./getting-started/quick-start.md).
 
+## Staying up to date
+
+Each new version of Actuality is announced on the [blog](/blog), with its highlights and the full list of changes. To hear about new posts in your feed reader, subscribe to the blog's [RSS feed](pathname:///blog/rss.xml).
+
 Actuality isn't affiliated with or endorsed by the Actual Budget project.

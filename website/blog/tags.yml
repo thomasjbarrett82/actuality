@@ -1,0 +1,10 @@
+# Blog tags (02 §3.1). A post tagged `release` becomes a release entry in the news feed, and its slug must be
+# release-X.Y.Z.
+release:
+  label: Release
+  permalink: /release
+  description: Release notes for each version of Actuality.
+announcement:
+  label: Announcement
+  permalink: /announcement
+  description: News about Actuality and its website.

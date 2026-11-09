@@ -133,7 +133,7 @@ Project rules live in `eslint-rules/` as a small local plugin, with their own un
 
 ### 4.5 Docs checks
 
-- **markdownlint-cli2** on `docs/**/*.md` and the user guide's `website/docs/**/*.md` (`.markdownlint-cli2.jsonc`): the default rules, with line length (`MD013`) off because spec tables are wide, and inline HTML allowed only for the swatch images in `theme-palettes.md`. The generated `CHANGELOG.md` is ignored: it repeats its section headings in every release.
+- **markdownlint-cli2** on `docs/**/*.md`, the user guide's `website/docs/**/*.md` and the blog's `website/blog/**/*.md` (`.markdownlint-cli2.jsonc`): the default rules, with line length (`MD013`) off because spec tables are wide, and inline HTML allowed only for the swatch images in `theme-palettes.md`. The generated `CHANGELOG.md` is ignored: it repeats its section headings in every release.
 - **`scripts/docs-check.ts`** fails when:
   - a cross-reference `` `NN` §x.y `` names a chapter that doesn't exist or a section heading that chapter doesn't have (a bare `§x.y` is checked against its own chapter);
   - a CSS token (`--name`) named in a chapter isn't defined in `05`, or in `src/renderer/styles/tokens.css` once that exists;
@@ -146,6 +146,7 @@ Project rules live in `eslint-rules/` as a small local plugin, with their own un
   - a UI string in `src/shared/i18n/en/` was removed or reworded, and a spec chapter or guide page still contains its text (each part between placeholders of 10 characters or more that no current string contains).
 
   It passes without checking when `origin` has no `main` yet, because a repository's first push has no base to compare with. A missing `origin/main` is still an error when the remote has `main` or can't be reached.
+- **`scripts/news-feed.ts --check`** (`npm run news:check`, the last step of `check`) fails when `website/static/news.json` differs from what the blog posts produce, or when the posts can't produce a feed (`02` §3.1): an opted-in post without a time and zone in its `date`, two entries with the same timestamp or slug, or a release post whose slug isn't `release-X.Y.Z`. It prints a warning for a relative image and for a link it can't make absolute. Its pure functions (`scripts/news-feed-lib.ts`, `scripts/release-post-lib.ts`) and the feed contract (`src/shared/news/feed.ts`) have unit tests: opt-in, drafts and unlisted posts, date conversion and rejection, release classification and the highlights/details split, comment and MDX removal (overlapping and unterminated comments included) that leaves fenced code blocks exactly as written, link rewriting, duplicate timestamps, sorting and the separate caps, and the contract's rejection of a wrong `schemaVersion`, a malformed entry, a non-canonical `date`, entries out of order or sharing a `date`, and a duplicate `id`.
 
 ### 4.6 Commit messages
 

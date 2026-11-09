@@ -40,7 +40,7 @@ Pin the exact latest stable versions when scaffolding. Record them in `package.j
 | UI | **Vue 3** (`<script setup lang="ts">`, Composition API), **Vue Router** (hash history) | No UI component library. Components are custom-styled in a look inspired by YNAB (`05`). |
 | State | **Pinia** for UI/view state; **@tanstack/vue-query** for server data (cache, invalidation, refetch) | `03` §5 |
 | Language | **TypeScript** only, strict (compiler options in `21` §4); `moduleResolution: "bundler"` (required by `@actual-app/api` typings). No JavaScript source files. | `21` §4 |
-| Validation | **zod** for IPC payloads and reserved-note JSON | |
+| Validation | **zod** for IPC payloads, reserved-note JSON and the news feed contract | |
 | Virtual lists | **@tanstack/vue-virtual** | register and scheduler |
 | Popover positioning | **@floating-ui/dom** | callouts with tail positions (`17`) |
 | Dates | **date-fns** (no time zones; dates are `YYYY-MM-DD` strings) | |
@@ -57,6 +57,7 @@ Pin the exact latest stable versions when scaffolding. Record them in `package.j
 | Format | **Prettier** (+ `prettier-plugin-organize-imports`), **EditorConfig**, `.gitattributes` | `21` §4.3 |
 | Dead code | **knip** | `21` §4.4 |
 | Docs | **markdownlint-cli2** + `scripts/docs-check.ts` | `21` §4.5 |
+| Blog and news feed | Docusaurus's blog (RSS) in `website/`; **yaml** reads post front matter for `scripts/news-feed.ts` | §3.1 |
 | Git hooks | **simple-git-hooks** + **lint-staged** + **commitlint** (`@commitlint/config-conventional`) | §5.1, `21` §4.6 |
 | Packaging | **electron-builder** | §5 |
 
@@ -71,7 +72,8 @@ actuality/
 ├─ scripts/                     (docs-check.ts and other repo scripts, run with tsx)
 ├─ docs/                         (specs)
 ├─ website/                      (the user guide: a Docusaurus site with its own package.json and lockfile;
-│                                 guides in website/docs/, written for users, not normative — see below)
+│                                 guides in website/docs/, written for users, not normative — see below;
+│                                 the blog in website/blog/ and the news feed, website/static/news.json — §3.1)
 ├─ resources/                    (app icons placeholder set, sample CSV, licenses)
 ├─ src/
 │  ├─ shared/                    (pure TS, no Node/DOM APIs; imported by all)
@@ -83,6 +85,7 @@ actuality/
 │  │  ├─ schedule/               (frequency ↔ RecurConfig mapping — 12 §1)
 │  │  ├─ quickbudget/            (average/history math — 09 §5)
 │  │  ├─ i18n/                   (message files per locale + meta.json; translate.ts for main — 20 §3)
+│  │  ├─ news/                   (the news feed contract: types, schema version, validator — §3.1)
 │  │  └─ rpc/                    (host-api.ts: renderer↔host methods, error codes;
 │  │                              control-api.ts: main↔host control channel — §4.1)
 │  ├─ main/                      (Electron main)
@@ -120,6 +123,34 @@ saved-filter overrides in Pinia. Vue Query requests only the active report throu
 RPC. Pure report calculations live in `src/shared/reporting/`; the host reports service gathers
 normalized Actual inputs in one serial read job and returns bounded aggregate DTOs, not the
 transaction ledger (`03` §3, §8; `15` §7).
+
+### 3.1 Blog and news feed
+
+The website (§3) has a **blog** at `/blog` for release notes and announcements, with an **RSS feed** at `/blog/rss.xml`. It is Docusaurus's blog, configured in `website/docusaurus.config.ts`. Posts are Markdown files in `website/blog/`, named `YYYY-MM-DD-{slug}.md`, and each one is served at `/blog/{slug}`. The tags are declared in `website/blog/tags.yml`: `release` and `announcement`. The site build fails on a tag that isn't declared there, on an author written inline, and on a post without a `<!-- truncate -->` marker, which ends the excerpt shown in the post list. Like the guide, posts are written for users, quote UI text exactly, and aren't normative.
+
+**The news feed** is `website/static/news.json`, served at `https://actualitydesktop.org/news.json`. It is a machine-readable list of the posts worth announcing, so an app can show release notes and announcements. The app doesn't fetch it. Its format is the contract in `src/shared/news/feed.ts`, kept in `shared` so that a reader can validate the feed with the same schema the generator checks its output against:
+
+- The document is `{ "schemaVersion": 1, "entries": [ … ] }`, with the entries newest first. A reader rejects a feed whose `schemaVersion` isn't the one it was built for, a feed with any malformed entry, and a feed whose entries aren't strictly newest first (two sharing a `date`) or share an `id`. So the version changes only for a breaking change, and adding an optional field isn't one.
+- Each entry has `id` (`release-{version}` or `post-{slug}`), `type` (`release` or `post`), `title` (plain text), `date`, `url` (the post's page) and `body` (Markdown; for a release, the highlights only). A release also has `version` (`X.Y.Z`) and, optionally, `details` (Markdown: the full list of changes).
+- Every `date` has the form `YYYY-MM-DDTHH:MM:SSZ` (UTC, whole seconds, a literal `Z`), so plain string order is chronological. No two entries share a `date`, so a reader can keep its read state as a single "last seen" timestamp.
+- The feed holds the 10 newest releases and the 10 newest posts, capped separately so that a run of one type can't push out the other.
+
+The feed is generated, never edited by hand. `npm run news:build` (`scripts/news-feed.ts`) writes it from the posts, and `npm run news:check` (part of `check`, so CI runs it, §5.1) fails when the committed file differs from what the posts produce. It is committed so that a reviewer sees exactly what readers will get, and so that it can be served as a plain static file. Prettier skips it, so the check can compare the text exactly.
+
+How posts become entries:
+
+| Rule | Behavior |
+| --- | --- |
+| Opt-in | A post is in the feed only when its front matter has `in_app_notification: true`. Drafts (`draft: true`) and unlisted posts (`unlisted: true`) are left out. |
+| Type | A post tagged `release` becomes a `release` entry, and its slug must be `release-X.Y.Z`. Otherwise the feed can't be built. Every other post becomes a `post` entry. |
+| `date` | The front matter `date`, which must have a time and a zone (`Z` or an offset such as `+02:00`), converted to UTC. A missing, date-only or zone-less `date` stops the build: the date in the file name has no time, so it isn't used instead. Two entries with the same instant stop it too, and moving one of them by a second fixes it. |
+| Slug, `title`, `url` | The slug is the front matter `slug`, else the file name without its date and extension. The title is the front matter `title`, else the post's leading H1 (`# Title`), else the slug. The URL is `https://actualitydesktop.org/blog/{slug}`. |
+| `body` | The post without its leading H1 (`# Title`), its HTML comments (an unterminated `<!--` drops the rest of the post), MDX `import` lines, `{/* … */}` comments and capitalized component tags; lowercase HTML stays. Relative and root-relative links and images become absolute URLs on the website, without `.md` or `.mdx`, and a link to another post by its file name becomes that post's URL. Links with a scheme, `//` links and `#` links stay as they are. Runs of blank lines are collapsed. All of this happens outside fenced code blocks (three or more backticks or tildes), which are carried exactly as written. A fence inside an HTML comment isn't one, so a commented-out code block is removed with its comment. A link that can't be parsed is left as it is, with a warning. |
+| Release `details` | Everything after the line `<!-- release-details -->`; the `body` is what comes before it. A release post without that line has no `details`. |
+
+An image that should show in the feed goes in `website/static/img/blog/` and is linked as `/img/blog/…`. Docusaurus moves an image linked by a relative path to a generated path the feed can't know, so the generator warns about one.
+
+**Release posts.** The release workflow (§5.1) writes each release's post with `scripts/release-post.ts {version}`: `website/blog/{date}-release-{version}.md`, titled "Actuality {version}", tagged `release` and opted in to the feed. It is dated when the release pull request is opened. Above the `<!-- release-details -->` line is a one-line summary that links to the releases page; below it is the version's `CHANGELOG.md` section, with its `###` headings as `##` (the post's title is its only H1). The workflow then regenerates the feed and adds both files to the release commit. Hand-written highlights replace the summary in a later pull request, which keeps the post's date. The post goes live when the release pull request merges, while the GitHub release is still a draft, so it links to the list of releases rather than to its own release.
 
 ## 4. RPC between renderer and API host
 
@@ -186,10 +217,11 @@ electron-vite builds with Vite (Rolldown and Oxc), which strip types without che
 | `lint:css` | `stylelint "src/**/*.{css,vue}" --max-warnings 0` |
 | `format:check` | `prettier --check.` |
 | `deadcode` | `knip` |
-| `docs:check` | `markdownlint-cli2` on `docs/**/*.md` and `website/docs/**/*.md`, then `tsx scripts/docs-check.ts` on `docs/` (`21` §4.5) |
+| `docs:check` | `markdownlint-cli2` on `docs/**/*.md`, `website/docs/**/*.md` and `website/blog/**/*.md`, then `tsx scripts/docs-check.ts` on `docs/` (`21` §4.5) |
 | `docs:sync` | `tsx scripts/docs-sync.ts [base] [head]`: the spec, user guide and UI strings stay in step across a range of commits (`21` §4.5) |
 | `docs:site` / `docs:site:build` | the user guide site (§3): the Docusaurus dev server / its typecheck, then `docusaurus build` into `website/build/`. Run `npm --prefix website ci` first. |
-| `check` | `format:check`, `lint`, `lint:css`, `typecheck`, `i18n:check` (`20` §3.7), `deadcode`, `docs:check`, in that order, stopping at the first failure |
+| `news:build` / `news:check` | `tsx scripts/news-feed.ts`: writes the news feed, `website/static/news.json`, from the blog posts / `tsx scripts/news-feed.ts --check`: writes nothing, and fails when the committed feed is out of date (§3.1) |
+| `check` | `format:check`, `lint`, `lint:css`, `typecheck`, `i18n:check` (`20` §3.7), `deadcode`, `docs:check`, `news:check` (§3.1), in that order, stopping at the first failure |
 | `build` | `typecheck`, then `electron-vite build`. A type error fails the build. |
 | `test` / `test:int` / `test:e2e` | unit and component (Vitest) / integration (`21` §1) / `install-electron` (so a missing binary fails once, before the build, not in every test), `build`, then E2E (Playwright), because `dev` leaves `out/` without a renderer |
 
@@ -205,15 +237,15 @@ Hooks can be skipped with `--no-verify`, so they're a convenience, not the gate.
 
 | Job | Runs on | Steps | When |
 | --- | --- | --- | --- |
-| `check` | ubuntu-latest | `check` (format, lint, stylelint, typecheck, i18n, dead code, docs); on pull requests also `commitlint --from <base> --to HEAD`, `docs:sync` from base to head (`21` §4.5) and a check of the pull request title (`21` §4.6); on a release merge, reads the version from `package.json` and fails when the commit names another | every push and pull request |
+| `check` | ubuntu-latest | `check` (format, lint, stylelint, typecheck, i18n, dead code, docs, news feed); on pull requests also `commitlint --from <base> --to HEAD`, `docs:sync` from base to head (`21` §4.5) and a check of the pull request title (`21` §4.6); on a release merge, reads the version from `package.json` and fails when the commit names another | every push and pull request |
 | `test` | windows-latest, macos-latest, ubuntu-latest | `test` | every push and pull request, after `check` |
 | `integration` | ubuntu-latest | `test:int` against the Docker test server matrix (`21` §1) | every push and pull request, after `check` |
 | `build` | windows-latest, macos-latest, ubuntu-latest | `build`, then package (`electron-builder`) | every push and pull request, after `check` |
 | `website` | ubuntu-latest | in `website/`: `npm ci`, `typecheck`, `build` (broken links and anchors fail it) | every push and pull request, after `check` |
 | `e2e` | ubuntu-latest (smoke on windows and macos) | `install-electron` (up to five tries, because the GitHub release download can time out), then `test:e2e` on the packaged app, including the axe, keyboard-only, zoom and target-size suites (`22` §7) | nightly, on demand, and in the CI run of a release merge (`21` §1) |
 | `release` | ubuntu-latest | tags the commit `v{version}` and drafts its GitHub release with the 12 installers from `build` and the version's `CHANGELOG.md` section (`scripts/release-notes.ts`); a re-run reuses the tag and the draft | pushes to `main` whose commit is a release merge (`chore: release v{version}`), after every other job and `e2e` pass |
-| `pull-request` (`release.yml`) | ubuntu-latest | `commit-and-tag-version` bumps `package.json` and the lockfile and writes `CHANGELOG.md` from the conventional commits since the last tag, then opens the release pull request with auto-merge (squash) | on demand: Actions ▸ Release ▸ Run workflow, choosing patch, minor or major |
-| `build`, `deploy` (`docs-deploy.yml`) | ubuntu-latest | in `website/`: `npm ci`, `build`; then publish `website/build/` to GitHub Pages at `https://actualitydesktop.org` | pushes to `main` that change the site, its icons or the Node version, and on demand |
+| `pull-request` (`release.yml`) | ubuntu-latest | `commit-and-tag-version` bumps `package.json` and the lockfile and writes `CHANGELOG.md` from the conventional commits since the last tag; `scripts/release-post.ts` writes the release's blog post from that section, and `news:build` regenerates the news feed, both added to the release commit (§3.1); then it opens the release pull request with auto-merge (squash) | on demand: Actions ▸ Release ▸ Run workflow, choosing patch, minor or major |
+| `build`, `deploy` (`docs-deploy.yml`) | ubuntu-latest | in `website/`: `npm ci`, `build`; then publish `website/build/` (the guide, the blog, its RSS feed and the news feed, §3.1) to GitHub Pages at `https://actualitydesktop.org` | pushes to `main` that change the site, its icons or the Node version, and on demand |
 
 CI runs on branch pushes and pull requests, not on tags. A newer push cancels a run in progress, except on `main`, so a release run always finishes. The release jobs install with `npm ci --ignore-scripts` and commit with `--no-verify`, so the git hooks never run in CI. A release is a **draft** until a person has done the manual items of the release checklist (`21` §7), recorded them in its notes, and published it.
 

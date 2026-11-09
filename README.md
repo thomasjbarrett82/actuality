@@ -65,16 +65,17 @@ npm install
 npm run dev        # run the app with hot reload
 ```
 
-| Command             | What it does                                                                                               |
-| ------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `npm run dev`       | Starts the app in development mode.                                                                        |
-| `npm run check`     | Prettier, ESLint, stylelint, the `vue-tsc` typecheck, the i18n check, knip (dead code) and the docs check. |
-| `npm test`          | Vitest unit and component tests.                                                                           |
-| `npm run test:int`  | Integration tests against a real Actual server (see below).                                                |
-| `npm run build`     | Typecheck, then build into `out/` with electron-vite, and write the third-party licenses file.             |
-| `npm run test:e2e`  | Runs `npm run build`, then Playwright end-to-end tests against that build (see below).                     |
-| `npm run package`   | Build installers for the current OS into `release/` with electron-builder.                                 |
-| `npm run docs:site` | Starts the user guide site locally (run `npm --prefix website ci` once first).                             |
+| Command              | What it does                                                                                                                    |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`        | Starts the app in development mode.                                                                                             |
+| `npm run check`      | Prettier, ESLint, stylelint, the `vue-tsc` typecheck, the i18n check, knip (dead code), the docs check and the news feed check. |
+| `npm test`           | Vitest unit and component tests.                                                                                                |
+| `npm run test:int`   | Integration tests against a real Actual server (see below).                                                                     |
+| `npm run build`      | Typecheck, then build into `out/` with electron-vite, and write the third-party licenses file.                                  |
+| `npm run test:e2e`   | Runs `npm run build`, then Playwright end-to-end tests against that build (see below).                                          |
+| `npm run package`    | Build installers for the current OS into `release/` with electron-builder.                                                      |
+| `npm run docs:site`  | Starts the user guide site locally (run `npm --prefix website ci` once first).                                                  |
+| `npm run news:build` | Regenerates the news feed (`website/static/news.json`) from the blog posts. `npm run check` fails when it's stale.              |
 
 Git hooks run lint-staged and the typecheck before each commit, check commit messages with commitlint
 ([Conventional Commits](https://www.conventionalcommits.org)), and run `npm run check` and `npm test` before
@@ -112,6 +113,10 @@ sign-in limit is too strict for the full suite.
 
 Code signing and notarization need credentials that only CI has.
 
+### Blog posts and releases
+
+[`docs/operations.md`](docs/operations.md) has the steps for writing a blog post and for cutting a release.
+
 ## Project layout
 
 ```text
@@ -122,8 +127,8 @@ src/
   host/       the API host: the only place @actual-app/api runs
   renderer/   the Vue 3 UI
 tests/        integration (int/), end-to-end (e2e/) and fixture budgets (fixtures/)
-docs/         architecture overview, the app specification, the release checklist
-website/      the user guide: a Docusaurus site (guides in website/docs/)
+docs/         architecture overview, the app specification, the release checklist, operations
+website/      the user guide and blog: a Docusaurus site (guides in website/docs/, posts in website/blog/)
 references/   a local copy of the Actual API docs
 ```
 

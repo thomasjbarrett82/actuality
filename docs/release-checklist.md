@@ -28,8 +28,5 @@ packaged build: **Release**.
 
 ## Cutting a release
 
-1. Actions ▸ **Release** ▸ **Run workflow** on `main`, choosing `patch`, `minor` or `major`.
-2. The release pull request merges by itself when its checks pass. Don't merge other pull requests while
-   it's open: a change merged before it but after it was opened ends up in neither changelog section.
-3. The CI run on `main` for the merge runs E2E, then drafts the release with the installers.
-4. Do the **Release** items above, record the results in the draft's notes, and publish it.
+The steps are in [`operations.md`](operations.md#cutting-a-release). Step 4 there is where the **Release**
+items above are done.
