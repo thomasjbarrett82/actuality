@@ -28,14 +28,5 @@ packaged build: **Release**.
 
 ## Cutting a release
 
-1. Actions ▸ **Release** ▸ **Run workflow** on `main`, choosing `patch`, `minor` or `major`.
-2. The release pull request merges by itself when its checks pass. Don't merge other pull requests while
-   it's open: a change merged before it but after it was opened ends up in neither changelog section.
-   Besides the version and `CHANGELOG.md`, it adds the release's blog post
-   (`website/blog/{date}-release-{version}.md`) and the regenerated news feed (`02` §3.1).
-3. The CI run on `main` for the merge runs E2E, then drafts the release with the installers. The merge also
-   publishes the website, so the release post and its news feed entry are live from here on.
-4. Do the **Release** items above, record the results in the draft's notes, and publish it.
-5. In a pull request, replace the release post's one-line summary with hand-written highlights (what
-   users will notice, linking to the guide pages that describe it). Keep the post's `date`. Run
-   `npm run news:build` and commit the feed with the post.
+The steps are in [`operations.md`](operations.md#cutting-a-release). Step 4 there is where the **Release**
+items above are done.

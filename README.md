@@ -113,6 +113,10 @@ sign-in limit is too strict for the full suite.
 
 Code signing and notarization need credentials that only CI has.
 
+### Blog posts and releases
+
+[`docs/operations.md`](docs/operations.md) has the steps for writing a blog post and for cutting a release.
+
 ## Project layout
 
 ```text
@@ -123,7 +127,7 @@ src/
   host/       the API host: the only place @actual-app/api runs
   renderer/   the Vue 3 UI
 tests/        integration (int/), end-to-end (e2e/) and fixture budgets (fixtures/)
-docs/         architecture overview, the app specification, the release checklist
+docs/         architecture overview, the app specification, the release checklist, operations
 website/      the user guide and blog: a Docusaurus site (guides in website/docs/, posts in website/blog/)
 references/   a local copy of the Actual API docs
 ```
