@@ -1548,7 +1548,7 @@ class RealActual implements ActualApi {
       ...scalars,
       ...(subtransactions ? { subtransactions: subtransactions.map(childFields) } : {}),
     } as Parameters<Api['updateTransaction']>[1]);
-    // updateTransaction resolves before its write lands: wait until the fields read back. One
+    // updateTransaction may resolve before its write lands: wait until the fields read back. One
     // update lands as one batch, so a category Actual rewrites itself is only checked when it's alone.
     // Actual keeps transfers in step in a second batch after that, so wait for it too: a later write
     // racing it would see half-updated rows.

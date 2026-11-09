@@ -30,6 +30,8 @@ Actuality is an envelope-budgeting desktop client for budgets stored on an Actua
 | TaskDialogs, callouts, tooltips | `17` |
 | Help/About, Wipe the Slate Clean | `18` |
 | Read-only offline viewing of cached budgets | `03` §6 |
+| Accessibility: keyboard, screen readers, zoom, color-blind-safe palettes | `22` |
+| Notifications: the update check and the news feed | `24` |
 
 ## 3. Out of scope
 
@@ -56,7 +58,7 @@ Most deviations exist because Actual's data model or API differs. Chapters refer
 | X8 | Works fully offline. | **Read-only when the server is unreachable.** Edits are blocked and a banner explains why (`03` §6). | Requirement 4. |
 | X9 | Title-bar "*" dirty marker, "Save a Version". | No dirty marker. **Ctrl+S = "Sync Now"**. Every change is saved immediately and synced. | Actual saves each change. |
 | X10 | Hidden sub-categories move under a "Hidden Categories" master with mangled names. | Actual's `hidden` flag on categories and groups. The UI still shows a synthetic **Hidden Categories** row. Hiding a master hides the group (it is not deleted). | Native feature. |
-| X11 | A debt master category.. | **Dropped.** There is no debt category: a negative starting balance goes to an income category like any other (`13` §2.1). | D7 |
+| X11 | A debt master category. | **Dropped.** There is no debt category: a negative starting balance goes to an income category like any other (`13` §2.1). | D7 |
 | X12 | Payee "List and Autocomplete" flag stored on the payee. | Stored in the reserved note `ad:payees` (`04` §5.3). | No Actual field. |
 | X13 | Auto-fill notes/amount stored per payee. | Derived from the payee's most recent transaction. Auto-fill category uses the payee's Actual category rule if any, else the most recent category. | Avoids extra storage. Same observable behavior. |
 | X14 | Payee rename conditions on the payee. | Stored as Actual **rules** (stage `pre`, condition on `imported_payee`, action set `payee`). Starts-with/Ends-with use `matches` with an anchored, escaped regex. All ops are case-insensitive. Actual applies rules to **every** import, so bank text matching a disabled payee is sent only as `imported_payee` and stays unassigned unless a rename rule matches (`14` §2). | Native feature. |

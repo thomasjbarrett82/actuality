@@ -70,16 +70,9 @@ Keyed by `cloudFileId`, because the `groupId` changes when a budget's sync is re
 
 Entries for accounts/categories that no longer exist are dropped on load. New accounts copy column widths per `10` §2.
 
-Saved report filters contain only named filter/option snapshots, not report results or transactions.
-They are validated on load; definitions with invalid page names, ids, date ranges, or option shapes
-are discarded with the normal settings validation warning. Deleting a referenced category, payee,
-or account removes that id from saved definitions. Saved names are unique case-insensitively within
-each page. These values use the existing atomic JSON settings path; they do not introduce a local
-database.
+Saved report filters contain only named filter/option snapshots, not report results or transactions. They are validated on load; definitions with invalid page names, ids, date ranges, or option shapes are discarded with the normal settings validation warning. Deleting a referenced category, payee, or account removes that id from saved definitions. Saved names are unique case-insensitively within each page. These values use the existing atomic JSON settings path; they do not introduce a local database.
 
-The active Reports tab, shared current filters, filter drafts, and saved-filter override state are
-not persisted. Every app launch starts Reports on Summary with default filters, even when
-`lastScreen` restores the Reports destination.
+The active Reports tab, shared current filters, filter drafts, and saved-filter override state are not persisted. Every app launch starts Reports on Summary with default filters, even when `lastScreen` restores the Reports destination.
 
 ## 3. Budget metadata (synced, inside Actual)
 
@@ -90,7 +83,7 @@ not persisted. Every app launch starts Reports on Summary with default filters, 
 
 ## 4. Secrets (`secrets.json`)
 
-- Keys: `server:{url}` → the server **session token** (: never the password, `03` §7), `e2e:{cloudFileId}` → encryption password. It's keyed by `cloudFileId`, and deleted when it fails to decrypt, which means the password was changed elsewhere.
+- Keys: `server:{url}` → the server **session token** (never the password, `03` §7), `e2e:{cloudFileId}` → encryption password. It's keyed by `cloudFileId`, and deleted when it fails to decrypt, which means the password was changed elsewhere.
 - Enabling encryption or generating a new key may change the budget's `groupId` but not its `cloudFileId`; refresh `lastBudget`/recent-budget sync ids from the server without changing the secret key. A failed encryption-password check deletes the corresponding `e2e:` secret. Enabling or rotating the key replaces the remembered password only after key creation and sync reset succeed. If **Remember** isn't ticked, a remembered password for the old key is deleted at that point instead, because it can no longer decrypt the budget.
 - Values are encrypted with Electron's asynchronous `safeStorage` API (`encryptStringAsync`, `decryptStringAsync`) and stored base64; the synchronous calls are deprecated. Main applies secret operations one at a time in the order they arrive, so a value still being encrypted can't be written after a later delete or clear of the same key. When a read reports `shouldReEncrypt` (the OS key was rotated or upgraded), main encrypts the value again and saves it; if that fails, it keeps the old value, which still decrypts. A value that won't decrypt reads as absent. If `safeStorage.isAsyncEncryptionAvailable()` resolves false (some Linux setups without a keyring), the "Stay signed in" and "Remember" checkboxes are disabled with the tooltip "Your system doesn't provide secure storage, so Actuality can't keep you signed in or remember passwords."
 - Secrets are never sent to the renderer after entry. Only the host reads and writes them, through the control channel (`02` §4.1). The renderer can only ask whether secure storage is available, whether a key exists, and forget a key (`02` §4).

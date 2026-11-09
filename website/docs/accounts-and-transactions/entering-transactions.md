@@ -35,7 +35,7 @@ Click a transaction to select it, then click it again (or press **Enter** or **F
 
 While you have unsaved changes, clicking elsewhere in the list is blocked and the buttons glow, so you don't lose your edit by accident.
 
-If you change the payee on a transaction, and other transactions have the same payee, Actuality asks **Apply changes to matching transactions?**. Choose to rename them all, rename and categorize the uncategorized ones, or **Leave them alone**. Tick **Don't try to bulk-rename this payee again** if you don't want to be asked for this payee in future.
+If you change the payee on a transaction, and other transactions have the same payee, Actuality asks **Apply changes to matching transactions?**. Choose to rename them all, rename and categorize the uncategorized ones, or **Leave them alone**. Ticking **Don't try to bulk-rename this payee again** turns the old payee off: you won't be asked about it again, and it also drops out of the payee list and stops filling in categories. To turn it back on, tick **List and Autocomplete this payee** in [Payee Settings](./payees-and-rules.md#payee-settings).
 
 ## Typing dates
 

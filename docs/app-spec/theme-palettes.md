@@ -97,9 +97,7 @@ All four palettes meet every target, with no exceptions. Only the CVD palettes a
 
 ### Reports palette values and checks (`05` §1.11)
 
-The report series and semantic colors alias the existing tokens described in `05` §1.11. The
-following measured foreground/background ratios apply to each series mark on `--panel-bg`; the
-minimum is 3:1 for a meaningful chart mark. The report grid is decorative and does not encode data.
+The report series and semantic colors alias the existing tokens described in `05` §1.11. The following measured foreground/background ratios apply to each series mark on `--panel-bg`; the minimum is 3:1 for a meaningful chart mark. The report grid is decorative and does not encode data.
 
 | Report mark on `--panel-bg` | Target | Light | Dark | Light CVD | Dark CVD |
 | --- | --- | --- | --- | --- | --- |
@@ -114,11 +112,7 @@ minimum is 3:1 for a meaningful chart mark. The report grid is decorative and do
 | `--report-series-other` / `--report-zero-line` | 3:1 | 5.74 | 6.18 | 5.74 | 6.18 |
 | `--text` on `--report-tooltip-bg` | 4.5:1 | 12.42 | 10.36 | 12.42 | 10.36 |
 
-The report positive/negative semantic pair aliases `--money-positive` /
-`--money-negative-strong`; its CVD separation is therefore the already measured 86.5 ΔE in Light
-CVD and 92.0 ΔE in Dark CVD above. Individual series are not required to meet a pairwise ΔE target:
-their identity is also encoded with labels and non-color cues, as required by `05` §1.11. The
-decorative grid contrast is intentionally below 3:1 and is not used to distinguish data.
+The report positive/negative semantic pair aliases `--money-positive` / `--money-negative-strong`; its CVD separation is therefore the already measured 86.5 ΔE in Light CVD and 92.0 ΔE in Dark CVD above. Individual series are not required to meet a pairwise ΔE target: their identity is also encoded with labels and non-color cues, as required by `05` §1.11. The decorative grid contrast is intentionally below 3:1 and is not used to distinguish data.
 
 ## 2. Brand & chrome
 
