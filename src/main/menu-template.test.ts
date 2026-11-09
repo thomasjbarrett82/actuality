@@ -140,17 +140,13 @@ describe('native menu (06 §4)', () => {
     expect(mac.length).toBeGreaterThan(win.length);
   });
 
-  it('groups app placeholders and Actual Budget resources in Help', () => {
+  it('groups Actuality and Actual Budget resources in Help', () => {
     const { items } = build();
     const help = find(items, 'menu.help')?.submenu as MenuItemConstructorOptions[];
     const actuality = find(help, APP_NAME)?.submenu as MenuItemConstructorOptions[];
     const actualBudget = find(help, 'menu.actualBudget')?.submenu as MenuItemConstructorOptions[];
 
-    expect(actuality.map((item) => [item.label, item.enabled])).toEqual([
-      ['menu.docs', false],
-      ['menu.github', false],
-    ]);
-    expect(actuality.every((item) => item.click === undefined)).toBe(true);
+    expect(actuality.map((item) => item.label)).toEqual(['menu.docs', 'menu.github']);
     expect(actualBudget.map((item) => item.label)).toEqual([
       'menu.tour',
       'menu.blog',
@@ -193,6 +189,19 @@ describe('native menu (06 §4)', () => {
       const help = find(items, 'menu.help')?.submenu as MenuItemConstructorOptions[];
       (find(help, 'menu.about')?.click as (() => void) | undefined)?.();
       expect(send).toHaveBeenCalledWith('help.about');
+    }
+  });
+
+  it('opens each Actuality resource at its specified URL', () => {
+    const { items, openUrl } = build();
+    const help = find(items, 'menu.help')?.submenu as MenuItemConstructorOptions[];
+    const actuality = find(help, APP_NAME)?.submenu as MenuItemConstructorOptions[];
+    const urls = ['https://actualitydesktop.org', 'https://github.com/thomasjbarrett82/actuality'];
+
+    for (const [index, item] of actuality.entries()) {
+      expect(item.enabled).not.toBe(false);
+      (item.click as (() => void) | undefined)?.();
+      expect(openUrl).toHaveBeenNthCalledWith(index + 1, urls[index]);
     }
   });
 

@@ -63,7 +63,7 @@ Actuality syncs every minute, whenever you switch back to its window, and after 
 - **File**: create, open and close budgets; **Sync Now**; **Export Budget Backup…**; **Wipe the Slate Clean…**; **Import Transactions from Your Bank…**; **Budget Properties…**; **Export…**; **Print…**; **Preferences…**.
 - **Edit**: the usual Undo, Cut, Copy and Paste, plus Rename Account, Edit Account Note and Close Account while an account's register is shown.
 - **View**: **Go to Accounts** (**Ctrl+T**), **Go to Budget** (**Ctrl+B**), **Go to Reports** (**Ctrl+R**), **Go to Payee Settings** (**Ctrl+Y**), **Go to Rules** (**Ctrl+U**), collapsing the sidebar, **Privacy Mode**, **Appearance** and zoom.
-- **Help**: links to Actual Budget's own site, **Keyboard Shortcuts**, **Notifications…** (see [Updates and news](../reference/updates-and-news.md)), **Show Logs Folder** and **About Actuality**.
+- **Help**: links to this guide and Actuality's GitHub project (**Actuality ▸ Docs** and **Actuality ▸ GitHub**), links to Actual Budget's own site, **Keyboard Shortcuts**, **Notifications…** (see [Updates and news](../reference/updates-and-news.md)), **Show Logs Folder** and **About Actuality**.
 
 ## Privacy mode
 

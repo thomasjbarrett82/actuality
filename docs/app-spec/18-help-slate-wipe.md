@@ -4,9 +4,9 @@
 
 The Help menu has three sections:
 
-1. **Actuality** submenu:
-   - **Docs** — reserved for future Actuality documentation; disabled until a destination is published.
-   - **GitHub** — reserved for a future project link; disabled until a destination is published.
+1. **Actuality** submenu, whose items open externally:
+   - **Docs** — `https://actualitydesktop.org` (the user guide)
+   - **GitHub** — `https://github.com/thomasjbarrett82/actuality`
 2. **Actual Budget** submenu, whose items open externally:
    - **Tour** — `https://actualbudget.org/docs/tour/`
    - **Blog** — `https://actualbudget.org/blog/`
