@@ -69,4 +69,4 @@ Actuality writes a log file that can help find problems.
 
 Passwords, sign-in tokens and the contents of your budget are never written to the log, and neither are amounts.
 
-Report the problem on the project's [issue tracker](https://github.com/thomasjbarrett82/actuality/issues), with what you did, what you expected, what happened, and the log file. **Help ▸ About Actuality** shows the versions to include.
+Report the problem on the project's [issue tracker](https://github.com/thomasjbarrett82/actuality/issues) (**Help ▸ Actuality ▸ GitHub** opens the project), with what you did, what you expected, what happened, and the log file. **Help ▸ About Actuality** shows the versions to include.

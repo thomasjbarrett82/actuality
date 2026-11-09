@@ -9,6 +9,8 @@ import {
   ACTUAL_DOCS_URL,
   ACTUAL_GITHUB_URL,
   ACTUAL_TOUR_URL,
+  APP_DOCS_URL,
+  APP_GITHUB_URL,
   APP_NAME,
 } from '@shared/app';
 import type { Translate } from '@shared/i18n/translate';
@@ -246,8 +248,18 @@ export function menuTemplate(o: MenuOptions): MenuItemConstructorOptions[] {
     {
       label: t('menu.product'),
       submenu: [
-        { label: t('menu.docs'), enabled: false },
-        { label: t('menu.github'), enabled: false },
+        {
+          label: t('menu.docs'),
+          click: () => {
+            o.openUrl(APP_DOCS_URL);
+          },
+        },
+        {
+          label: t('menu.github'),
+          click: () => {
+            o.openUrl(APP_GITHUB_URL);
+          },
+        },
       ],
     },
     sep,

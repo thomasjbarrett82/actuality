@@ -4,8 +4,12 @@ export const APP_NAME = 'Actuality';
 /** Placeholder application id (02 §5). */
 export const APP_ID = 'com.actuality.app';
 
-/** Existing Actuality learn-more destination. The Help menu's Actuality links are not published yet. */
+/** Existing Actuality learn-more destination. */
 export const APP_HELP_URL = 'https://github.com/thomasjbarrett82/actuality#readme';
+
+/** Help ▸ Actuality resources (06 §4, 18 §1). */
+export const APP_DOCS_URL = 'https://actualitydesktop.org';
+export const APP_GITHUB_URL = 'https://github.com/thomasjbarrett82/actuality';
 
 /** Help ▸ Actual Budget resources (06 §4). */
 export const ACTUAL_DOCS_URL = 'https://actualbudget.org/docs/';

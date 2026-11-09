@@ -99,7 +99,7 @@ All Go to items are enabled only with a budget open. **Ctrl+R must not reload th
 
 | Item | Action |
 | --- | --- |
-| **Actuality** ▸ Docs / GitHub | reserved links; disabled until published |
+| **Actuality** ▸ Docs / GitHub | opens the Actuality pages in the browser: the user guide `https://actualitydesktop.org` and the project repository `https://github.com/thomasjbarrett82/actuality` |
 | — | |
 | **Actual Budget** ▸ Tour / Blog / Contributions / Discord / Docs / GitHub | opens the official Actual Budget pages in the browser: `https://actualbudget.org/docs/tour/`, `https://actualbudget.org/blog/`, `https://opencollective.com/actual`, `https://discord.com/invite/8JfAXSgfRf`, `https://actualbudget.org/docs/`, `https://github.com/actualbudget/actual` |
 | — | |
