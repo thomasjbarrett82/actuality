@@ -1,6 +1,7 @@
 // The renderer's amount text (06 §7). Every amount the UI shows goes through <MoneyAmount> or these helpers,
 // which apply privacy mode; components never test the flag themselves. Amount fields show the real value
-// only while they have focus (`useMaskedField`). Exports and backups show real values and don't use them.
+// once a click or key in them reveals it, until they lose focus (`useMaskedField`). Exports and backups show
+// real values and don't use them.
 import type { Money } from '@shared/domain/types';
 import { format, type FormatOptions, type MoneySettings } from '@shared/money';
 import { formatMoneyDisplay, HIDDEN_AMOUNT_TEXT } from '@shared/money-display';

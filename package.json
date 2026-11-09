@@ -31,7 +31,6 @@
     "news:build": "tsx scripts/news-feed.ts",
     "news:check": "tsx scripts/news-feed.ts --check",
     "i18n:check": "tsx scripts/i18n-check.ts",
-    "i18n:catalog": "tsx scripts/i18n-catalog.ts",
     "check": "npm run format:check && npm run lint && npm run lint:css && npm run typecheck && npm run i18n:check && npm run deadcode && npm run docs:check && npm run news:check",
     "build": "npm run typecheck && electron-vite build && npm run licenses",
     "licenses": "tsx scripts/third-party-licenses.ts",
@@ -78,7 +77,6 @@
   },
   "dependencies": {
     "@actual-app/api": "26.11.0",
-    "@tanstack/vue-virtual": "3.13.39",
     "date-fns": "4.4.0",
     "zod": "4.6.7"
   },
@@ -103,6 +101,7 @@
     "@intlify/eslint-plugin-vue-i18n": "4.5.1",
     "@playwright/test": "1.64.1",
     "@tanstack/vue-query": "5.105.2",
+    "@tanstack/vue-virtual": "3.13.39",
     "@types/node": "26.6.5",
     "@typescript-eslint/parser": "8.72.1",
     "@typescript-eslint/rule-tester": "8.72.1",

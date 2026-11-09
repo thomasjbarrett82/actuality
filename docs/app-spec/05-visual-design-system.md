@@ -220,16 +220,11 @@ Dark was adjusted the same way for `--error-badge` (`#DA372A`; Dark CVD `#C05422
 
 ### 1.11 Reports and chart tokens
 
-Reports use the values below for Light, Dark, Light CVD, and Dark CVD. Tokens whose Use names
-another token alias that existing palette value; other tokens are defined as report-specific
-variables. Contrast results are in `theme-palettes.md` §1. The required tokens are:
+Reports use the values below for Light, Dark, Light CVD, and Dark CVD. Tokens whose Use names another token alias that existing palette value; other tokens are defined as report-specific variables. Contrast results are in `theme-palettes.md` §1. The required tokens are:
 
-- `--report-inflow`, `--report-outflow`, `--report-positive`, and `--report-negative` for flow and
-  change semantics;
-- `--report-series-1` through `--report-series-6` for categorical series, plus
-  `--report-series-other` for aggregated rows;
-- `--report-grid`, `--report-zero-line`, and `--report-tooltip-bg` for chart structure and
-  tooltips.
+- `--report-inflow`, `--report-outflow`, `--report-positive`, and `--report-negative` for flow and change semantics;
+- `--report-series-1` through `--report-series-6` for categorical series, plus `--report-series-other` for aggregated rows;
+- `--report-grid`, `--report-zero-line`, and `--report-tooltip-bg` for chart structure and tooltips.
 
 | Token | Light | Dark | Light CVD | Dark CVD | Use |
 | --- | --- | --- | --- | --- | --- |
@@ -248,12 +243,7 @@ variables. Contrast results are in `theme-palettes.md` §1. The required tokens 
 | `--report-zero-line` | `#666666` | `#9AA3A9` | `#666666` | `#9AA3A9` | Meaningful chart baseline; aliases `--text-muted` |
 | `--report-tooltip-bg` | `#FFFFE1` | `#2C3236` | `#FFFFE1` | `#2C3236` | Chart tooltips; aliases `--tooltip-bg` |
 
-Series must also use stable labels and non-color cues (line pattern, marker, or table swatch);
-pairwise series-color separation is not relied on to communicate identity. Positive and negative
-report semantics inherit the measured color-vision separation of `--money-positive` and
-`--money-negative-strong` (`theme-palettes.md` §1). No age-band colors are specified; Money Age
-status must be communicated with text and values, not an unverified color threshold. Reports must
-not use raw color literals.
+Series must also use stable labels and non-color cues (line pattern, marker, or table swatch); pairwise series-color separation is not relied on to communicate identity. Positive and negative report semantics inherit the measured color-vision separation of `--money-positive` and `--money-negative-strong` (`theme-palettes.md` §1). No age-band colors are specified; Money Age status must be communicated with text and values, not an unverified color threshold. Reports must not use raw color literals.
 
 ## 2. Typography
 

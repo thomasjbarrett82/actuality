@@ -98,47 +98,35 @@ Some text is written into Actual's data, or belongs to a file format or a machin
 
 Message bundles and keys are part of Actuality's own implementation. Use bundle names that describe product areas, and stable `camelCase` keys that describe a message's meaning or use. Do not preserve identifiers from another application's resources or organize Actuality's messages to mirror another product's internal structure.
 
+The `en` message files are the string catalog: chapters `03`–`24` quote their values. The bundles are:
+
 | Bundle | Content |
 | --- | --- |
-| `app` | Connection states, startup, and cross-feature application messages |
-| `budget` | Budget screen, category, and budget-month messages |
-| `register` | Transaction register and transaction-entry messages |
-| `accounts` | Account management and reconciliation messages |
-| `schedules` | Scheduled transaction messages |
-| `reports` | Report tabs, filters and selections, chart/table labels, Money Age, saved filters, status and export/print messages (`15`). |
-| `imports` | Import and export workflow messages |
-| `settings` | Preferences and configuration messages |
-| `menus` | Native menu labels and commands |
-| `dialogs` | Shared dialog actions and reusable prompts |
-| `search` | Search syntax labels and suggestions |
+| `app` | Most of the app's text: start screens, connection states, dialogs, Preferences, schedules, import and export, notifications, and other cross-feature messages |
+| `budget` | Budget screen column and row labels |
+| `register` | Register columns and transaction-entry messages |
+| `accounts` | Account creation, closing and balance labels, and the reconciliation adjustment's notes |
+| `navigation` | Sidebar destinations |
+| `menu` | Native menu labels and commands (`06` §4), translated by main (§3.4) |
+| `files` | The file-type filter name in the import file dialog (`16` §1) |
+| `taskDialog` | The standard task dialog buttons (`17` §1) |
+| `templates` | Category and group names for budget templates (`07` §4.1) |
+| `reports` | Report tabs, filters and selections, chart/table labels, Money Age, saved filters, status and export/print messages (`15`) |
+| `search` | Search syntax labels and suggestions (`10` §4) |
 | `shortcuts` | The Keyboard Shortcuts dialog: descriptions, sections and key names |
-| `a11y` | Accessible names, descriptions, and announcements |
-| `common` | Reusable labels that are genuinely shared across features |
+| `a11y` | Accessible names, descriptions, and announcements (`22`) |
 
-These are target names for app-owned message groups, not a required one-file-per-area rule or an inventory of the current runtime files. This specification change does not rename or replace existing code resources; any migration should be a separate, behavior-preserving change, with uncertain copy re-authored before shipping. Keep keys stable when wording changes; do not encode English text, source-product terminology, or implementation details in a key. Locale-specific date, number, and currency formatting belongs to the relevant formatting APIs and Actual budget preferences, not to copied string-resource data.
+A new message goes in the bundle for its feature, or in `app` when no feature bundle fits. Keep keys stable when wording changes; do not encode English text, source-product terminology, or implementation details in a key. Locale-specific date, number, and currency formatting belongs to the relevant formatting APIs and Actual budget preferences, not to string resources.
 
 ### 4.1 Reports catalog requirements
 
-The `reports` bundle (or equivalent app-owned message group) covers every visible or accessible
-Reports string required by `15`, including:
+The `reports` bundle covers every visible or accessible Reports string required by `15`, including:
 
-- the five tab names, page headings, chart titles/descriptions, table captions/headers, axis labels,
-  legends, series names, units, and tooltips;
-- filter and option names, select-all/none actions, selected-count labels, search/no-match text,
-  group controls, date presets/range validation, comparison-period controls, and Use linked filters;
-- the Timeframe callout title, **From:** and **To:** endpoint labels, and accessible names for the
-  separate month and year controls for each endpoint (`15` §2.2); the Compare Period dialog title,
-  **Week**, **Month**, **Quarter**, **Year**, **Period:**, and **Compared with the previous period:**
-  labels and the period names shown in its selector and comparison preview (`15` §4.3);
-- saved-filter menu states, name input, duplicate/empty validation, save/replace/load/delete
-  confirmations, and saved-filter summaries;
-- loading, refreshing, stale/offline, error/retry, empty, zero-data, partial Money Age/coverage,
-  and unavailable-future-period states, plus the localized Money Age explanation
-  required by `15` §5, including its FIFO, historical coverage, purchase-date treatment, and
-  non-comparability with similarly named metrics;
-- CSV/Print menu items, file names and dialog labels, progress, success, cancel, and failure
-  messages, including the privacy-mode behavior of CSV versus Print.
+- the five tab names, page headings, chart titles/descriptions, table captions/headers, axis labels, legends, series names, units, and tooltips;
+- filter and option names, select-all/none actions, selected-count labels, search/no-match text, group controls, date presets/range validation, comparison-period controls, and Use linked filters;
+- the Timeframe callout title, **From:** and **To:** endpoint labels, and accessible names for the separate month and year controls for each endpoint (`15` §2.2); the Compare Period dialog title, **Week**, **Month**, **Quarter**, **Year**, **Period:**, and **Compared with the previous period:** labels and the period names shown in its selector and comparison preview (`15` §4.3);
+- saved-filter menu states, name input, duplicate/empty validation, save/replace/load/delete confirmations, and saved-filter summaries;
+- loading, refreshing, stale/offline, error/retry, empty, zero-data, partial Money Age/coverage, and unavailable-future-period states, plus the localized Money Age explanation required by `15` §5, including its FIFO, historical coverage, purchase-date treatment, and non-comparability with similarly named metrics;
+- CSV/Print menu items, file names and dialog labels, progress, success, cancel, and failure messages, including the privacy-mode behavior of CSV versus Print.
 
-All dates, currencies, amounts, and percentages are formatted by existing APIs; do not encode
-symbols, date patterns, or translated values in message keys or report data. Accessible names,
-descriptions, and announcements communicate the same meaning as visible text.
+All dates, currencies, amounts, and percentages are formatted by existing APIs; do not encode symbols, date patterns, or translated values in message keys or report data. Accessible names, descriptions, and announcements communicate the same meaning as visible text.

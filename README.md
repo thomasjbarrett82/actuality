@@ -6,14 +6,14 @@ workflow of a classic desktop budgeting app, modernized. The budget numbers come
 so they always match Actual's web app.
 
 Actuality isn't affiliated with or endorsed by the Actual Budget project, and it ships no third-party
-names, logos, images or fonts.
+logos, images or fonts.
 
 Actuality is developed with LLM assistance.
 
 ## Features
 
-- **Accounts and the register:** on-budget accounts, inline editing, splits, transfers,
-  payee auto-fill, color flags, cleared and reconciled states, a search language, undo, and
+- **Accounts and the register:** on- and off-budget accounts, inline editing, splits, transfers,
+  payee auto-fill, tags, cleared and reconciled states, a search language, undo, and
   reconciliation.
 - **Budget:** envelope budgeting with month columns for Budgeted, Outflows and Balance, the Available
   to Budget header, overspending handling, Quick Budget, a calculator, notes and hidden categories.
@@ -28,7 +28,8 @@ Actuality is developed with LLM assistance.
   Dark and color-blind-safe palettes.
 
 Everything is saved to the server as you go. When the server can't be reached, Actuality shows your
-cached budget **read-only** and explains why; it doesn't queue offline edits.
+cached budget **read-only** and explains why. You can't edit while offline; a change made just before
+the connection dropped is kept and sent when the server is back.
 
 Actuality has no database of its own. The things Actuality tracks and Actual doesn't (check numbers,
 etc.) are stored inside the Actual budget as tags, note tokens and
@@ -41,7 +42,7 @@ than password and OpenID. Actuality leaves that data alone. It doesn't edit it, 
 
 - An Actual Budget server, version **26.2.0** or later. The integration suite runs against 26.2.0 and
   the latest release.
-- Bundled Actual API: `@actual-app/api` 26.10.0. **Help ▸ About Actuality** shows both the bundled API
+- Bundled Actual API: `@actual-app/api` 26.11.0. **Help ▸ About Actuality** shows both the bundled API
   version and the version of the server you're connected to. Connecting to a server older than 26.2.0
   shows a warning.
 

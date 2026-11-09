@@ -19,7 +19,7 @@ Choose **File ▸ Preferences…** (**Ctrl+,**). On macOS, choose **Actuality �
 | Tags | **Manage Tags…**: view, create, recolor, describe, rename and delete tags, find tags already used in notes, and see the transactions with a tag. |
 | Language | **Use system setting**, or one of Actuality's languages. |
 | Auto-fill (all payees) | Whether choosing a payee fills in the **Category**, **Notes** and **Amount** from last time. The same settings are in [Payee Settings](../accounts-and-transactions/payees-and-rules.md#auto-fill-for-all-payees). |
-| File Associations | **Use Actuality to open bank statement files (.OFX,.QFX,.QIF,.CSV)?** (Windows and Linux). |
+| File Associations | **Use Actuality to open bank statement files (.OFX, .QFX, .QIF, .CSV)?** (Windows and Linux). |
 | Updates and News | **Display a notification when updates are available** checks api.github.com for a new version. **Show in-app notifications (release notes and announcements)** downloads the latest posts from actualitydesktop.org and shows the bell. Nothing about you or your budgets is sent. See [Updates and news](updates-and-news.md). |
 | Diagnostics | **Enable debug logging** records more detail in the log file, to help find problems. Passwords, tokens and budget contents are never recorded. |
 

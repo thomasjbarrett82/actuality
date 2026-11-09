@@ -52,7 +52,7 @@ for (const locale of locales) {
   warnings.push(...result.warnings);
 }
 
-// Pending catalog keys (scripts/i18n-pending.json): each must exist, and must not be used yet.
+// Pending keys (scripts/i18n-pending.json): each must exist, and must not be used yet.
 function sourceFiles(dir: string): string[] {
   return readdirSync(dir).flatMap((n) => {
     const p = join(dir, n);

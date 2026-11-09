@@ -60,10 +60,10 @@ flowchart TB
         end
 
         subgraph host["API HOST (utilityProcess, Node) — singleton"]
-            dispatch["index.ts<br/>RPC dispatch · zod validation · error mapping"]
+            dispatch["index.ts · dispatch.ts<br/>RPC dispatch · zod validation · error mapping"]
             conn["connection.ts<br/>state machine · health sync · **write gate**"]
             queue["queue.ts<br/>serial FIFO job queue (read / write / sync)"]
-            services["services/*<br/>session · budgetFile · accounts · transactions<br/>budget · categories · notes · payees · schedules<br/>reconcile · import · export · reports<br/>slateWipe · prefs · metadata"]
+            services["services/*<br/>budgetFile · accounts · transactions · tags<br/>budget · categories · notes · payees · rules · schedules<br/>reconcile · import · export · reports · slateWipe<br/>metadata · read · restore"]
             parsers["parsers/<br/>ofx · qif · csv"]
             actualts["**actual.ts**<br/>the ONLY importer of @actual-app/api"]
             api[["@actual-app/api"]]
@@ -73,8 +73,8 @@ flowchart TB
             preload["preload: window.app.shell<br/>+ forwards the host port"]
             rpcclient["rpc/ typed client<br/>generated from HostApi"]
             vq["TanStack Vue Query<br/>server-data cache"]
-            pinia["Pinia stores<br/>app · connection · budgetView<br/>registerView · reportsView · dialogs"]
-            screens["Screens & components<br/>start · shell · budget · register · dialogs"]
+            pinia["Pinia stores<br/>app · connection · settings · budgetSettings<br/>registerSession · registerJump · reportsView<br/>dialogs · modals · prompts · callouts · toasts"]
+            screens["Screens & components<br/>screens/start · screens/shell<br/>components/* per feature"]
             kbd["keyboard/ dispatcher"]
         end
     end
@@ -195,12 +195,12 @@ sequenceDiagram
     C-->>VQ: data
     VQ-->>UI: render
 
-    Note over D,C: Host → renderer events:<br/>connection:state · data:changed {tables} · budget:opened · job:progress
+    Note over D,C: Host → renderer events:<br/>connection:state · data:changed {tables} · budget:opened · job:progress<br/>slateWipe:interrupted · session:restoreFailed
 ```
 
 - **Request:** `{ id, method, params }`. **Response:** `{ id, ok: true, result }` or `{ id, ok: false, error: { code, message, details? } }`.
 - **Error codes:** `offline`, `auth`, `not-found`, `validation`, `conflict`, `timeout`, `actual`, `internal`. A `timeout` fails only its own call, except for the jobs that run `init`/`downloadBudget` (`session.connect`, `session.openBudget` and the re-init retry), which put the connection into `Error` (`03` §3). Reads like the one above skip the write gate.
-- **Method groups** (`03` §8): `session`, `budgetFile`, `accounts`, `transactions`, `budget`, `categories`, `notes`, `payees`, `schedules`, `reconcile`, `import`, `export`, `reports`, `slateWipe`, `prefs`.
+- **Method groups** (`03` §8): `session`, `budgetFile`, `accounts`, `transactions`, `tags`, `budget`, `categories`, `notes`, `payees`, `rules`, `schedules`, `reconcile`, `import`, `export`, `slateWipe`, `prefs`, `reports`.
 - **Reports:** `reports.get` is a strict, read-only host RPC. It runs one report calculation in one serial queue job, returns aggregate DTOs rather than the ledger, and may read cached Actual data offline. Pure calculations live in `shared/reporting/`. Vue Query requests only the active report; its key includes the report kind, effective filters, and options.
 - **Cache invalidation:** after a write or a successful sync the host emits `data:changed`. The renderer invalidates its Vue Query cache, and only active queries refetch. Reports depend on transactions, accounts, categories/category groups and mappings, payees and mappings, and currency/format preferences (`03` §4.1).
 
@@ -241,7 +241,7 @@ sequenceDiagram
         else gate passes
             Q->>S: validate invariants (04 §9)
             S->>S: notes = encode(notes, chk, review)
-            S->>A: addTransactions / updateTransaction (settling)<br/>(split: parent + full subtransactions,<br/>delete mirrors of removed transfer lines, copy date to other side,<br/>if Actual linked it to a schedule, restore the user's notes/category)
+            S->>A: addTransactions / transactions-batch-update<br/>(split: parent + full subtransactions,<br/>delete mirrors of removed transfer lines, copy date to other side,<br/>if Actual linked it to a schedule, restore the user's notes/category)
             A-->>S: ok (written to local cache)
             H-->>E: event data:changed {written tables + applied tables seen during the job}
             S-->>E: result (the write job ends here)
@@ -332,13 +332,13 @@ flowchart TB
         s1[("settings.json<br/>app preferences")]
         s2[("budgets/{cloudFileId}.json<br/>per-budget UI state, localId, lastSyncAt")]
         s3[("secrets.json<br/>server:{url} (session token) · e2e:{cloudFileId}<br/>encrypted with safeStorage")]
-        logs[("logs/<br/>rotating host log")]
+        logs[("logs/app.log<br/>rotating, written by main only")]
     end
 
     hostp["API host"] --> actual
     hostp --> c
-    hostp --> logs
     mainp["Main process"] --> s1
+    mainp --> logs
     mainp --> s2
     mainp --> s3
     hostp -. "control channel" .-> mainp
@@ -370,22 +370,22 @@ Writes to reserved notes are read-modify-write inside **one queue job**. They ar
 flowchart TB
     App["App.vue"]
     App --> Banner["ConnectionBanner"]
-    App --> ScreenHost["ScreenHost (350 ms slide)"]
-    App --> Hosts["DialogHost · CalloutHost · TooltipHost · LoadingOverlay · Announcer"]
+    App --> Router["RouterView"]
+    App --> Hosts["SessionHost · ToastHost · ModalHost · DialogHost<br/>CalloutHost · TooltipHost · LoadingOverlay · TheAnnouncer"]
 
-    ScreenHost --> Blue["BlueCanvas — start screens"]
-    Blue --> Connect & BudgetList & BudgetSetup & Loading & Preferences
+    Router --> MainScreen["MainScreen (350 ms slide)"]
+    MainScreen --> Start["StartCanvas — start screens"]
+    Start --> Connect & BudgetList & OpenBudget & BudgetSetup & Loading & Preferences
 
-    ScreenHost --> MainCanvas
-    MainCanvas --> Sidebar["Sidebar<br/>sections · account groups · balances · badges · DnD · indicator"]
-    MainCanvas --> PanelHost
+    MainScreen --> Sidebar["TheSidebar<br/>sections · account groups · balances · badges · DnD · indicator"]
+    MainScreen --> PanelHost
     PanelHost --> Welcome["WelcomePanel"]
-    PanelHost --> Budget["BudgetScreen<br/>envelope budget<br/>timeline · category column · month columns"]
-    PanelHost --> Register["RegisterScreen<br/>virtual grid · search · inline editor · splits<br/>scheduler pane · reconcile mode"]
+    PanelHost --> Budget["BudgetPanel<br/>envelope budget<br/>timeline · category column · month columns"]
+    PanelHost --> Register["RegisterPanel<br/>virtual grid · search · inline editor · splits<br/>scheduler pane · reconcile mode"]
     PanelHost --> Reports["ReportsPanel<br/>five tabs · linked filters · saved overrides<br/>charts + accessible tables (spec 15)"]
 
     subgraph common["components/common"]
-        cc["UiButton · TaskDialog · Callout · AutoComplete<br/>MoneyInput · DateField · MonthPicker · Calculator"]
+        cc["UiButton · TaskDialog · Callout · AutoComplete<br/>MoneyInput · DateField · MonthPicker · CalculatorPanel"]
     end
     Budget -.-> common
     Register -.-> common
@@ -445,8 +445,7 @@ flowchart TD
 flowchart LR
     f["File (dialog, drag or<br/>file association)"] --> p["import.parse<br/>host parsers: OFX/QFX/QIF/CSV"]
     p --> m["Per-account mapping dialog<br/>(remembered in ad:import-mappings)"]
-    m --> pv["import.preview<br/>importTransactions dryRun → counts"]
-    pv --> r["import.run (gated, 10-min job)<br/>importTransactions → Actual dedupe / match<br/>tag #needs-review, cleared"]
+    m --> r["import.run (gated, 10-min job)<br/>importTransactions → Actual dedupe / match<br/>tag #needs-review, cleared"]
     r --> res["Results dialog → register<br/>Approve / Approve and find next"]
 ```
 
@@ -470,7 +469,7 @@ flowchart LR
         l --> pkg["build (windows · macos · ubuntu)<br/>build, then package (electron-builder)"]
     end
     subgraph nightly["Nightly and before release"]
-        e2e["e2e: Playwright _electron on the packaged app<br/>(ubuntu; smoke on windows · macos)<br/>incl. axe, keyboard-only, zoom, target size"]
+        e2e["e2e: Playwright _electron on the built app (out/)<br/>(ubuntu; smoke on windows · macos)<br/>incl. axe, keyboard-only, zoom, target size"]
     end
     pkg -.-> e2e
 ```
@@ -492,7 +491,7 @@ flowchart TB
     golden["Parser golden files"] --> parsers2["host/parsers"]
     comp["Component — @vue/test-utils<br/>mocked RPC"] --> rend2["renderer components"]
     integ["Integration — every supported RPC method<br/>Docker actual-server: 26.2.0 (min) + latest<br/>stop container → offline transitions"] --> real
-    e2e2["E2E — 9 critical journeys<br/>packaged app, Playwright _electron"] --> app2["full app"]
+    e2e2["E2E — the critical journeys (21 §3)<br/>built app (out/), Playwright _electron"] --> app2["full app"]
     fixtures[("Fixtures: typical.zip ·<br/>large.zip (20k txns)")] --> integ
     fixtures --> e2e2
 ```
@@ -546,7 +545,7 @@ flowchart TB
 | — | Offline retries probe `GET /info` **outside the queue** first, and queue a `sync()` (server session) or a re-init (local-only session) only if it answers | A queued retry against a dead server would block reads for 10–15 s each time. |
 | — | Sign-in follows the server's **active** method: password → token login; **OpenID → browser flow** (loopback `http://localhost:{port}` listener in the host, `shell.openExternal`) → token; others unsupported. No password fallback on OpenID servers. | OpenID is supported. The server does the OAuth exchange and only accepts `localhost` return addresses. The token then works exactly like a password token. |
 | — | Multi-user servers: client only. Shared tag on others' budgets; no user or access management. A changed server `userId` **clears the other user's cached budgets**. | One computer may be used by several server users, and their cached budgets must not be visible to each other. |
-| — | Settling wrappers for `updateTransaction` / `deleteTransaction` | They resolve before the write lands. A job may only finish once its writes are visible. |
+| — | Transaction writes through the awaited `transactions-batch-update`; settling wrappers for the public `updateTransaction` / `deleteTransaction` as the fallback | `deleteTransaction` resolves before the write lands. A job may only finish once its writes are visible. |
 | — | Write gate in the host plus `useCanEdit()` in the UI | The requirement "no changes while offline", with a backstop |
 | — | Vue Query for server data, Pinia for view state | Clear cache-invalidation story (`data:changed`) |
 | — | `actual.ts` as the test seam | Host services are unit-testable against a fake; integration tests prove the API assumptions |

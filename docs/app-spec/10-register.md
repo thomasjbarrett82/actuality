@@ -7,14 +7,14 @@ The register shows the transactions of one account, or of **All Accounts**: ever
 ```text
 ┌─────────────────────────────────────────────────────────────────────────────────────┐
 │ Checking  [🗒] [✎]                                                               [⋯] │ ← account header (single account, 13 §3)
-│ [! 1 Transfer to an On-Budget account has a category Show] [⚠ 2 Warnings Show]   │ ← notifier strip (when needed)
-│ [⏰ 3 Transactions need to be approved  Show]          [ 1 Transaction has been deleted  Undo ] │
+│ [! 1 transfer to an on-budget account has a category  Show] [⚠ 2 Warnings  Show]    │ ← notifier strip (when needed)
+│ [⏰ 3 transactions need approval  Show]                       [ Deleted 1 transaction  Undo ] │
 ├─────────────────────────────────────────────────────────────────────────────────────┤
 │ [✎ Edit Transactions ▾] [＋ Add] [⇄ Transfer] [⇩ Import]     [◉|○] [All Dates ▾] [🔍 Search Checking ]│ ← toolbar (--control-h)
 ├─────────────────────────────────────────────────────────────────────────────────────┤
 │ Showing 12 results for "Payee: Kroger" during "This Month"            [✕ Clear Search]│ ← search info bar
 ├──┬───────┬────────┬───────┬──────────────┬─┬───────────────┬──────────────┬───────┬───────┬──────────┬──┤
-│☐ │Account│ Date   │Check #│ Payee        │!│ Category      │Notes         │Outflow│ Inflow│ Balance   │C │[⚙]
+│☐ │Account│ Date   │Check #│ Payee        │!│ Category      │Notes         │Outflow│ Inflow│ Balance   │C │
 ├──┼───────┼────────┼───────┼──────────────┼─┼───────────────┼──────────────┼───────┼───────┼──────────┼──┤
 │☐ │       │01/02/26│       │ Kroger       │ │ Groceries     │              │  52.10│       │  1,947.90│C │
 │☐ │       │01/03/26│       │ Transfer : Sav│ │              │              │ 100.00│       │  1,847.90│  │
@@ -264,9 +264,7 @@ The operators become vertical dividers (1 px wide, the panels' height, `--summar
 
 ### 7.3 Reconcile Account button
 
-A `--control-h-lg` "Reconcile\nAccount" button. Disabled in All Accounts (tooltip "Please select an account on the sidebar to reconcile"; a pointer-down shows a help callout on the sidebar's Budget Accounts group: "You can't reconcile from the All Accounts view.
-
-Please select the account you want to reconcile first."). Disabled offline. Starts reconciliation (`13` §6). While reconciling, the **Reconciling title** "Reconciling {account}..." is shown on its own line below the account header (§1); it's a separate element, and the header doesn't change.
+A `--control-h-lg` "Reconcile\nAccount" button. Disabled in All Accounts, with the tooltip "Please select an account on the sidebar to reconcile". Disabled offline. Starts reconciliation (`13` §6). While reconciling, the **Reconciling title** "Reconciling {account}..." is shown on its own line below the account header (§1); it's a separate element, and the header doesn't change.
 
 ### 7.4 Running balance tooltip
 
@@ -302,12 +300,12 @@ Any other active sort keys are ignored when deriving this order. For example, Pa
   - "1 of the selected transactions is a transfer. " / "{n} of the selected transactions are transfers. " + "Deleting a transfer will delete its counterpart transaction in another account." Split transactions with transfer lines count here too.
   - Buttons: Cancel / **Delete Transaction** / **Delete Transactions** (default).
 - **Split transfer lines:** deleting a split parent makes Actual *unlink* the mirrors of its transfer lines rather than delete them (`04` §3). The host deletes those mirrors itself, in the same job, so the result matches the reference design: deleting a split deletes all its transfer counterparts.
-- **Undo (app-level):** before deleting, the host snapshots each deleted transaction, its splits and its transfer counterpart (full field set, including `rawNotes`, `cleared`, `reconciled`, `imported_id`). `transactions.undo(token)` re-creates them with **new ids**. showed that Actual silently drops a create that reuses a deleted id.
+- **Undo (app-level):** before deleting, the host snapshots each deleted transaction, its splits and its transfer counterpart (full field set, including `rawNotes`, `cleared`, `reconciled`, `imported_id`). `transactions.undo(token)` re-creates them with **new ids**, because integration tests showed that Actual silently drops a create that reuses a deleted id.
   - Normal transactions and splits are re-created with `addTransactions(acct, [...], { runTransfers: true })`, with the snapshotted fields and `cleared` set explicitly.
   - A transfer is re-created **once**, from the side that was deleted (or the first one selected), through its transfer payee. Actual creates a new mirror.
   - A split is re-created with its transfer lines, so Actual creates a new mirror for each line. The mirrors the host deleted (above) are not re-created separately.
   - In the same job, the host then restores each mirror's own snapshotted `date`, `cleared`, `reconciled` and `category`, which Actual doesn't take from the source. The category matters for the on-budget side of an on↔off transfer, which has its own.
-  - The undo token maps old ids → new ids, so the re-created rows can be re-selected. The Undo notifier ("1 Transaction has been deleted" / "{n} Transactions have been deleted") lasts until the next mouse-down elsewhere. Undo needs `canEdit`: an undo refused offline keeps its token, and the notifier shows again after the offline dialog so it can be retried.
+  - The undo token maps old ids → new ids, so the re-created rows can be re-selected. The Undo notifier ("Deleted 1 transaction" / "Deleted {n} transactions") lasts until the next mouse-down elsewhere. Undo needs `canEdit`: an undo refused offline keeps its token, and the notifier shows again after the offline dialog so it can be retried.
 
 ## 9. Selection & keyboard (grid not in edit mode)
 

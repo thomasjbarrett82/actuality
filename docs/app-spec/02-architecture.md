@@ -45,13 +45,13 @@ Pin the exact latest stable versions when scaffolding. Record them in `package.j
 | Virtual lists | **@tanstack/vue-virtual** | register and scheduler |
 | Popover positioning | **@floating-ui/dom** | callouts with tail positions (`17`) |
 | Dates | **date-fns** (no time zones; dates are `YYYY-MM-DD` strings) | |
-| i18n | **vue-i18n** (composition mode), message files generated from `20` | |
+| i18n | **vue-i18n** (composition mode), message files in `src/shared/i18n/` | `20` |
 | Fonts | **Source Sans 3** via `@fontsource/source-sans-3` (OFL) | substitutes Myriad Pro |
 | Icons | an open-source icon set (e.g. **Lucide** via `lucide-vue-next`) + custom SVGs for cleared states | no third-party images |
 | Secrets | Electron **safeStorage** | `19` §4 |
 | Settings files | plain JSON with atomic write (write temp + rename), schema-versioned | not a database |
 | Unit tests | **Vitest** (+ `@vue/test-utils`, `happy-dom`, `fast-check` for property tests, `vitest-axe` / `axe-core` for component accessibility) | |
-| E2E | **Playwright** `_electron` | against a real `actualbudget/actual-server` Docker container |
+| E2E | **Playwright** `_electron` | the built app (`out/`), against a real `actualbudget/actual-server` Docker container |
 | Type checking | **vue-tsc** (checks `.ts` and `.vue`, templates included) | §5.1 |
 | Lint | **ESLint** flat config with typescript-eslint (type-aware `strictTypeChecked`, `projectService`), eslint-plugin-vue, `@intlify/eslint-plugin-vue-i18n`, `eslint-plugin-vuejs-accessibility`, `eslint-plugin-boundaries`, `eslint-plugin-import-x`, `@vitest/eslint-plugin`, `eslint-plugin-playwright`, `@eslint-community/eslint-plugin-eslint-comments`, `eslint-config-prettier`, and a local plugin for project rules | `21` §4.1 |
 | Styles lint | **stylelint** with `stylelint-config-standard` and `stylelint-config-recommended-vue` | `21` §4.2, `05` |
@@ -75,57 +75,65 @@ actuality/
 ├─ website/                      (the user guide: a Docusaurus site with its own package.json and lockfile;
 │                                 guides in website/docs/, written for users, not normative — see below;
 │                                 the blog in website/blog/ and the news feed, website/static/news.json — §3.1)
-├─ resources/                    (app icons placeholder set, sample CSV, licenses)
+├─ resources/                    (app icons, logos and spinners)
 ├─ src/
 │  ├─ shared/                    (pure TS, no Node/DOM APIs; imported by all)
 │  │  ├─ money.ts                (minor-unit math, parse/format, currency decimals)
 │  │  ├─ dates.ts                (YYYY-MM-DD / YYYY-MM helpers, loose parsing — 11 §3)
+│  │  ├─ settings.ts             (settings schemas and defaults — 19)
+│  │  ├─ aspects/                (logging aspects and the weaving functions — §8.5)
 │  │  ├─ domain/                 (types from 04, error-state rules, transfer rules)
 │  │  ├─ metadata/               (notes token codec, tag names, reserved-note schemas — 04 §5)
 │  │  ├─ search/                 (register search parser + predicate builder — 10 §4)
 │  │  ├─ schedule/               (frequency ↔ RecurConfig mapping — 12 §1)
 │  │  ├─ quickbudget/            (average/history math — 09 §5)
+│  │  ├─ reporting/              (pure report calculations — 15)
+│  │  ├─ import/, export/        (import rules and export formats — 16)
 │  │  ├─ i18n/                   (message files per locale + meta.json; translate.ts for main — 20 §3)
 │  │  ├─ news/                   (the news feed contract and the site's addresses — §3.1; version
 │  │  │                           comparison and read state — 24 §3.2, §4.4)
 │  │  └─ rpc/                    (host-api.ts: renderer↔host methods, error codes;
 │  │                              control-api.ts: main↔host control channel — §4.1)
 │  ├─ main/                      (Electron main)
-│  │  ├─ index.ts, window.ts, menu.ts, shortcuts.ts
-│  │  ├─ host-supervisor.ts      (spawn/restart utility process, port brokering)
-│  │  ├─ settings-store.ts, secrets.ts, dialogs.ts, print.ts
-│  │  ├─ news.ts                 (the news feed and update check requests — 24 §4.2)
+│  │  ├─ index.ts, window.ts, menu.ts, menu-template.ts, about.ts
+│  │  ├─ host-supervisor.ts, host-control.ts (spawn/restart utility process, port brokering,
+│  │  │                           the control channel — §4.1)
+│  │  ├─ settings-store.ts, secrets.ts, dialogs.ts, print.ts, log.ts
+│  │  └─ news.ts                 (the news feed and update check requests — 24 §4.2)
 │  ├─ preload/index.ts           (contextBridge: window.app)
 │  ├─ host/                      (API host utility process)
-│  │  ├─ index.ts                (port listener, RPC dispatch)
+│  │  ├─ index.ts, dispatch.ts   (port listener, RPC dispatch)
 │  │  ├─ actual.ts               (thin wrapper over @actual-app/api — the ONLY importer)
 │  │  ├─ queue.ts, connection.ts (serial queue, connection monitor, write gate)
-│  │  ├─ services/               (session, budgetFile, accounts, transactions, budget, categories,
-│  │  │                           notes, payees, schedules, reconcile, import, export,
-│  │  │                           slateWipe, prefs — one per RPC group in the 03 catalog — and metadata)
-│  │  └─ parsers/                (ofx, qif, csv)
+│  │  ├─ diagnose.ts             (the connection diagnosis — 03 §9.1)
+│  │  ├─ services/               (one per RPC group in the 03 catalog: budget-file, accounts,
+│  │  │                           transactions, tags, budget, categories, notes, payees, rules,
+│  │  │                           schedules, reconcile, import, export, slate-wipe, reports;
+│  │  │                           and metadata, read, restore)
+│  │  └─ parsers/                (ofx, qif, csv; golden files in parsers/fixtures/)
 │  └─ renderer/
 │     ├─ index.html, main.ts, App.vue, router.ts, i18n.ts
 │     ├─ styles/                 (tokens.css, base.css — 05)
-│     ├─ rpc/                    (typed client over MessagePort, vue-query keys)
-│     ├─ stores/                 (Pinia: app, connection, budgetView, registerView, dialogs)
-│     ├─ components/common/      (Callout, TaskDialog, AutoComplete, MoneyInput, DateField, Calculator…)
+│     ├─ rpc/, queries/          (typed client over MessagePort, vue-query keys and queries)
+│     ├─ stores/                 (Pinia: app, connection, settings, budgetSettings, dialogs, modals,
+│     │                           prompts, callouts, toasts, loading, start)
+│     ├─ register/, budget/, reports/ (feature logic: view state, commit pipeline, report state …)
+│     ├─ components/             (common/: Callout, TaskDialog, AutoComplete, MoneyInput, DateField,
+│     │                           CalculatorPanel…; and one folder per feature, sidebar/ included)
 │     ├─ screens/
-│     │  ├─ start/               (Connect, BudgetList, BudgetSetup, Loading, Preferences)
-│   │  ├─ shell/               (MainCanvas, Sidebar, WelcomePanel, ConnectionBanner)
-│     │  ├─ budget/, register/
-│     │  └─ dialogs/             (CreateAccount, AccountBalance, Reconcile, PayeeSettings, Import…, SlateWipe, About)
+│     │  ├─ start/               (StartCanvas, Connect, BudgetList, OpenBudget, BudgetSetup, Loading,
+│     │  │                        Preferences)
+│     │  └─ shell/               (MainScreen, PanelHost, BudgetPanel, RegisterPanel, ReportsPanel,
+│     │                           WelcomePanel)
 │     └─ keyboard/               (central key dispatcher — 06 §6)
-└─ tests/ (unit fixtures, e2e, docker-compose for test server)
+└─ tests/                        (int/, e2e/, unit/, and fixtures/: fixture budgets and their facts)
 ```
+
+The register and Reports view stores (`registerSession`, `registerJump`, `reportsView`) sit with their features, in `register/` and `reports/`.
 
 **The user guide** (`website/`) is a static Docusaurus site of task-oriented guides for people using the app. This specification stays the normative description of behavior; when the app changes, update the guide pages that describe it in the same change, and quote UI text exactly, as here. Each page's front matter lists the chapters it describes (`spec: ['09']`), which `docs:check` and `docs:sync` use to keep the two in step (`21` §4.5). The site has its own dependencies (Docusaurus and React), kept apart from the app's so they never reach the packaged app, and it builds to `website/build/` (git-ignored). It serves the app's own icons from `resources/icons/svg`. The root ESLint and stylelint configs ignore `website/`: its TypeScript is checked by its own `typecheck`, and its CSS sets Docusaurus's theme with literal colors, which the app's token rules (`21` §4.2) don't cover.
 
-Reports is a renderer feature with an active tab, linked/effective filter state, and page-specific
-saved-filter overrides in Pinia. Vue Query requests only the active report through the typed host
-RPC. Pure report calculations live in `src/shared/reporting/`; the host reports service gathers
-normalized Actual inputs in one serial read job and returns bounded aggregate DTOs, not the
-transaction ledger (`03` §3, §8; `15` §7).
+Reports is a renderer feature with an active tab, linked/effective filter state, and page-specific saved-filter overrides in Pinia. Vue Query requests only the active report through the typed host RPC. Pure report calculations live in `src/shared/reporting/`; the host reports service gathers normalized Actual inputs in one serial read job and returns bounded aggregate DTOs, not the transaction ledger (`03` §3, §8; `15` §7).
 
 ### 3.1 Blog and news feed
 
@@ -190,7 +198,7 @@ Main applies the same rules to `shell.openExternal` from the host as from the re
   - **macOS:** DMG + zip (universal or separate x64/arm64), hardened runtime, notarization via `notarytool` (CI secrets).
   - **Linux:** AppImage, deb and rpm (x64 + arm64).
 - **Signing:** Windows Authenticode and macOS notarization use the CI signing secrets when they are set. Without them the build is unsigned. Signed installers are required from the `1.0.0` release on (`21` §7); `0.x` releases may ship unsigned.
-- **Native modules (checked against `@actual-app/api@26.10.0`):** the only native module is **`better-sqlite3@13.0.3`**. Its `.node` binary must be loaded from outside the asar archive.
+- **Native modules (checked against `@actual-app/api@26.11.0`):** the only native module is **`better-sqlite3@13.0.3`**. Its `.node` binary must be loaded from outside the asar archive.
   - It is an **N-API** addon (`NAPI_VERSION=10`, `node-addon-api`). Its binary is ABI-stable across Node and Electron, so **`@electron/rebuild` is not used**.
   - The npm tarball ships prebuilt binaries for `win32-x64/arm64`, `darwin-x64/arm64`, `linux-x64/arm64` and `linuxmusl-x64/arm64`, with no install script and no compile step. Packaging never compiles native code.
   - `allowScripts` in `package.json` MUST deny `better-sqlite3`. The tarball sets `gypfile: false`, but the lockfile does not record that field, so installing from the lockfile sees `binding.gyp` and runs `node-gyp rebuild`, which fails on a machine with no C++ toolchain. Denying the scripts keeps every install on the prebuilt binary.
@@ -216,17 +224,24 @@ electron-vite builds with Vite (Rolldown and Oxc), which strip types without che
 | `typecheck` | `vue-tsc --build` over the three TypeScript projects: `tsconfig.node.json` (main, host, shared, scripts, tests, configs), `tsconfig.preload.json` (preload, shared; Node and DOM types, because preload forwards a DOM `MessagePort`) and `tsconfig.web.json` (renderer, shared). Incremental (`.tsbuildinfo`), declaration-only output in `node_modules/.cache`. |
 | `dev` | `install-electron` (Electron has no install script and downloads its binary on first use, but `electron-vite` only looks for it, and fails if it is missing; no-op once downloaded), generates the `en-XA` pseudo-locale (`20` §3.6), then `electron-vite dev` |
 | `start` | `install-electron`, then `electron-vite preview` |
-| `lint` | `eslint. --max-warnings 0 --cache --report-unused-disable-directives` |
+| `lint` | `eslint . --max-warnings 0 --cache --report-unused-disable-directives` |
 | `lint:css` | `stylelint "src/**/*.{css,vue}" --max-warnings 0` |
-| `format:check` | `prettier --check.` |
+| `format:check` | `prettier --check .` |
 | `deadcode` | `knip` |
 | `docs:check` | `markdownlint-cli2` on `docs/**/*.md`, `website/docs/**/*.md` and `website/blog/**/*.md`, then `tsx scripts/docs-check.ts` on `docs/` (`21` §4.5) |
 | `docs:sync` | `tsx scripts/docs-sync.ts [base] [head]`: the spec, user guide and UI strings stay in step across a range of commits (`21` §4.5) |
 | `docs:site` / `docs:site:build` | the user guide site (§3): the Docusaurus dev server / its typecheck, then `docusaurus build` into `website/build/`. Run `npm --prefix website ci` first. |
 | `news:build` / `news:check` | `tsx scripts/news-feed.ts`: writes the news feed, `website/static/news.json`, from the blog posts / `tsx scripts/news-feed.ts --check`: writes nothing, and fails when the committed feed is out of date (§3.1) |
 | `check` | `format:check`, `lint`, `lint:css`, `typecheck`, `i18n:check` (`20` §3.7), `deadcode`, `docs:check`, `news:check` (§3.1), in that order, stopping at the first failure |
-| `build` | `typecheck`, then `electron-vite build`. A type error fails the build. |
+| `build` | `typecheck`, then `electron-vite build`, then `licenses` (`scripts/third-party-licenses.ts` writes `out/THIRD-PARTY-LICENSES.txt`, `18` §1). A type error fails the build. |
+| `licenses` | `tsx scripts/third-party-licenses.ts`: the third-party license file alone (`build` runs it) |
+| `package` | `electron-builder --config electron-builder.yml`: installers for the current OS into `release/`, from what `build` left in `out/` |
 | `test` / `test:int` / `test:e2e` | unit and component (Vitest) / integration (`21` §1) / `install-electron` (so a missing binary fails once, before the build, not in every test), `build`, then E2E (Playwright), because `dev` leaves `out/` without a renderer |
+| `test:coverage` | `test` with coverage, against the targets in `21` §4 |
+| `i18n:check` | `tsx scripts/i18n-check.ts`: the message files of every locale (`20` §3.7) |
+| `fixtures:build` / `demo:build` | rebuild the test fixture budgets / the user guide's demo budget (`21` §2) |
+| `format` | `prettier --write .` |
+| `release:preview` | `commit-and-tag-version --dry-run`: the next version and changelog section, without writing them |
 
 **Git hooks** (installed by `simple-git-hooks` on `npm install`; `lint-staged` for staged files):
 
@@ -245,7 +260,7 @@ Hooks can be skipped with `--no-verify`, so they're a convenience, not the gate.
 | `integration` | ubuntu-latest | `test:int` against the Docker test server matrix (`21` §1) | every push and pull request, after `check` |
 | `build` | windows-latest, macos-latest, ubuntu-latest | `build`, then package (`electron-builder`) | every push and pull request, after `check` |
 | `website` | ubuntu-latest | in `website/`: `npm ci`, `typecheck`, `build` (broken links and anchors fail it) | every push and pull request, after `check` |
-| `e2e` | ubuntu-latest (smoke on windows and macos) | `install-electron` (up to five tries, because the GitHub release download can time out), then `test:e2e` on the packaged app, including the axe, keyboard-only, zoom and target-size suites (`22` §7) | nightly, on demand, and in the CI run of a release merge (`21` §1) |
+| `e2e` | ubuntu-latest (smoke on windows and macos) | `install-electron` (up to five tries, because the GitHub release download can time out), then `test:e2e` on the built app (`out/`, not packaged), including the axe, keyboard-only, zoom and target-size suites (`22` §7) | nightly, on demand, and in the CI run of a release merge (`21` §1) |
 | `release` | ubuntu-latest | tags the commit `v{version}` and drafts its GitHub release with the 12 installers from `build` and the version's `CHANGELOG.md` section (`scripts/release-notes.ts`); a re-run reuses the tag and the draft | pushes to `main` whose commit is a release merge (`chore: release v{version}`), after every other job and `e2e` pass |
 | `pull-request` (`release.yml`) | ubuntu-latest | `commit-and-tag-version` bumps `package.json` and the lockfile and writes `CHANGELOG.md` from the conventional commits since the last tag; `scripts/release-post.ts` writes the release's blog post from that section, and `news:build` regenerates the news feed, both added to the release commit (§3.1); then it opens the release pull request with auto-merge (squash) | on demand: Actions ▸ Release ▸ Run workflow, choosing patch, minor or major |
 | `build`, `deploy` (`docs-deploy.yml`) | ubuntu-latest | in `website/`: `npm ci`, `build`; then publish `website/build/` (the guide, the blog, its RSS feed and the news feed, §3.1) to GitHub Pages at `https://actualitydesktop.org` | pushes to `main` that change the site, its icons or the Node version, and on demand |
@@ -268,7 +283,7 @@ CI runs on branch pushes and pull requests, not on tags. A newer push cancels a 
 | --- | --- | --- |
 | Menu | menu bar on the window (`06` §4) | app menu + standard Window menu |
 | Delete key in register | Delete | Backspace (and Delete) |
-| Preferences | File ▸ Preferences… (Ctrl+) | App menu ▸ Settings… (⌘) |
+| Preferences | File ▸ Preferences… (Ctrl+,) | App menu ▸ Settings… (⌘,) |
 | Quit | File ▸ Exit | App menu ▸ Quit (⌘Q) |
 | About | Help ▸ About | App menu ▸ About |
 | Full screen | View ▸ Toggle Full Screen (F11) | View ▸ Toggle Full Screen (Ctrl+Cmd+F) |
@@ -329,7 +344,7 @@ Events that are neither a failure nor a transition (carryover extended to new mo
 ### 8.4 What is logged, and what never is
 
 - Debug entries describe **what happened and how long it took**: event names, ids, counts, durations, status codes, error codes and the shape of parameters and results (the top-level key names, and array lengths).
-- **Never logged at any level:** passwords, session tokens, encryption passwords, certificate contents, request or response bodies, headers, cookies, query strings, and budget content (payees, amounts, notes, notes, account or category names, file contents). Local paths show `~` in place of the home folder.
+- **Never logged at any level:** passwords, session tokens, encryption passwords, certificate contents, request or response bodies, headers, cookies, query strings, and budget content (payees, amounts, notes, account or category names, file contents). Local paths show `~` in place of the home folder.
 - **Error messages and stacks:** a failed call or step logs the error's **code** (and its class name when it isn't a plain `Error`). The message is logged only when the error is our own `RpcError`, whose texts are fixed strings from `20-strings.md`. Messages from Actual, the server or Node can carry payee or category names, so they are never logged by the aspects (`safeError` in `shared/aspects/log-entry.ts`). When debug logging is on, exception entries also include stack frames; the stack's first line is omitted because it contains the exception message. With debug logging off, no stack is recorded. The error boundaries log the message of an uncaught exception, which is our code's.
 - **Unhandled rejections in main:** main registers `unhandledRejection` to log it, which replaces Node's default warning printed to the console for such a rejection, so it goes to the log file. `uncaughtException` is only monitored, so Electron's own handling stays.
 - A **redaction step** sits in the sink, as the last aspect before the write. It replaces the value of any key matching `/pass(word)?|token|secret|authorization|cookie|key/i` with `"[redacted]"` (at any depth, down to 6 levels), and cuts any string over 500 characters. It is a safety net: the aspects aren't meant to pass such values, and a test fails when one gets through (§8.6).

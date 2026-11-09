@@ -66,7 +66,7 @@ interface BudgetMonthView {
 }
 ```
 
-- **Field mapping and signs** (confirmed against API 26.10.0 / server 26.2.0; `cur` = `getBudgetMonth(m)`, `prev` = `getBudgetMonth(prev(m))`):
+- **Field mapping and signs** (confirmed against API 26.11.0 / server 26.2.0; `cur` = `getBudgetMonth(m)`, `prev` = `getBudgetMonth(prev(m))`):
 
   | View field | Source | Raw sign in Actual |
   | --- | --- | --- |
@@ -191,7 +191,7 @@ Three cells: **Budgeted** (34% plus `--space-1`, bordered box), **Outflows** (33
 
 #### Editing the Budgeted cell (requires `canEdit`; otherwise the cell is read-only and shows the offline tooltip)
 
-1. Click → the cell becomes a right-aligned text input with transparent background and all text selected. Allowed characters: digits, `., + - * /`, and the locale decimal separator (the numpad decimal key inserts the locale separator). A small **dropdown arrow** appears at the box's right edge (tooltip "Click for Quick Budget options and calculator").
+1. Click → the cell becomes a right-aligned text input with transparent background and all text selected. Allowed characters: digits, `. , + - * /`, and the locale decimal separator (the numpad decimal key inserts the locale separator). A small **dropdown arrow** appears at the box's right edge (tooltip "Click for Quick Budget options and calculator").
 2. Keys:
 
    | Key | Action |
@@ -361,8 +361,7 @@ Opened by clicking an Outflows value (category, group, Uncategorized, totals) or
 - Read-only grid (`--row-h` rows, 4–8 rows tall, scrolling beyond): **Date** (4 rem), **Account** (5.75 rem), **Payee** (5.75 rem; split lines show "[Split] {Payee} / Transfer: X"), **Notes** (5.75 rem; split notes + " - " + parent notes), **Amount** (5.75 rem, right). Sorted newest first.
 - Clicking a row closes the popover and jumps to that transaction in the register (`10` §9.1).
 - Buttons: **Show in Account View** (eye icon; disabled when empty) → the register (the single account if all rows share one, otherwise All Accounts) with a pre-built search (`Category: {Group}: {Name},`, or `Income: {Month YYYY},`) and a date filter covering the transactions' dates. **Close**.
-- When a category or group has *no* outflows and the user clicks its Outflows cell (not Hidden/Uncategorized), and `showEmptyOutflowTooltip` is true: the text popover "How to Enter an Outflow": "There are currently no outflows for the category **'{category}'** in {month}.
-- To enter an outflow, select one of your accounts and click **Add** in the register toolbar. Make sure to categorize the transaction as **'{category}'** and date it sometime in {month} to have it show up here." with a **Don't show this again** checkbox (saves `showEmptyOutflowTooltip = false` and closes).
+- When a category or group has *no* outflows and the user clicks its Outflows cell (not Hidden/Uncategorized), and `showEmptyOutflowTooltip` is true: the text popover "How to Enter an Outflow": "There are currently no outflows for the category **'{category}'** in {month}." and, as a second paragraph, "To enter an outflow, select one of your accounts and click **Add** in the register toolbar. Make sure to categorize the transaction as **'{category}'** and date it sometime in {month} to have it show up here." with a **Don't show this again** checkbox (saves `showEmptyOutflowTooltip = false` and closes).
 
 ## 7. Keyboard & mouse
 

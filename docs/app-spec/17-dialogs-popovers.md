@@ -99,7 +99,7 @@ Callouts in the app:
 | Timeframe (register) | `10` §3 |
 | Income-as-outflow "Just Checking..." | `11` §6 |
 | Invalid date | `11` §3 |
-| Text callouts (`--popover-w`, optional title, HTML body `body` `--text-subtle`): "How to Enter an Outflow", "Scheduled transaction added", "Transaction moved", "You can't reconcile from the All Accounts view" | various |
+| Text callouts (`--popover-w`, optional title, HTML body `body` `--text-subtle`): "How to Enter an Outflow" (`09` §6.6) | `09` |
 
 ## 4. Plain tooltips
 

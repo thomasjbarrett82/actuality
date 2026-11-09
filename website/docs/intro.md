@@ -23,7 +23,7 @@ Actuality doesn't keep a database of its own. Your budget lives on your Actual s
 - **Everything is saved as you go.** There is no Save button. Each change is sent to your server straight away, and **File ▸ Sync Now** (**Ctrl+S**) checks for changes made elsewhere.
 - **The numbers match Actual's.** Budget amounts come from Actual's own budget engine, so Actuality always shows the same numbers as Actual's web app.
 - **Your data is shared with other Actual apps.** You can open the same budget in Actual's web app or on another computer. The few things Actuality tracks that Actual doesn't (such as check numbers and which payees appear in the payee list) are stored inside the budget, so they sync to every device. Other Actual apps will see them as tags and note text.
-- **No connection, no changes.** Actuality keeps a copy of each budget you open on your computer. When the server can't be reached, it shows that copy **read-only** and explains why. It never queues up changes to send later. See [Connection problems](./troubleshooting/connection-problems.md).
+- **No connection, no changes.** Actuality keeps a copy of each budget you open on your computer. When the server can't be reached, it shows that copy **read-only** and explains why. You can't make changes while it's offline; a change you made just before the connection dropped is kept on your computer and sent when the server is back. See [Connection problems](./troubleshooting/connection-problems.md).
 
 ## What you need
 

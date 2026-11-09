@@ -12,18 +12,19 @@
 ```text
 App.vue
 ├─ ConnectionBanner        (top, 0 or `--bar-h`; only in OfflineReadOnly / Reconnecting / unsynced, 03 §4)
-├─ ScreenHost              (slide transition 350 ms between the two canvases)
-│  ├─ BlueCanvas           — full-window start screens: Connect, Budget List, Open/Import,
-│  │                          Budget Setup / Properties, Loading, Preferences      (07)
-│  └─ MainCanvas (flex row)
-│     ├─ Sidebar (full height)                                                     (08)
+├─ RouterView
+│  └─ MainScreen           (slide transition 350 ms between the start screens and the shell)
+│     ├─ StartCanvas       — full-window start screens: Connect, Budget List, Open/Import,
+│     │                       Budget Setup / Properties, Loading, Preferences      (07)
+│     ├─ TheSidebar (full height)                                                  (08)
 │     └─ PanelHost (white "paper" panel, slight rounded top-left corner and shadow)
 │        ├─ WelcomePanel   (no screen selected yet)
-│        ├─ BudgetScreen                                                           (09)
-│        ├─ RegisterScreen                                                         (10)
-│        └─ ReportsScreen                                                          (15)
+│        ├─ BudgetPanel                                                            (09)
+│        ├─ RegisterPanel                                                          (10)
+│        └─ ReportsPanel                                                           (15)
+├─ SessionHost / ToastHost / ModalHost                                             (03 §7, 17 §9)
 ├─ DialogHost / CalloutHost / TooltipHost / LoadingOverlay                         (17)
-├─ Announcer               (visually hidden live regions; 23)
+└─ TheAnnouncer            (visually hidden live regions; 22)
 ```
 
 - Panel switches slide (350 ms). Budget and Register show a centered loading illustration the first time each is shown (a `status` with the accessible name "Loading…", and `aria-busy` on the panel). The illustration fades out (350 ms, after the first data arrives or 1 s, whichever is later) while the screen fades in (350 ms). Reports owns its query loading, error, and empty states within the panel (`15`, `22`).
@@ -143,12 +144,12 @@ A display-only toggle for screen sharing. While it's on, every visible money amo
 
 - **State**: the `privacyMode` app preference (`19` §1), a bool that defaults to false. It's per device, persists across restarts and budgets, and is never synced. The renderer holds it in the Pinia `app` store, applies it to all windows' content immediately, and saves it through `shell.settings.set`.
 - **Controls**: the eye button in the sidebar's bottom controls (`08` §2.4) and View ▸ Privacy Mode (Ctrl+Shift+P). Both reflect the same state. The button's **tooltip** is "Enable privacy mode" when off and "Disable privacy mode" when on. Its **accessible name** is the fixed "Privacy mode" with `aria-pressed`, so a screen reader says "Privacy mode, toggle button, pressed" and the label doesn't contradict the state. Toggling from the menu or the shortcut announces "Privacy mode on" / "Privacy mode off" through the live region (`22` §4); the button's own state change is announced by the screen reader, so the button doesn't add a second announcement.
-- **What is masked**: every money amount rendered by the UI, formatted through `shared/money.ts`. That covers sidebar account balances and badges that show amounts, budget screen columns and header summaries (Available to Budget, Budgeted, Spent, Balance, month totals), the register (Payment, Deposit, Balance columns, split rows, the editor's displayed amounts, reconciliation and statement balances, the status line), scheduled transactions, dialogs, popovers and tooltips that show amounts, and the printed output (`16` §3).
+- **What is masked**: every money amount rendered by the UI, formatted through `shared/money.ts`. That covers sidebar account balances and badges that show amounts, budget screen columns and header summaries (Available to Budget, Budgeted, Outflows, Balance, month totals), the register (Outflow, Inflow, Balance columns, split rows, the editor's displayed amounts, reconciliation and statement balances, the status line), scheduled transactions, dialogs, popovers and tooltips that show amounts, Reports (charts, tables and a report's CSV, `15` §7), and the printed output (`16` §3).
 - **Implementation**: one shared `<MoneyAmount>` display component (not `<Money>`, which would clash with the `Money` type in every file that uses both), backed by `formatMoneyDisplay(m, settings, opts)` in `shared/money-display.ts`, is the only way the renderer shows an amount. It renders the mask instead of the text when `privacyMode` is on. Components never test the flag themselves. Text that can't hold the mask glyph (messages, tooltips, print) takes it from the same helper through `renderer/money-display.ts`: `moneyText` gives a fixed squiggle text (`∿∿∿∿`), `moneyLabel` gives "Hidden amount" for accessible names and announcements. Amount fields use `useMaskedField(text)` from the same file.
 - **No reveal**: there is no hover or focus reveal of a masked display value, and no per-value override. (Actual's original request, `actualbudget/actual#1041`, proposed revealing on hover. Actual shipped a full mask instead, and Actuality follows the shipped behavior, which is safer for screen sharing.) To see a value, turn the mode off.
 - **The mask** is a fixed decorative squiggly-line SVG drawn with `currentColor`, vertically centered, in the same alignment and roughly the same width as the amount it replaces (it keeps the column's right alignment). Its width doesn't depend on the value, so the digit count can't be inferred. Masked values have `aria-label="Hidden amount"` (`a11y` bundle), and the real value is never in the DOM text, `title`, `aria-*` attributes or tooltips while the mode is on.
-- **Amount fields** (the editor's Payment and Deposit, Hold, the reconciliation statement balance, a new account's balance) show the mask text until the user edits them, including when they open pre-filled with a balance. Focus alone doesn't reveal a field, because dialogs and the editor focus an amount field as they open. A click in the field or a key pressed in it (other than Tab, Esc and modifier keys) reveals the real text, before the key acts; if the whole mask was selected, the whole amount is, so typing replaces it. Leaving the field masks it again. A masked field's accessible description is "Hidden amount". Editing a field isn't the reveal ruled out below. The Budgeted cell's input exists only while it's being edited, so it's always unmasked.
-- **Not masked**: the text of an amount field that has focus, because the user is entering their own data. Export files (`16` §2) and backups are data, not display, and always contain the real values. The export and print dialogs don't change. The user can still select and copy a masked cell: the clipboard gets nothing for it.
+- **Amount fields** (the editor's Outflow and Inflow, Hold, the reconciliation statement balance, a new account's balance) show the mask text until the user edits them, including when they open pre-filled with a balance. Focus alone doesn't reveal a field, because dialogs and the editor focus an amount field as they open. A click in the field or a key pressed in it (other than Tab, Esc and modifier keys) reveals the real text, before the key acts; if the whole mask was selected, the whole amount is, so typing replaces it. Leaving the field masks it again. A masked field's accessible description is "Hidden amount". Editing a field isn't the reveal ruled out below. The Budgeted cell's input exists only while it's being edited, so it's always unmasked.
+- **Not masked**: the text of an amount field once a click or key has revealed it (above), because the user is entering their own data. Export files (`16` §2) and backups are data, not display, and always contain the real values. The export and print dialogs don't change. The user can still select and copy a masked cell: the clipboard gets nothing for it.
 - **Editing and budgeting** keep working normally while the mode is on. Nothing is sent to the host differently, and the write gate and `useCanEdit()` (`03` §4) are unaffected.
 - **Logging**: log lines never include amounts, so privacy mode has no effect on them (`02` §8).
 
