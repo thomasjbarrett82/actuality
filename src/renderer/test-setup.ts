@@ -60,6 +60,8 @@ export function stubShell(): ShellApi {
       saveSampleImport: vi.fn(() => Promise.resolve(null)),
     },
     printPreview: vi.fn(() => Promise.resolve()),
+    news: { getFeed: vi.fn(() => Promise.resolve(null)) },
+    updates: { getLatest: vi.fn(() => Promise.resolve(null)) },
     onMenuCommand: vi.fn(noop),
     onHostStatus: vi.fn(noop),
     onCloseRequested: vi.fn(noop),

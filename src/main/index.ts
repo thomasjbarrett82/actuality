@@ -27,11 +27,13 @@ import {
   ipcMain,
   Menu,
   nativeTheme,
+  net,
   safeStorage,
   shell,
   type MenuItemConstructorOptions,
 } from 'electron';
 import { existsSync, rmSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { appInfo, licensesPath } from './about';
 import {
@@ -56,6 +58,7 @@ import { HostSupervisor, type HostLifecycle } from './host-supervisor';
 import { initLog, toLogEntry, write, writeLog } from './log';
 import { applyDebugLogging } from './log-level';
 import { buildMenu } from './menu';
+import { getFeed, getLatest, type NewsDeps } from './news';
 import { registerPrintHandlers, showPreview } from './print';
 import { SecretsStore } from './secrets';
 import { SettingsStore } from './settings-store';
@@ -413,6 +416,19 @@ function start(): void {
     if (typeof factor === 'number') applyZoom(factor);
   });
   handle(IPC.quit, () => finishQuit());
+
+  // The news feed and update check (24 §3.1, §4.2): one info line per request, with its outcome only.
+  const newsRequest = lifecycle('news.request');
+  const news: NewsDeps = {
+    fetch: (url, init) => net.fetch(url, init),
+    readFile: (path) => readFile(path, 'utf8'),
+    env: process.env,
+    isPackaged: app.isPackaged,
+    settings: () => settings.getApp(),
+    onRequest: newsRequest,
+  };
+  handle(IPC.newsGetFeed, () => getFeed(news));
+  handle(IPC.updatesGetLatest, () => getLatest(news));
 
   // Files and print (16 §1–3).
   const filters = (v: unknown): { name: string; extensions: string[] }[] =>

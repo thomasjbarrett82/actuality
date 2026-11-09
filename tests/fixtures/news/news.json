@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "id": "post-fixture-announcement",
+      "type": "post",
+      "title": "A fixture announcement",
+      "date": "2026-11-02T10:00:00Z",
+      "url": "https://actualitydesktop.org/blog/fixture-announcement",
+      "body": "An announcement for the E2E tests, with a [link](https://actualitydesktop.org/blog).\n\n## A heading\n\n- One\n- Two"
+    },
+    {
+      "id": "release-0.0.1",
+      "type": "release",
+      "title": "Actuality 0.0.1",
+      "date": "2026-11-01T12:00:00Z",
+      "version": "0.0.1",
+      "url": "https://actualitydesktop.org/blog/release-0.0.1",
+      "body": "The highlights of a release at or below every version the tests run.",
+      "details": "## Features\n\n- A feature"
+    }
+  ]
+}

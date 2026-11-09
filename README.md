@@ -8,9 +8,11 @@ so they always match Actual's web app.
 Actuality isn't affiliated with or endorsed by the Actual Budget project, and it ships no third-party
 names, logos, images or fonts.
 
+Actuality is developed with LLM assistance.
+
 ## Features
 
-- **Accounts and the register:** on-budget and tracking accounts, inline editing, splits, transfers,
+- **Accounts and the register:** on-budget accounts, inline editing, splits, transfers,
   payee auto-fill, color flags, cleared and reconciled states, a search language, undo, and
   reconciliation.
 - **Budget:** envelope budgeting with month columns for Budgeted, Outflows and Balance, the Available
@@ -28,8 +30,8 @@ names, logos, images or fonts.
 Everything is saved to the server as you go. When the server can't be reached, Actuality shows your
 cached budget **read-only** and explains why; it doesn't queue offline edits.
 
-Actuality has no database of its own. The things Actuality tracks and Actual doesn't (flags, check numbers,
-account types, payee settings and so on) are stored inside the Actual budget as tags, note tokens and
+Actuality has no database of its own. The things Actuality tracks and Actual doesn't (check numbers,
+etc.) are stored inside the Actual budget as tags, note tokens and
 reserved notes, so they sync to every device. Other Actual clients will see those tags and notes.
 
 Not supported: bank sync, budget templates and goals, and server sign-in methods other

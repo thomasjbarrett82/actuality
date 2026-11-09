@@ -1,6 +1,7 @@
 // Wipe the Slate Clean, Export Budget Backup, Import a budget file and About in the renderer, with a mocked
 // host (18 §1–2, 07 §3.4, §6).
 import { RpcError } from '@shared/rpc/protocol';
+import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query';
 import { flushPromises } from '@vue/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import AboutDialog from '../components/budget-file/AboutDialog.vue';
@@ -236,7 +237,8 @@ describe('About (18 §1)', () => {
   it('shows the versions, the server and View licenses', async () => {
     mocked = mockHost({ 'session.serverVersion': () => '26.2.0' });
     useConnection().info = { ...ONLINE, serverUrl: 'https://budget.example.com' };
-    const w = mountApp(AboutDialog);
+    const queryClient = new QueryClient();
+    const w = mountApp(AboutDialog, { global: { plugins: [[VueQueryPlugin, { queryClient }]] } });
     await flushPromises();
     const text = w.text();
     expect(text).toContain('Potential made actual');

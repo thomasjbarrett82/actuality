@@ -1,6 +1,6 @@
 ---
 spec: ['06', '08', '22']
-description: The sidebar, the connection indicator, menus, privacy mode, appearance and zoom.
+description: The sidebar, the notifications bell, the connection indicator, menus, privacy mode, appearance and zoom.
 ---
 
 # Finding your way around
@@ -39,6 +39,7 @@ The badge on a group header totals its accounts. Open the account to see and fix
 
 | Control | What it does |
 | --- | --- |
+| Bell | Opens **Notifications**: release notes and announcements. A number on it counts the ones you haven't seen. See [Updates and news](../reference/updates-and-news.md). |
 | Eye | Turns [privacy mode](#privacy-mode) on or off. |
 | Globe | Opens your Actual server in your web browser, where you can use the same budget in Actual's web app. |
 | Connection indicator | Shows whether Actuality is connected to your server (below). Select it to sync, retry or see details. |
@@ -62,7 +63,7 @@ Actuality syncs every minute, whenever you switch back to its window, and after 
 - **File**: create, open and close budgets; **Sync Now**; **Export Budget Backup…**; **Wipe the Slate Clean…**; **Import Transactions from Your Bank…**; **Budget Properties…**; **Export…**; **Print…**; **Preferences…**.
 - **Edit**: the usual Undo, Cut, Copy and Paste, plus Rename Account, Edit Account Note and Close Account while an account's register is shown.
 - **View**: **Go to Accounts** (**Ctrl+T**), **Go to Budget** (**Ctrl+B**), **Go to Reports** (**Ctrl+R**), **Go to Payee Settings** (**Ctrl+Y**), **Go to Rules** (**Ctrl+U**), collapsing the sidebar, **Privacy Mode**, **Appearance** and zoom.
-- **Help**: links to Actual Budget's own site, **Keyboard Shortcuts**, **Show Logs Folder** and **About Actuality**.
+- **Help**: links to Actual Budget's own site, **Keyboard Shortcuts**, **Notifications…** (see [Updates and news](../reference/updates-and-news.md)), **Show Logs Folder** and **About Actuality**.
 
 ## Privacy mode
 
@@ -88,7 +89,7 @@ Choose **View ▸ Appearance** to pick **Use System Setting**, **Light** or **Da
 Everything you can do with the mouse, you can do with the keyboard:
 
 - Press **?** (outside a text field) to see every shortcut, with a search box.
-- **F6** and **Shift+F6** move between the main areas of the window: the sidebar, the toolbar, the content, the footer and so on.
+- **F6** and **Shift+F6** move between the main areas of the window: the sidebar, the toolbar, the content, the footer and so on, and last, any messages at the bottom right.
 - **Shift+F10**, or the Menu key, opens the menu you'd get by right-clicking the focused item.
 - Every drag has a keyboard equivalent, usually **Alt+↑** / **Alt+↓** or **Move Up** / **Move Down** in a menu.
 

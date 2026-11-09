@@ -1,5 +1,6 @@
 // Vue Query keys and scoped invalidation (03 §4.1): `data:changed.tables` → the queries to refetch.
-// Any other or unknown table invalidates everything. Only active queries refetch.
+// Any other or unknown table invalidates every host query. Only active queries refetch. Queries that
+// aren't host data (the news feed and update check, 24 §4.3) are never invalidated here.
 import type { QueryClient } from '@tanstack/vue-query';
 
 /** Query key roots. Each feature's keys start with one of these. */
@@ -19,6 +20,9 @@ export const QUERY_ROOTS = [
 ] as const;
 
 export type QueryRoot = (typeof QUERY_ROOTS)[number];
+
+/** Roots of queries main answers, not the host (news/use-news.ts): `data:changed` never touches them. */
+const SHELL_QUERY_ROOTS: readonly unknown[] = ['news', 'updates', 'app'];
 
 // The host derives some fields from other tables, so a table also refreshes the queries that read it:
 // payee names on register rows, transfer names and on/off-budget error states from accounts, account
@@ -59,7 +63,10 @@ export async function invalidateTables(
 ): Promise<void> {
   const roots = rootsFor(tables);
   if (roots === 'all') {
-    await client.invalidateQueries({ refetchType: 'active' });
+    await client.invalidateQueries({
+      predicate: (q) => !SHELL_QUERY_ROOTS.includes(q.queryKey[0]),
+      refetchType: 'active',
+    });
     return;
   }
   await Promise.all(

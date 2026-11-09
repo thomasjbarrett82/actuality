@@ -37,12 +37,19 @@ only adds or changes a post needs no spec or guide change. The full rules are in
    - `in_app_notification: true` puts the post in the news feed. Leave it out for a post that only belongs
      on the website.
    - Put images in `website/static/img/blog/` and link them as `/img/blog/…`. Relative links to guide pages
-     and other posts are fine: the feed turns them into full URLs.
+     and other posts are fine: the feed turns them into full URLs. In the app an image shows as a link,
+     labeled with its alt text, so give every image alt text that reads well on its own.
+   - In a post with `in_app_notification: true`, don't use admonitions (`:::tip … :::`), relative image
+     paths or MDX components: the app shows its Markdown without them, so they appear as plain text or
+     go missing (`24` §4.6).
 
 2. Run `npm run news:build` to regenerate `website/static/news.json`. Never edit that file by hand.
 3. Run `npm run check`, then `npm run docs:site:build` (after `npm --prefix website ci` once). `check`
    doesn't build the site, and the site build is what fails on a missing truncate marker or an undeclared
-   tag; CI's `website` job builds it too. Use `npm run docs:site` to preview the post.
+   tag; CI's `website` job builds it too. Use `npm run docs:site` to preview the post. To preview it in the
+   app's Notifications dialog, start the app with `ACTUAL_DESKTOP_NEWS_URL` set to the full path of
+   `website/static/news.json` (development builds only, `24` §4.2); set `lastSeenNewsAt` in the
+   development `settings.json` to an earlier time to see it as unread.
 4. Commit the post and `news.json` together and open a pull request with a Conventional Commits title,
    e.g. `docs: blog post about …`.
 5. Merge it. The merge to `main` runs `docs-deploy.yml`, which publishes the post, the RSS feed

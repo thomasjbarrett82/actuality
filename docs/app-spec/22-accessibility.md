@@ -20,8 +20,8 @@ The window is divided into **regions**. **F6** moves focus to the next region an
 
 | Screen | Region order |
 | --- | --- |
-| Main canvas | Sidebar → panel toolbar (timeline, search, filters) → panel content (budget grid, register grid, or Reports tab panel) → panel footer (register summary) → scheduler pane (when open) → connection banner (when shown) |
-| Blue-canvas screens (`07`) | One region; Tab order only |
+| Main canvas | Sidebar → panel toolbar (timeline, search, filters) → panel content (budget grid, register grid, or Reports tab panel) → panel footer (register summary) → scheduler pane (when open) → connection banner (when shown) → messages (the toast stack, while it holds a toast, `24` §5) |
+| Blue-canvas screens (`07`) | The screen, then messages (while the toast stack holds a toast); otherwise one region, Tab order only |
 | Modal dialog | No regions; F6 does nothing (focus stays trapped, §3) |
 
 Within a region, Tab and Shift+Tab move between controls, and arrow keys move inside composite widgets (grids, lists, trees, radio groups), which take a single Tab stop (roving `tabindex`).
@@ -99,7 +99,7 @@ Cell content is read as its text plus the state that the visuals carry: "Overspe
 
 ### 4.3 Names and values
 
-- **Icon-only controls** have an accessible name from the `a11y` bundle: cleared cell ("Cleared" / "Uncleared" / "Reconciled"), note icon ("Note" / "Add note"), Quick Budget ("Quick Budget"), search clear ("Clear search"), error icons ("Error", "Needs a category", "Needs approval"), the connection indicator (its label from `08` §2.4), the privacy mode toggle (the fixed name "Privacy mode" with `aria-pressed`; its tooltip alone changes between "Enable privacy mode" and "Disable privacy mode"), the server web link ("Connect to {url} web", the same as its tooltip, `08` §2.4). Masked amounts are named "Hidden amount", and a masked amount field gets that as its accessible description, so a screen reader doesn't read out the mask text (`06` §7). Each tag pill's accessible name is "Filter by tag {tag}".
+- **Icon-only controls** have an accessible name from the `a11y` bundle: cleared cell ("Cleared" / "Uncleared" / "Reconciled"), note icon ("Note" / "Add note"), Quick Budget ("Quick Budget"), search clear ("Clear search"), error icons ("Error", "Needs a category", "Needs approval"), the connection indicator (its label from `08` §2.4), the privacy mode toggle (the fixed name "Privacy mode" with `aria-pressed`; its tooltip alone changes between "Enable privacy mode" and "Disable privacy mode"), the server web link ("Connect to {url} web", the same as its tooltip, `08` §2.4), the notifications bell ("Notifications", or "Notifications: {n} unread" with the real count, the same as its tooltip; its badge is hidden, `24` §4.5), a toast's close button ("Close"). Masked amounts are named "Hidden amount", and a masked amount field gets that as its accessible description, so a screen reader doesn't read out the mask text (`06` §7). Each tag pill's accessible name is "Filter by tag {tag}".
 - **Badges:** the sidebar badge is read as the tooltip text ("There are 3 transactions that require your attention."), not the bare number.
 - **Amounts** are shown without a currency symbol in grids (`09`, `10`). Their accessible name is the full format with symbol and sign (`format(m, {symbol: true, sign: true})`, `04` §1), so "-50.00" reads as "-$50.00". A negative category balance adds ", overspent"; a negative Available to Budget is read with its label ("Overbudgeted").
 - **The month header** is read as one group: "{Month} {Year}. Not budgeted in {Prev}: {amount}. Overspent in {Prev}: {amount}. Income for {Month}: {amount}. Budgeted in {Month}: {amount}. Available to Budget: {amount}." (the same lines and wording as `09` §5.1, in order).
@@ -129,6 +129,8 @@ Each common component (`17`) follows the WAI-ARIA Authoring Practices pattern be
 | Timeline | `slider`-like single Tab stop: `role="listbox"` of months with `aria-selected` on the selected month |
 | `ConnectionBanner` | `region` (§4.1) with its text and button; changes announced (§4.5) |
 | `LoadingOverlay` | `aria-busy="true"` on the panel while shown; its label announced (§4.5) |
+| Toast stack (`24` §5) | a `region` named "Messages" while it holds a toast; each toast a `group` named by its title, with its action and close buttons. Never takes focus; inert under a modal; Esc inside a toast closes it and returns focus to where it came from |
+| Notifications dialog (`24` §4.6) | a standard dialog; each entry an `article` named by its `h3` title, with headings in its Markdown demoted to `h4`–`h6`; "Unread" as visually hidden text; the "Show all changes" disclosure has `aria-expanded` and `aria-controls`; the list area has `aria-busy` while loading |
 
 ### 4.5 Announcements
 
@@ -152,6 +154,8 @@ A single **announcer** (`renderer/a11y/announcer.ts`, mounted once in `App.vue`)
 | Report loading, refreshed, empty, or failed | polite for loading/refresh/empty; assertive for failure | the active report's localized state and retry instruction (`15` §7) |
 | Report filters applied / linked filters restored | polite | localized confirmation describing the active report and applied state |
 | CSV or Print completed / failed | polite for completion; assertive for failure | localized status with the destination or recovery action (`15` §7) |
+| A toast appears (`24` §5) | polite | its title and message |
+| Notifications dialog loaded, empty or failed (`24` §4.6) | polite | "{n} notifications.", "Nothing new to show yet.", or its error text |
 
 TaskDialogs announce themselves as dialogs and aren't sent to the announcer.
 
@@ -176,6 +180,7 @@ The custom tooltip directive (`17` §4) meets WCAG 1.4.13:
 
 - `prefers-reduced-motion` turns off all animations (`05` §3), including panel slides, the timeline indicator and the auto-scroll during drags. The one exception is the loading spinner (`05` §5): it runs three times slower (a 3 s rising fill, then a fade), so a load still shows progress. It never moves or flashes.
 - Nothing that holds keyboard focus closes on a timer. A callout with `closeOnRollOut` (`17` §3) doesn't close while focus is inside it.
+- Toasts (`24` §5) have no timer: each stays until it is closed or removed.
 - Notifiers (`10` §5) have no timer. The Undo notifier hides on the events `10` §5 lists; moving keyboard focus to it (F6 into the toolbar region, then Tab) doesn't hide it.
 - No session timeouts in the UI. Server sign-in expiry is handled by the sign-in modal (`03` §7), which is a normal dialog.
 

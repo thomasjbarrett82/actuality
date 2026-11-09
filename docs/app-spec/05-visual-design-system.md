@@ -163,6 +163,12 @@ Transaction tag colors come from Actual's synced tag entities (`04` §5.2), not 
 | `--button-save-bg` | `#528200` | `#4B7B00` | `#0072B2` | `#0072B2` | Save-tone button: the register editor's Save and add another, Save, Done, Approve and find next and Approve (`11` §2), the Schedule dialog's Save / Add (`12` §3.1). Green, blue in CVD (new) |
 | `--button-cancel-bg` | `#D14238` | `#DA372A` | `#B8400A` | `#C05422` | Cancel-tone button: Cancel in the same places, and the needs-review editor's Delete. Red, orange in CVD; aliases `--error-badge` (new) |
 | `--button-tone-text` | `#FFFFFF` | `#FFFFFF` | = | = | Label on a save- or cancel-tone button: white in every palette (new) |
+| `--news-badge` | `#FFD84D` | `#FFD84D` | = | = | The notifications bell's unread badge, on the blue sidebar (`24` §4.5) (new) |
+| `--news-badge-text` | `#2F302F` | `#2F302F` | = | = | The bell badge's count (new) |
+| `--news-pill-release-bg` | `#E5F0D3` | `#2D3B1C` | = | = | "Release" type pill on a news entry (`24` §4.6) (new) |
+| `--news-pill-release-text` | `#3D6100` | `#B9DE84` | = | = | "Release" pill text (new) |
+| `--news-pill-post-bg` | `#DDEBF6` | `#1A3347` | = | = | "Post" type pill on a news entry (new) |
+| `--news-pill-post-text` | `#00507E` | `#93CFF2` | = | = | "Post" pill text (new) |
 
 ### 1.9 Themes
 
@@ -299,6 +305,7 @@ The reference design used 1 px text shadows (white below on light backgrounds, b
 | `--bar-h` | 2.5 | 32.5 | connection banner, scheduler title bar |
 | `--bar-h-lg` | 3.25 | 42 | standard dialog button row (`17` §2) |
 | `--badge-h` | 1.75 | 23 | error badges (min width = height) |
+| `--badge-h-sm` | 1.1 | 14 | the notifications bell's unread badge (min width = height), which sits on a `--hit-min` icon button (`24` §4.5) |
 
 Rows and controls set a `min-height` from these tokens and grow if their content needs more (larger text, two-line labels). Clickable rows and controls use `min-height: max(var(--token), var(--hit-min))`, so they never drop below the minimum target size even if the root font size is smaller than the default. **Icon buttons** (note, Quick Budget, close ✕, connection indicator) draw an `--icon` glyph centered in a hit area of at least `--hit-min` × `--hit-min`. Grids that are virtualized use the computed value of `--row-h` (§3.5).
 
@@ -367,6 +374,8 @@ Virtualized grids (register, scheduler) need a row height in px. They read the c
 | Help callout | `--callout-help-bg` bubble, `--callout-help-border` | `<Callout variant="help">` |
 | Notifier pill | colored `--radius-pill` strip with icon, text, link | `<Notifier>` |
 | Error badge | `--radius-pill` count badge in the level's `--*-badge` color (§1.6), `--badge-h` tall, min width `--badge-h`, bold `sm` white (`--needscat-badge-text`, dark, for needsCategory) | `<ErrorBadge>` |
+| Notifications bell | an `--icon` bell icon button on the blue sidebar with a `--radius-pill` unread badge at its top right: `--badge-h-sm` tall, min width `--badge-h-sm`, bold `xs` `--news-badge-text` on `--news-badge` (`24` §4.5) | `<NotificationsBell>` |
+| Toast | the callout surface (`--callout-bg-start`→`--callout-bg-end`, `--tooltip-border`, `--radius`) with a bold `md` title, the message, a standard button and a ✕ close button, about 22 rem wide (`24` §5) | `<ToastHost>` |
 | Summary box | inset panel with title + big amount | `<SummaryPanel>` |
 | Scrollbars | thin custom, `--scrollbar-w`, the same on every scroll container: transparent track, `--radius-pill` thumb in `--text-muted` (`--text-on-blue` on blue); the system scrollbar under forced colors | global CSS `::-webkit-scrollbar` (`base.css`) |
 

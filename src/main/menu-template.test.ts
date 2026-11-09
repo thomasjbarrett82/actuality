@@ -165,6 +165,21 @@ describe('native menu (06 §4)', () => {
     expect(flat(items).some((item) => item.label === 'menu.walkthroughs')).toBe(false);
   });
 
+  it('shows Help ▸ Notifications… after Keyboard Shortcuts only while the news feed is on (24 §4.6)', () => {
+    const { items, send } = build();
+    const help = find(items, 'menu.help')?.submenu as MenuItemConstructorOptions[];
+    const labels = help.map((i) => i.label);
+    expect(labels.indexOf('menu.notifications')).toBe(labels.indexOf('menu.keyboardShortcuts') + 1);
+    const item = find(help, 'menu.notifications');
+    expect(item?.visible).toBe(true);
+    (item?.click as (() => void) | undefined)?.();
+    expect(send).toHaveBeenCalledWith('help.notifications');
+
+    const off = build({}, 'win32', { showNewsFeed: false });
+    const offHelp = find(off.items, 'menu.help')?.submenu as MenuItemConstructorOptions[];
+    expect(find(offHelp, 'menu.notifications')?.visible).toBe(false);
+  });
+
   it('opens Keyboard Shortcuts from Help', () => {
     const { items, send } = build();
     const help = find(items, 'menu.help')?.submenu as MenuItemConstructorOptions[];

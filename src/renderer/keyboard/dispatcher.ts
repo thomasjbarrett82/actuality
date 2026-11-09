@@ -1,6 +1,7 @@
 // The in-app keyboard dispatcher (06 §6, 22 §2): one capture-phase keydown listener on window, routing
 // keys to a stack of handler scopes. While a modal is open only the modal's scope gets keys. Regions are
 // cycled with F6 / Shift+F6; Shift+F10 and the Menu key open the focused item's context menu.
+import { shallowRef } from 'vue';
 
 export type KeyHandler = (e: KeyboardEvent) => boolean | undefined;
 
@@ -51,9 +52,16 @@ export function inFieldPopup(target: EventTarget | null): boolean {
   return target instanceof Element && target.closest('[data-field-popup]') !== null;
 }
 
+/** Inside a part of the page that handles its own keys, such as the toast stack (24 §5). */
+function ownsKeys(target: EventTarget | null): boolean {
+  return target instanceof Element && target.closest('[data-own-keys]') !== null;
+}
+
 export class KeyboardDispatcher {
   private readonly scopes: Scope[] = [];
   private readonly regions: Region[] = [];
+  /** Reactive, so the toast stack can follow it (24 §5). */
+  private readonly modalCount = shallowRef(0);
   private detach: (() => void) | null = null;
 
   install(target: Window): void {
@@ -82,14 +90,18 @@ export class KeyboardDispatcher {
   push(handler: KeyHandler, opts: { modal?: boolean } = {}): () => void {
     const scope: Scope = { handler, modal: opts.modal === true };
     this.scopes.push(scope);
+    if (scope.modal) this.modalCount.value++;
     return () => {
       const i = this.scopes.indexOf(scope);
-      if (i !== -1) this.scopes.splice(i, 1);
+      if (i === -1) return;
+      this.scopes.splice(i, 1);
+      if (scope.modal) this.modalCount.value--;
     };
   }
 
+  /** Whether a modal scope is open. Reactive. */
   get modalOpen(): boolean {
-    return this.scopes.some((s) => s.modal);
+    return this.modalCount.value > 0;
   }
 
   registerRegion(name: string, order: number, element: HTMLElement): () => void {
@@ -114,7 +126,7 @@ export class KeyboardDispatcher {
       return;
     }
     // This listener runs first, so a modal's Enter or Esc would otherwise beat the popup's own.
-    if (inFieldPopup(e.target)) return;
+    if (inFieldPopup(e.target) || ownsKeys(e.target)) return;
     const top = [...this.scopes].reverse();
     const modalIndex = top.findIndex((s) => s.modal);
     const active = modalIndex === -1 ? top : top.slice(0, modalIndex + 1);

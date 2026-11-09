@@ -61,4 +61,18 @@ describe('scoped invalidation (03 §4.1)', () => {
     await invalidateTables(client, ['*']);
     expect(stale('budgetList')).toBe(true);
   });
+
+  it('never invalidates the news feed or the update check, which are not host data (24 §4.3)', async () => {
+    const client = new QueryClient();
+    client.setQueryData(['news', 'feed'], { schemaVersion: 1, entries: [] });
+    client.setQueryData(['updates', 'latest'], '0.3.0');
+    client.setQueryData(['app', 'info'], {});
+    await invalidateTables(client, ['*']);
+    for (const key of [
+      ['news', 'feed'],
+      ['updates', 'latest'],
+      ['app', 'info'],
+    ])
+      expect(client.getQueryState(key)?.isInvalidated, key.join('.')).toBe(false);
+  });
 });

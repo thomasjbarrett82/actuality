@@ -471,6 +471,23 @@ describe('bottom controls (08 §2.4)', () => {
     expect(w.get('button.privacy').attributes('aria-disabled')).toBeUndefined();
   });
 
+  it('the notifications bell sits left of the privacy toggle, offline too, and only while the feed is on (24 §4.5)', async () => {
+    const settings = useSettings();
+    settings.loaded = true;
+    useConnection().info = { ...online, state: 'OfflineReadOnly' };
+    const w = await mountSidebar();
+    const row = w.get('.sidebar__indicator');
+    const buttons = row.findAll('button');
+    expect(buttons[0]?.attributes('data-notifications-bell')).toBeDefined();
+    expect(buttons[1]?.classes()).toContain('privacy');
+    expect(buttons[0]?.attributes('aria-label')).toBe('Notifications');
+    expect(buttons[0]?.attributes('disabled')).toBeUndefined();
+
+    settings.app = { ...settings.app, showNewsFeed: false };
+    await flushPromises();
+    expect(w.find('[data-notifications-bell]').exists()).toBe(false);
+  });
+
   it('the server web link sits between the privacy toggle and the indicator and opens the server (08 §2.4)', async () => {
     const openExternal = vi.spyOn(window.app.shell, 'openExternal');
     useConnection().info = { ...online, state: 'OfflineReadOnly' };

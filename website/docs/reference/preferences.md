@@ -20,6 +20,7 @@ Choose **File ▸ Preferences…** (**Ctrl+,**). On macOS, choose **Actuality �
 | Language | **Use system setting**, or one of Actuality's languages. |
 | Auto-fill (all payees) | Whether choosing a payee fills in the **Category**, **Notes** and **Amount** from last time. The same settings are in [Payee Settings](../accounts-and-transactions/payees-and-rules.md#auto-fill-for-all-payees). |
 | File Associations | **Use Actuality to open bank statement files (.OFX,.QFX,.QIF,.CSV)?** (Windows and Linux). |
+| Updates and News | **Display a notification when updates are available** checks api.github.com for a new version. **Show in-app notifications (release notes and announcements)** downloads the latest posts from actualitydesktop.org and shows the bell. Nothing about you or your budgets is sent. See [Updates and news](updates-and-news.md). |
 | Diagnostics | **Enable debug logging** records more detail in the log file, to help find problems. Passwords, tokens and budget contents are never recorded. |
 
 ## What's stored where
@@ -27,5 +28,5 @@ Choose **File ▸ Preferences…** (**Ctrl+,**). On macOS, choose **Actuality �
 | Stored | What |
 | --- | --- |
 | **In the budget**, synced to every device and visible in Actual's web app | Your accounts, transactions, categories, budgeted amounts, schedules, payees and rules; budget properties such as currency and date format; notes and tags; check numbers; which payees are listed; import settings for each bank account. |
-| **On this computer only** | Everything in Preferences; privacy mode; zoom; the window's size; and, for each budget, your view settings: the last screen and month, register columns and sorting, collapsed groups and report saved filters. |
+| **On this computer only** | Everything in Preferences; privacy mode; zoom; the window's size; which news posts you've seen and which update message you closed; and, for each budget, your view settings: the last screen and month, register columns and sorting, collapsed groups and report saved filters. |
 | **In your operating system's secure storage** | Your server sign-in (if you chose to stay signed in) and remembered encryption passwords. Your server password is never stored. |

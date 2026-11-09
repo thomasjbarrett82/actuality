@@ -2,18 +2,14 @@
 // entries of the news feed. The CLI in news-feed.ts reads the posts and writes the file.
 import { parse as parseYaml } from 'yaml';
 import {
+  BLOG_ROUTE,
   NEWS_FEED_SCHEMA_VERSION,
   RELEASE_VERSION,
+  SITE_URL,
   newsFeedSchema,
   type NewsEntry,
   type NewsFeed,
 } from '../src/shared/news/feed';
-
-/** The published site. Must match `url` in website/docusaurus.config.ts. */
-export const SITE_URL = 'https://actualitydesktop.org';
-
-/** The blog's route, `routeBasePath` in website/docusaurus.config.ts. */
-const BLOG_ROUTE = 'blog';
 
 /** Each type is capped on its own, so a run of posts can't push the releases out, or the reverse. */
 export const MAX_ENTRIES_PER_TYPE = 10;

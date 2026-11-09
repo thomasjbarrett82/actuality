@@ -1,11 +1,14 @@
 <script setup lang="ts">
 // About Actuality (18 §1): the app icon, the motto, the version and commit, the Electron, Chromium and Node versions,
-// the Actual API version, the connected server and its Actual version, the copyright and the
-// non-affiliation lines, View licenses (the bundled third-party license file) and Close.
+// the update check's status line (24 §2.2), the Actual API version, the connected server and its Actual
+// version, the copyright and the non-affiliation lines, Release notes, View licenses (the bundled
+// third-party license file) and Close.
 import { APP_NAME } from '@shared/app';
+import { RELEASE_NOTES_URL, releasePostUrl } from '@shared/news/feed';
 import type { AppInfo } from '@shared/shell-api';
 import { onMounted, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
+import { useUpdateStatus } from '../../news/use-news';
 import { host } from '../../rpc/host-client';
 import { useConnection } from '../../stores/connection';
 import AppLogo from '../common/AppLogo.vue';
@@ -18,6 +21,7 @@ const { t } = useI18n();
 const connection = useConnection();
 const info = ref<AppInfo | null>(null);
 const serverVersion = ref<string | null>(null);
+const { status, latest } = useUpdateStatus();
 
 onMounted(async () => {
   info.value = await window.app.shell.appInfo();
@@ -50,6 +54,15 @@ async function licenses(): Promise<void> {
                 ? t('app.aboutVersion', { version: info.version, sha: info.gitSha })
                 : t('app.aboutVersionNoSha', { version: info.version })
             }}
+          </p>
+          <p v-if="status === 'outdated' && latest" data-update-status>
+            <UiLink :href="releasePostUrl(latest)">{{
+              t('app.aboutUpdateAvailable', { version: latest })
+            }}</UiLink>
+          </p>
+          <p v-else-if="status === 'upToDate'" data-update-status>{{ t('app.aboutUpToDate') }}</p>
+          <p>
+            <UiLink :href="RELEASE_NOTES_URL">{{ t('app.aboutReleaseNotes') }}</UiLink>
           </p>
           <p>
             {{

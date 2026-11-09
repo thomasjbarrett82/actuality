@@ -14,11 +14,14 @@ The Help menu has three sections:
    - **Discord** — `https://discord.com/invite/8JfAXSgfRf`
    - **Docs** — `https://actualbudget.org/docs/`
    - **GitHub** — `https://github.com/actualbudget/actual`
-3. **Keyboard Shortcuts** opens the Keyboard Shortcuts dialog (`06` §6.1, also on `?`); **Show Logs Folder** opens `{userData}/logs`; **About Actuality** opens the About dialog.
+3. **Keyboard Shortcuts** opens the Keyboard Shortcuts dialog (`06` §6.1, also on `?`); **Notifications…** opens the Notifications dialog, the news feed's release notes and announcements, and is shown only while "Show in-app notifications" is on (`24` §4.6); **Show Logs Folder** opens `{userData}/logs`; **About Actuality** opens the About dialog.
 
 The About dialog ("About Actuality") contains the app icon, the app name with the motto
 "Potential made actual" right below it (a translatable string, so a locale may render it in its own
-language), "Version: {version} ({git sha})",
+language), "Version: {version} ({git sha})", the update check's status line right below it (the link
+"New version available: {version}" to that release's post, "You're up to date!", or nothing while
+checking, when the version is unknown, or when the check is off; `24` §2.2), a **Release notes** link
+(`https://actualitydesktop.org/blog/tags/release`, opened externally),
 "Electron {v} · Chromium {v} · Node {v}", "Actual API {version}", "Connected server: {url} (Actual
 {serverVersion})" (via `getServerVersion`), a copyright line, "Not affiliated with Actual Budget.", **View licenses** (opens the bundled third-party license file), and **Close**. On macOS,
 About is also available in the app menu.

@@ -65,11 +65,15 @@ All four palettes meet every target, with no exceptions. Only the CVD palettes a
 | `--error-pill-text` on `--error-pill-bg` | 4.5:1 | 4.69 | 5.73 | 5.04 | 5.39 |
 | `--needscat-pill-text` on `--needscat-pill-bg` | 4.5:1 | 4.59 | 5.10 | 5.57 | 6.05 |
 | `--needscat-badge-text` on `--needscat-badge` | 4.5:1 | 6.14 | 6.14 | 7.96 | 7.96 |
+| `--news-badge-text` on `--news-badge` | 4.5:1 | 9.58 | 9.58 | 9.58 | 9.58 |
+| `--news-pill-release-text` on `--news-pill-release-bg` | 4.5:1 | 6.10 | 7.89 | 6.10 | 7.89 |
+| `--news-pill-post-text` on `--news-pill-post-bg` | 4.5:1 | 7.06 | 7.74 | 7.06 | 7.74 |
 | `--text` on `--callout-help-bg` | 4.5:1 | 11.63 | 9.80 | 11.63 | 9.80 |
 | `--text` on `--tooltip-bg` | 4.5:1 | 12.42 | 10.36 | 12.42 | 10.36 |
 | `--text` on `--banner-bg` | 4.5:1 | 11.35 | 9.80 | 11.35 | 9.80 |
 | `--cleared-on` on `--panel-bg` | 3:1 | 3.07 | 7.13 | 5.19 | 6.87 |
 | `--drag-indicator` on `--panel-bg` | 3:1 | 7.46 | 8.59 | 7.46 | 8.59 |
+| `--news-badge` on `--app-bg` | 3:1 | 3.63 | 7.64 | 3.63 | 7.64 |
 | `--focus-ring` on `--panel-bg` | 3:1 | 4.15 | 6.82 | 4.15 | 6.82 |
 | `--text-on-blue` as the focus ring on `--app-bg` | 3:1 | 5.02 | 9.65 | 5.02 | 9.65 |
 
@@ -271,6 +275,12 @@ Actual tag-entity colors are user data shared across clients, so they are not tr
 | `--button-save-bg` | ![#528200](swatches/528200.svg) `#528200` | ![#4B7B00](swatches/4B7B00.svg) `#4B7B00` | **![#0072B2](swatches/0072B2.svg) `#0072B2`** | **![#0072B2](swatches/0072B2.svg) `#0072B2`** | Save-tone button: editor Save and add another / Save / Done / Approve and find next / Approve, Schedule dialog Save / Add (new) |
 | `--button-cancel-bg` | ![#D14238](swatches/D14238.svg) `#D14238` | ![#DA372A](swatches/DA372A.svg) `#DA372A` | **![#B8400A](swatches/B8400A.svg) `#B8400A`** | **![#C05422](swatches/C05422.svg) `#C05422`** | Cancel-tone button: Cancel, the editor's Delete; aliases `--error-badge` (new) |
 | `--button-tone-text` | ![#FFFFFF](swatches/FFFFFF.svg) `#FFFFFF` | ![#FFFFFF](swatches/FFFFFF.svg) `#FFFFFF` | ![#FFFFFF](swatches/FFFFFF.svg) `#FFFFFF` | ![#FFFFFF](swatches/FFFFFF.svg) `#FFFFFF` | Label on a toned button (new) |
+| `--news-badge` | ![#FFD84D](swatches/FFD84D.svg) `#FFD84D` | ![#FFD84D](swatches/FFD84D.svg) `#FFD84D` | ![#FFD84D](swatches/FFD84D.svg) `#FFD84D` | ![#FFD84D](swatches/FFD84D.svg) `#FFD84D` | The notifications bell's unread badge (new) |
+| `--news-badge-text` | ![#2F302F](swatches/2F302F.svg) `#2F302F` | ![#2F302F](swatches/2F302F.svg) `#2F302F` | ![#2F302F](swatches/2F302F.svg) `#2F302F` | ![#2F302F](swatches/2F302F.svg) `#2F302F` | The bell badge's count (new) |
+| `--news-pill-release-bg` | ![#E5F0D3](swatches/E5F0D3.svg) `#E5F0D3` | ![#2D3B1C](swatches/2D3B1C.svg) `#2D3B1C` | ![#E5F0D3](swatches/E5F0D3.svg) `#E5F0D3` | ![#2D3B1C](swatches/2D3B1C.svg) `#2D3B1C` | "Release" type pill (new) |
+| `--news-pill-release-text` | ![#3D6100](swatches/3D6100.svg) `#3D6100` | ![#B9DE84](swatches/B9DE84.svg) `#B9DE84` | ![#3D6100](swatches/3D6100.svg) `#3D6100` | ![#B9DE84](swatches/B9DE84.svg) `#B9DE84` | "Release" pill text (new) |
+| `--news-pill-post-bg` | ![#DDEBF6](swatches/DDEBF6.svg) `#DDEBF6` | ![#1A3347](swatches/1A3347.svg) `#1A3347` | ![#DDEBF6](swatches/DDEBF6.svg) `#DDEBF6` | ![#1A3347](swatches/1A3347.svg) `#1A3347` | "Post" type pill (new) |
+| `--news-pill-post-text` | ![#00507E](swatches/00507E.svg) `#00507E` | ![#93CFF2](swatches/93CFF2.svg) `#93CFF2` | ![#00507E](swatches/00507E.svg) `#00507E` | ![#93CFF2](swatches/93CFF2.svg) `#93CFF2` | "Post" pill text (new) |
 
 ## 10. Design notes
 

@@ -56,6 +56,7 @@ This folder is **self-contained**: everything needed to understand the app's beh
 | [21-testing-quality.md](21-testing-quality.md) | Test strategy, fixtures, test server, performance and accessibility targets |
 | [22-accessibility.md](22-accessibility.md) | WCAG 2.2 AA target, keyboard model, focus rules, screen-reader semantics, announcements, zoom, accessibility tests |
 | [23-rules.md](23-rules.md) | Actual's rules: model, stages, conditions and actions, the Rules dialog and the rule editor |
+| [24-notifications.md](24-notifications.md) | The update check and the news feed: preferences, the bell, the Notifications dialog, the toasts, requests, read state and privacy |
 
 ## Conventions
 
@@ -69,4 +70,4 @@ This folder is **self-contained**: everything needed to understand the app's beh
 ## Reading order
 
 1. `01`, `02`, `03`, `04`: scope, architecture, the Actual boundary and the data model. Every screen depends on them. Read `22` (accessibility) alongside each feature chapter.
-2. Then the feature chapters, `05`–`20` and `23`, and the testing chapter `21`.
+2. Then the feature chapters, `05`–`20`, `23` and `24`, and the testing chapter `21`.

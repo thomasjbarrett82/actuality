@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // The sidebar (08): Budget, Reports and All Accounts; the Budget, Off-Budget and Closed account groups
-// with balances and error badges; Add Account and the compact toggle; the privacy mode toggle, the server
-// web link and the connection indicator. It is a
+// with balances and error badges; Add Account and the compact toggle; the notifications bell (24 §4.5), the
+// privacy mode toggle, the server web link and the connection indicator. It is a
 // tree for the keyboard (22 §2.3) with Move Up / Down as the drag alternatives (22 §2.4). Accounts are
 // reordered within their group by drag-and-drop (08 §4). An account's menu (right-click or Shift+F10)
 // has its actions (08 §2.2), which the Edit menu also runs for the active account (06 §4).
@@ -38,6 +38,7 @@ import { useSettings } from '../../stores/settings';
 import MoneyAmount from '../common/MoneyAmount.vue';
 import ConnectionIndicator from './ConnectionIndicator.vue';
 import ErrorBadge from './ErrorBadge.vue';
+import NotificationsBell from './NotificationsBell.vue';
 import PrivacyToggle from './PrivacyToggle.vue';
 import ServerWebLink from './ServerWebLink.vue';
 import {
@@ -740,6 +741,7 @@ watch(
         </div>
         <div class="sidebar__add-row">
           <template v-if="scrolling">
+            <NotificationsBell />
             <PrivacyToggle />
             <ServerWebLink />
             <ConnectionIndicator :show-label="false" />
@@ -782,6 +784,7 @@ watch(
       </div>
     </div>
     <div v-if="!scrolling" ref="indicatorRow" class="sidebar__indicator">
+      <NotificationsBell />
       <PrivacyToggle />
       <ServerWebLink />
       <ConnectionIndicator :show-label="!compact" />
@@ -1049,6 +1052,7 @@ watch(
 
 .sidebar__add-row {
   display: flex;
+  flex-wrap: wrap;
   gap: var(--space-1);
   align-items: center;
   width: var(--row-w);

@@ -8,11 +8,20 @@ import type { ShellApi } from '../../src/shared/shell-api';
 /** A fresh, throwaway userData folder. */
 export const newUserData = (): string => mkdtempSync(join(tmpdir(), 'actual-desktop-e2e-'));
 
-/** Launches the built app, with a fresh userData folder unless one is given (a restart). */
-export async function launchApp(userData = newUserData()): Promise<ElectronApplication> {
+/** The news feed fixture, for `ACTUAL_DESKTOP_NEWS_URL` (24 §3.5, §4.2). */
+export const NEWS_FIXTURE = join(import.meta.dirname, '../fixtures/news/news.json');
+
+/**
+ * Launches the built app, with a fresh userData folder unless one is given (a restart). Under
+ * `ACTUAL_DESKTOP_E2E` the app makes no news or update request (24 §3.5); `env` can set the overrides.
+ */
+export async function launchApp(
+  userData = newUserData(),
+  env: Record<string, string> = {},
+): Promise<ElectronApplication> {
   return electron.launch({
     args: ['.', `--user-data-dir=${userData}`],
-    env: { ...process.env, ACTUAL_DESKTOP_E2E: '1' },
+    env: { ...process.env, ACTUAL_DESKTOP_E2E: '1', ...env },
   });
 }
 

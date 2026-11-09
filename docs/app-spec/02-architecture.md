@@ -41,6 +41,7 @@ Pin the exact latest stable versions when scaffolding. Record them in `package.j
 | State | **Pinia** for UI/view state; **@tanstack/vue-query** for server data (cache, invalidation, refetch) | `03` §5 |
 | Language | **TypeScript** only, strict (compiler options in `21` §4); `moduleResolution: "bundler"` (required by `@actual-app/api` typings). No JavaScript source files. | `21` §4 |
 | Validation | **zod** for IPC payloads, reserved-note JSON and the news feed contract | |
+| Markdown | **markdown-it**, with raw HTML off, for news feed entries; its tokens are rendered as Vue elements, never as HTML | `24` §4.6 |
 | Virtual lists | **@tanstack/vue-virtual** | register and scheduler |
 | Popover positioning | **@floating-ui/dom** | callouts with tail positions (`17`) |
 | Dates | **date-fns** (no time zones; dates are `YYYY-MM-DD` strings) | |
@@ -85,13 +86,15 @@ actuality/
 │  │  ├─ schedule/               (frequency ↔ RecurConfig mapping — 12 §1)
 │  │  ├─ quickbudget/            (average/history math — 09 §5)
 │  │  ├─ i18n/                   (message files per locale + meta.json; translate.ts for main — 20 §3)
-│  │  ├─ news/                   (the news feed contract: types, schema version, validator — §3.1)
+│  │  ├─ news/                   (the news feed contract and the site's addresses — §3.1; version
+│  │  │                           comparison and read state — 24 §3.2, §4.4)
 │  │  └─ rpc/                    (host-api.ts: renderer↔host methods, error codes;
 │  │                              control-api.ts: main↔host control channel — §4.1)
 │  ├─ main/                      (Electron main)
 │  │  ├─ index.ts, window.ts, menu.ts, shortcuts.ts
 │  │  ├─ host-supervisor.ts      (spawn/restart utility process, port brokering)
 │  │  ├─ settings-store.ts, secrets.ts, dialogs.ts, print.ts
+│  │  ├─ news.ts                 (the news feed and update check requests — 24 §4.2)
 │  ├─ preload/index.ts           (contextBridge: window.app)
 │  ├─ host/                      (API host utility process)
 │  │  ├─ index.ts                (port listener, RPC dispatch)
@@ -128,7 +131,7 @@ transaction ledger (`03` §3, §8; `15` §7).
 
 The website (§3) has a **blog** at `/blog` for release notes and announcements, with an **RSS feed** at `/blog/rss.xml`. It is Docusaurus's blog, configured in `website/docusaurus.config.ts`. Posts are Markdown files in `website/blog/`, named `YYYY-MM-DD-{slug}.md`, and each one is served at `/blog/{slug}`. The tags are declared in `website/blog/tags.yml`: `release` and `announcement`. The site build fails on a tag that isn't declared there, on an author written inline, and on a post without a `<!-- truncate -->` marker, which ends the excerpt shown in the post list. Like the guide, posts are written for users, quote UI text exactly, and aren't normative.
 
-**The news feed** is `website/static/news.json`, served at `https://actualitydesktop.org/news.json`. It is a machine-readable list of the posts worth announcing, so an app can show release notes and announcements. The app doesn't fetch it. Its format is the contract in `src/shared/news/feed.ts`, kept in `shared` so that a reader can validate the feed with the same schema the generator checks its output against:
+**The news feed** is `website/static/news.json`, served at `https://actualitydesktop.org/news.json`. It is a machine-readable list of the posts worth announcing, which the app shows as release notes and announcements (`24` §4). Its format is the contract in `src/shared/news/feed.ts`, kept in `shared` so that the app validates the feed with the same schema the generator checks its output against:
 
 - The document is `{ "schemaVersion": 1, "entries": [ … ] }`, with the entries newest first. A reader rejects a feed whose `schemaVersion` isn't the one it was built for, a feed with any malformed entry, and a feed whose entries aren't strictly newest first (two sharing a `date`) or share an `id`. So the version changes only for a breaking change, and adding an optional field isn't one.
 - Each entry has `id` (`release-{version}` or `post-{slug}`), `type` (`release` or `post`), `title` (plain text), `date`, `url` (the post's page) and `body` (Markdown; for a release, the highlights only). A release also has `version` (`X.Y.Z`) and, optionally, `details` (Markdown: the full list of changes).
@@ -159,7 +162,7 @@ An image that should show in the feed goes in `website/static/img/blog/` and is 
   - request `{ id: number, method: string, params: unknown }` → response `{ id, ok: true, result } | { id, ok: false, error: { code: RpcErrorCode, message: string, details?: unknown } }`.
   - host → renderer events: `{ event: string, payload }`.
 - The method map lives in `src/shared/rpc/host-api.ts` (`03` §8 lists every method): `hostMethods` holds each method's zod params schema, `HostResults` its result type, and `HostEvents` the event payloads. The renderer client derives its types from them: `host.call('transactions.update', {...})` is fully typed. The host validates params with the same schemas. `WRITE_METHODS` lists the methods that write; a host test sends each of them while offline and expects `offline`.
-- Main-process services (`shell.*`: open file dialog, save dialog, print, settings get/set, open URL, set window title, show native context menu, `log` for renderer log entries, §8.1) are exposed by preload as `window.app.shell.*` via `ipcRenderer.invoke`.
+- Main-process services (`shell.*`: open file dialog, save dialog, print, settings get/set, open URL, set window title, show native context menu, `log` for renderer log entries, §8.1, and `news.getFeed` / `updates.getLatest`, the news feed and update check requests, `24` §4.2) are exposed by preload as `window.app.shell.*` via `ipcRenderer.invoke`.
 - **Secrets in the renderer** are limited to `shell.secrets.available()` (is `safeStorage` usable, `19` §4), `shell.secrets.has(key)` and `shell.secrets.forget(key)`. There is no way to read a secret's value from the renderer. Storing secrets happens in the host, through the control channel (§4.1), driven by the `remember` flags on the session RPC methods (`03` §8).
 
 ### 4.1 Main ↔ host control channel
@@ -254,6 +257,7 @@ CI runs on branch pushes and pull requests, not on tags. A newer push cancels a 
 ## 6. Security
 
 - CSP in `index.html`: `default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'`. External links open in the OS browser via `shell.openExternal` (http/https only).
+- The renderer never makes a network request. Besides the Actual server, which the API host contacts, the app contacts only `actualitydesktop.org` (the news feed) and `api.github.com` (the update check), and **main** makes those requests with `net.fetch`, so the CSP stays unchanged. Each is an anonymous `GET` that main makes only while its preference is on, and main validates the feed before it reaches the renderer (`24` §4.2, §7).
 - `webContents.setWindowOpenHandler(() => ({ action: 'deny' }))`. Block navigation away from the app origin.
 - The server password and encryption passwords never reach the renderer after entry. The renderer sends them once to the host over the relevant RPC (server connection, encrypted-budget open, or key generation). The **server password is never stored**. The host exchanges it for a session token (`03` §7) and, if "Stay signed in" is ticked, hands **that token** to main over the control channel (§4.1), and main stores it with safeStorage. Encryption passwords are stored the same way if "Remember" is ticked (`19` §4). No secret value is ever sent back to the renderer.
 - Self-signed TLS: Preferences → "Trust this certificate file…" stores `extraCaCertPath` (`19` §1). Main passes it as `NODE_EXTRA_CA_CERTS` in the host's environment when it spawns the host, so it takes effect when Actuality restarts. **Restart now** runs the quit flow (`06` §5) and then `app.relaunch()`. Under `npm run dev` it only quits: the page comes from electron-vite's dev server, which stops with the first process, so a relaunched copy would open a blank window. Never set `NODE_TLS_REJECT_UNAUTHORIZED=0`. The setting doesn't reach the OS browser: an OpenID sign-in passes through `{server}/openid/callback` in the browser, so a self-signed certificate must also be trusted by the OS or browser (`03` §7). Trusting a certificate does not fix one whose subjectAltName doesn't list the server's address. Node still rejects it (`ERR_TLS_CERT_ALTNAME_INVALID`). The connection diagnosis in `03` §9.1 tells the user which case they hit.
@@ -303,6 +307,7 @@ Three kinds of join point:
 | `shell.*` IPC handlers | `main/` where the handlers are registered | a handler that throws | `shell.call`: channel, duration, outcome |
 | Host client (`renderer/rpc/host-client.ts`) | the client's `call` | — (the host already logged the error as `rpc.error`; the UI shows it) | `rpc.call`: method, `callId`, duration, outcome |
 | Lifecycle (host start, exit, restart, quit) | `host-supervisor.ts` and the quit flow | the event (`app.start`, `host.start`, `host.status`, `host.exit`, `app.quit`, `log.level`) and the host's stderr | `host.stdout`: the Actual API's own progress messages |
+| News feed and update check requests (`24` §4.2) | the `onRequest` hook of `main/news.ts` | `news.request` per request: which one, its outcome (`ok`, `off`, or why it is `null`), the HTTP status of a failed one, and its duration; never the content | — |
 | Fallible steps | `step()`, woven by each composition root | a failure (`step.failed`) | — |
 | The Actual API object (`03` §3) | `host/index.ts`, around the `ActualApi` object | a missing internal handler (`api.unavailable`) | — |
 | Data the host reads as empty or shows apart | hooks on `MetadataRepository` and `BudgetService` | an invalid reserved note (`metadata.invalidNote`, `04` §5.3), a month whose header identity doesn't hold (`budget.otherAdjustments`, `09` §2) (`warn`) | — |

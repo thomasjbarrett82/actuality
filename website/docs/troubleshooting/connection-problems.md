@@ -21,6 +21,8 @@ Actuality keeps trying to reconnect: after 5, 10 and 30 seconds, then every minu
 
 If you were in the middle of editing a transaction, it stays open with what you typed. Save it again once you're back online.
 
+The release notes in **Notifications** and the check for a new version come from actualitydesktop.org and GitHub, not from your server (see [Updates and news](../reference/updates-and-news.md)). They can load while your server is offline, and when they can't, your budget isn't affected.
+
 ### Starting Actuality offline
 
 If your server can't be reached when Actuality starts, it opens the budget you used last from the copy on your computer, read-only. This can take up to 15 seconds while it waits for the server. If there's no copy on this computer, the budget list says "Can't reach your Actual server at" and the address, with **Retry** and **Change server…**.
