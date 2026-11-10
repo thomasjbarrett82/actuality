@@ -2,6 +2,13 @@
 
 The user-visible changes in each release of Actuality. Changes before 0.2.0 are in the git history.
 
+## [0.4.1](https://github.com/thomasjbarrett82/actuality/compare/v0.4.0...v0.4.1) (2026-11-10)
+
+### Features
+
+* add github attestations for install files ([#37](https://github.com/thomasjbarrett82/actuality/issues/37)) ([2f80956](https://github.com/thomasjbarrett82/actuality/commit/2f809563eed744cc150fb7ebe31c7ed158861c66))
+* add website link to GitHub releases ([#36](https://github.com/thomasjbarrett82/actuality/issues/36)) ([7b357f0](https://github.com/thomasjbarrett82/actuality/commit/7b357f0ae7d8f1e0fbf13914f92ecb34f5cafd26))
+
 ## [0.4.0](https://github.com/thomasjbarrett82/actuality/compare/v0.3.0...v0.4.0) (2026-11-10)
 
 ### Documentation
