@@ -57,6 +57,15 @@ Download the installer for your computer from
 | macOS   | `Actuality-macOS-{version}-….dmg` or `.zip`, for Intel (`x64`) or Apple silicon (`arm64`)         |
 | Linux   | `Actuality-Linux-{version}-…`: AppImage, `.deb` or `.rpm`, for x64 (`x86_64`, `amd64`) or `arm64` |
 
+Every installer has a build provenance attestation, which proves it was built by this repository's CI
+from the tagged release. To check a download, use the [GitHub CLI](https://cli.github.com/):
+
+```sh
+gh attestation verify Actuality-Linux-{version}-x86_64.AppImage --repo thomasjbarrett82/actuality
+```
+
+This is how to check the Linux packages in particular, because they aren't signed.
+
 To build installers yourself, see [Packaging](#packaging).
 
 ## Development
