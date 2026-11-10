@@ -2,6 +2,12 @@
 
 The user-visible changes in each release of Actuality. Changes before 0.2.0 are in the git history.
 
+## [0.4.0](https://github.com/thomasjbarrett82/actuality/compare/v0.3.0...v0.4.0) (2026-11-10)
+
+### Documentation
+
+* update a few screenshots ([#33](https://github.com/thomasjbarrett82/actuality/issues/33)) ([88d6fc3](https://github.com/thomasjbarrett82/actuality/commit/88d6fc33d3fcb9f89f4afa4843286a92fa17e00c))
+
 ## [0.3.0](https://github.com/thomasjbarrett82/actuality/compare/v0.2.1...v0.3.0) (2026-11-09)
 
 ### Features
