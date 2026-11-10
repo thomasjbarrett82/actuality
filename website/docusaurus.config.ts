@@ -90,6 +90,7 @@ const config: Config = {
           label: 'Troubleshooting',
         },
         { to: '/blog', position: 'left', label: 'Blog' },
+        { href: `${repoUrl}/releases`, position: 'left', label: 'Downloads' },
         { href: repoUrl, position: 'right', label: 'Source code' },
       ],
     },
