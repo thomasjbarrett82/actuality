@@ -2,6 +2,16 @@
   "schemaVersion": 1,
   "entries": [
     {
+      "id": "release-0.4.0",
+      "type": "release",
+      "title": "Actuality 0.4.0",
+      "date": "2026-11-10T14:23:07Z",
+      "version": "0.4.0",
+      "url": "https://actualitydesktop.org/blog/release-0.4.0",
+      "body": "Actuality 0.4.0 is out. Download it for Windows, macOS or Linux from the [releases page](https://github.com/thomasjbarrett82/actuality/releases).",
+      "details": "## Documentation\n\n- update a few screenshots ([#33](https://github.com/thomasjbarrett82/actuality/issues/33)) ([88d6fc3](https://github.com/thomasjbarrett82/actuality/commit/88d6fc33d3fcb9f89f4afa4843286a92fa17e00c))"
+    },
+    {
       "id": "release-0.3.0",
       "type": "release",
       "title": "Actuality 0.3.0",
