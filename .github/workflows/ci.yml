@@ -138,73 +138,73 @@ jobs:
         if: matrix.os == 'windows-latest'
         with:
           name: installer-windows-x64
-          path: release/* x64.exe
+          path: release/*-Windows-*-x64.exe
           if-no-files-found: error
       - uses: actions/upload-artifact@v7
         if: matrix.os == 'windows-latest'
         with:
           name: installer-windows-arm64
-          path: release/* arm64.exe
+          path: release/*-Windows-*-arm64.exe
           if-no-files-found: error
       - uses: actions/upload-artifact@v7
         if: matrix.os == 'macos-latest'
         with:
           name: installer-macos-x64-dmg
-          path: release/* x64.dmg
+          path: release/*-macOS-*-x64.dmg
           if-no-files-found: error
       - uses: actions/upload-artifact@v7
         if: matrix.os == 'macos-latest'
         with:
           name: installer-macos-x64-zip
-          path: release/* x64.zip
+          path: release/*-macOS-*-x64.zip
           if-no-files-found: error
       - uses: actions/upload-artifact@v7
         if: matrix.os == 'macos-latest'
         with:
           name: installer-macos-arm64-dmg
-          path: release/* arm64.dmg
+          path: release/*-macOS-*-arm64.dmg
           if-no-files-found: error
       - uses: actions/upload-artifact@v7
         if: matrix.os == 'macos-latest'
         with:
           name: installer-macos-arm64-zip
-          path: release/* arm64.zip
+          path: release/*-macOS-*-arm64.zip
           if-no-files-found: error
       - uses: actions/upload-artifact@v7
         if: matrix.os == 'ubuntu-latest'
         with:
           name: installer-linux-x64-appimage
-          path: release/*-x86_64.AppImage
+          path: release/*-Linux-*-x86_64.AppImage
           if-no-files-found: error
       - uses: actions/upload-artifact@v7
         if: matrix.os == 'ubuntu-latest'
         with:
           name: installer-linux-x64-deb
-          path: release/*-amd64.deb
+          path: release/*-Linux-*-amd64.deb
           if-no-files-found: error
       - uses: actions/upload-artifact@v7
         if: matrix.os == 'ubuntu-latest'
         with:
           name: installer-linux-x64-rpm
-          path: release/*-x86_64.rpm
+          path: release/*-Linux-*-x86_64.rpm
           if-no-files-found: error
       - uses: actions/upload-artifact@v7
         if: matrix.os == 'ubuntu-latest'
         with:
           name: installer-linux-arm64-appimage
-          path: release/*-arm64.AppImage
+          path: release/*-Linux-*-arm64.AppImage
           if-no-files-found: error
       - uses: actions/upload-artifact@v7
         if: matrix.os == 'ubuntu-latest'
         with:
           name: installer-linux-arm64-deb
-          path: release/*-arm64.deb
+          path: release/*-Linux-*-arm64.deb
           if-no-files-found: error
       - uses: actions/upload-artifact@v7
         if: matrix.os == 'ubuntu-latest'
         with:
           name: installer-linux-arm64-rpm
-          path: release/*-aarch64.rpm
+          path: release/*-Linux-*-aarch64.rpm
           if-no-files-found: error
 
   # E2E before a release (21 §1), on the release merge only.
