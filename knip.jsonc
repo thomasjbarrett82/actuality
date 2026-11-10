@@ -14,4 +14,6 @@
   // vitest-axe runs axe-core; it is a direct devDependency so its version is pinned exactly, like every
   // other dependency (AGENTS.md).
   "ignoreDependencies": ["axe-core"],
+  // scripts/secrets-scan.ts runs gitleaks, a standalone binary installed outside npm (02 §5.1).
+  "ignoreBinaries": ["gitleaks"],
 }

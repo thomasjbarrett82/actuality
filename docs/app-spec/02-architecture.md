@@ -230,6 +230,7 @@ electron-vite builds with Vite (Rolldown and Oxc), which strip types without che
 | `deadcode` | `knip` |
 | `docs:check` | `markdownlint-cli2` on `docs/**/*.md`, `website/docs/**/*.md` and `website/blog/**/*.md`, then `tsx scripts/docs-check.ts` on `docs/` (`21` §4.5) |
 | `docs:sync` | `tsx scripts/docs-sync.ts [base] [head]`: the spec, user guide and UI strings stay in step across a range of commits (`21` §4.5) |
+| `secrets:scan` | `tsx scripts/secrets-scan.ts [base] [head]`: `gitleaks git` (verbose, with secrets redacted) on the commits from base to head (defaults `origin/main` and `HEAD`; every commit on the repo's first push), failing on anything that looks like a credential. gitleaks is a standalone binary, not an npm dependency, so it has to be installed and on the `PATH`; the script fails with install instructions when it isn't. A finding names its commit, file, line and rule, but never prints the secret. |
 | `docs:site` / `docs:site:build` | the user guide site (§3): the Docusaurus dev server / its typecheck, then `docusaurus build` into `website/build/`. Run `npm --prefix website ci` first. |
 | `news:build` / `news:check` | `tsx scripts/news-feed.ts`: writes the news feed, `website/static/news.json`, from the blog posts / `tsx scripts/news-feed.ts --check`: writes nothing, and fails when the committed feed is out of date (§3.1) |
 | `check` | `format:check`, `lint`, `lint:css`, `typecheck`, `i18n:check` (`20` §3.7), `deadcode`, `docs:check`, `news:check` (§3.1), in that order, stopping at the first failure |
@@ -247,7 +248,7 @@ electron-vite builds with Vite (Rolldown and Oxc), which strip types without che
 
 - **pre-commit:** on staged files, `eslint --fix --max-warnings 0 --no-warn-ignored` (staged files that ESLint ignores, such as `*.d.ts`, are skipped without a warning), `prettier --write`, `stylelint --fix` (on `src/`, as `lint:css`) and (for Markdown) `markdownlint-cli2 --fix`; then `typecheck` (incremental, so normally a few seconds). `lint-staged` runs with `--max-arg-length 4096`, because its Windows default of 8191 leaves no room for what the `.cmd` shims add, and a commit with many files would fail with "The command line is too long." The commit is refused on any error.
 - **commit-msg:** `commitlint --edit` (`21` §4.6).
-- **pre-push:** `check`, then `test`, then `docs:sync` from `origin/main` to `HEAD` (`21` §4.5).
+- **pre-push:** `check`, then `test`, then `docs:sync` from `origin/main` to `HEAD` (`21` §4.5), then `secrets:scan` over the same range.
 
 Hooks can be skipped with `--no-verify`, so they're a convenience, not the gate. CI is the gate.
 

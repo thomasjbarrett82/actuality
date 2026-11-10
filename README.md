@@ -61,7 +61,8 @@ To build installers yourself, see [Packaging](#packaging).
 
 ## Development
 
-You need **Node.js 26.10 or later** and npm.
+You need **Node.js 26.10 or later** and npm, and [gitleaks](https://github.com/gitleaks/gitleaks) on your
+`PATH` for the pre-push secret scan (`winget install Gitleaks.Gitleaks` or `brew install gitleaks`).
 
 ```sh
 npm install
@@ -81,8 +82,8 @@ npm run dev        # run the app with hot reload
 | `npm run news:build` | Regenerates the news feed (`website/static/news.json`) from the blog posts. `npm run check` fails when it's stale.              |
 
 Git hooks run lint-staged and the typecheck before each commit, check commit messages with commitlint
-([Conventional Commits](https://www.conventionalcommits.org)), and run `npm run check` and `npm test` before
-each push.
+([Conventional Commits](https://www.conventionalcommits.org)), and run `npm run check`, `npm test`, the docs
+sync check and a gitleaks scan of the commits being pushed (`npm run secrets:scan`) before each push.
 
 ### Integration and end-to-end tests
 

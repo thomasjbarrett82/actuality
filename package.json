@@ -26,6 +26,7 @@
     "deadcode": "knip",
     "docs:check": "markdownlint-cli2 \"docs/**/*.md\" \"website/docs/**/*.md\" \"website/blog/**/*.md\" && tsx scripts/docs-check.ts",
     "docs:sync": "tsx scripts/docs-sync.ts",
+    "secrets:scan": "tsx scripts/secrets-scan.ts",
     "docs:site": "npm --prefix website start",
     "docs:site:build": "npm --prefix website run typecheck && npm --prefix website run build",
     "news:build": "tsx scripts/news-feed.ts",
@@ -47,7 +48,7 @@
   "simple-git-hooks": {
     "pre-commit": "npx lint-staged --max-arg-length 4096 && npm run typecheck",
     "commit-msg": "npx commitlint --edit \"$1\"",
-    "pre-push": "npm run check && npm test && npm run docs:sync"
+    "pre-push": "npm run check && npm test && npm run docs:sync && npm run secrets:scan"
   },
   "lint-staged": {
     "*.{ts,vue,mjs}": [
