@@ -197,6 +197,7 @@ Main applies the same rules to `shell.openExternal` from the host as from the re
   - **Windows:** separate per-user NSIS installers for x64 and arm64. Each installer contains only its target architecture. MSI is optional.
   - **macOS:** DMG + zip (universal or separate x64/arm64), hardened runtime, notarization via `notarytool` (CI secrets).
   - **Linux:** AppImage, deb and rpm (x64 + arm64).
+- **Installer names** are `Actuality-{OS}-{version}-{arch}.{ext}` with `{OS}` one of `Windows`, `macOS`, `Linux`, so a release's assets say which system each one is for (the `artifactName` of each target in `electron-builder.yml`). Dashes, not spaces, so the file in `release/` and the GitHub release asset have the same name. `{arch}` is the package's own name for it (`amd64` for deb, `x86_64` and `aarch64` for rpm). The `build` job's upload paths match these names.
 - **Signing:** Windows Authenticode and macOS notarization use the CI signing secrets when they are set. Without them the build is unsigned. Signed installers are required from the `1.0.0` release on (`21` §7); `0.x` releases may ship unsigned.
 - **Native modules (checked against `@actual-app/api@26.11.0`):** the only native module is **`better-sqlite3@13.0.3`**. Its `.node` binary must be loaded from outside the asar archive.
   - It is an **N-API** addon (`NAPI_VERSION=10`, `node-addon-api`). Its binary is ABI-stable across Node and Electron, so **`@electron/rebuild` is not used**.

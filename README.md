@@ -51,11 +51,11 @@ than password and OpenID. Actuality leaves that data alone. It doesn't edit it, 
 Download the installer for your computer from
 [GitHub Releases](https://github.com/thomasjbarrett82/actuality/releases):
 
-| System  | Files                                                          |
-| ------- | -------------------------------------------------------------- |
-| Windows | `Actuality Setup {version} x64.exe` or `… arm64.exe`           |
-| macOS   | `.dmg` or `.zip`, for Intel (`x64`) or Apple silicon (`arm64`) |
-| Linux   | AppImage, `.deb` or `.rpm`, for `x64` or `arm64`               |
+| System  | Files                                                                                             |
+| ------- | ------------------------------------------------------------------------------------------------- |
+| Windows | `Actuality-Windows-{version}-x64.exe` or `… arm64.exe`                                            |
+| macOS   | `Actuality-macOS-{version}-….dmg` or `.zip`, for Intel (`x64`) or Apple silicon (`arm64`)         |
+| Linux   | `Actuality-Linux-{version}-…`: AppImage, `.deb` or `.rpm`, for x64 (`x86_64`, `amd64`) or `arm64` |
 
 To build installers yourself, see [Packaging](#packaging).
 
