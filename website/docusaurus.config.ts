@@ -124,6 +124,9 @@ const config: Config = {
             { label: 'RSS feed', href: 'pathname:///blog/rss.xml' },
             { label: 'Source code', href: repoUrl },
             { label: 'Report a problem', href: `${repoUrl}/issues` },
+            // SignPath Foundation's terms ask for this link on the home page (02 §5).
+            { label: 'Code signing policy', to: '/code-signing-policy' },
+            { label: 'Privacy policy', to: '/privacy' },
             { label: 'Actual Budget documentation', href: 'https://actualbudget.org/docs/' },
           ],
         },

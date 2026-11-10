@@ -66,7 +66,9 @@ A release is cut from GitHub; nothing runs on your machine. The workflows are `r
 
 Before the first release, the repository needs the `RELEASE_TOKEN` secret: a personal access token that can
 push branches and open pull requests. The release pull request is opened with it because GitHub runs no
-workflows for a pull request opened with `GITHUB_TOKEN`, so its required checks would never start.
+workflows for a pull request opened with `GITHUB_TOKEN`, so its required checks would never start. Signed
+Windows installers also need the SignPath settings (see [Windows code signing](#windows-code-signing));
+without them the release's Windows installers are unsigned.
 
 1. **Start it.** Actions ▸ **Release** ▸ **Run workflow**, on `main`, choosing `patch`, `minor` or `major`.
    The workflow:
@@ -79,15 +81,19 @@ workflows for a pull request opened with `GITHUB_TOKEN`, so its required checks 
 2. **Let the release pull request merge.** It merges by itself (squash) when its required checks pass.
    Don't merge other pull requests while it's open: a change merged after the release pull request was
    opened but before it merged ends up in neither changelog section.
-3. **Wait for the draft.** The CI run on `main` for the merge runs every job plus E2E, then its `release`
+3. **Approve the Windows signing request.** Once SignPath is set up, the Windows `build` job of the CI run
+   on `main` for the merge submits the installers to SignPath and waits up to an hour. Open the request in
+   SignPath (the job's log links it, or SignPath emails the approvers), check that it comes from this run
+   on `main` and names this version, and approve it.
+4. **Wait for the draft.** The CI run on `main` for the merge runs every job plus E2E, then its `release`
    job tags the commit `v{version}` and drafts the GitHub release with the 12 installers and the version's
    changelog section as its notes. The run's summary says "Draft release v{version} is ready". The merge
    also publishes the website, so the release post and its news feed entry are live from here on, before
    the release is.
-4. **Finish the checklist and publish.** Do the **Release** items of the checklist in
+5. **Finish the checklist and publish.** Do the **Release** items of the checklist in
    [`release-checklist.md`](release-checklist.md), record the results in the draft's notes, and publish
    the draft.
-5. **Write the highlights.** In a pull request, replace the release post's one-line summary (above the
+6. **Write the highlights.** In a pull request, replace the release post's one-line summary (above the
    `<!-- release-details -->` line) with hand-written highlights: what users will notice, linking to the
    guide pages that describe it. Keep the post's `date`. Run `npm run news:build` and commit the feed with
    the post.
@@ -103,3 +109,37 @@ workflows for a pull request opened with `GITHUB_TOKEN`, so its required checks 
   caused by the change (a timeout, a download that failed) can be fixed by re-running the failed jobs: the
   `release` job reuses an existing tag on the same commit and an existing draft, uploading the installers
   again. It refuses to run when the tag is on another commit.
+- **The Windows signing step fails or times out** (nobody approved within the hour, or the request was
+  denied). Re-run the failed `build` job: it builds again and submits a new signing request. Approve that
+  one.
+
+## Windows code signing
+
+The Windows installers are signed through [SignPath Foundation](https://signpath.org), which signs
+open-source projects for free with its own certificate. The rules are in `02` §5. The CI side is in
+`ci.yml` (the `build` job) and does nothing until the repository has the settings in step 3.
+
+1. **Apply.** Fill in the application on signpath.org. The project meets the terms as they stand: an MIT
+   license, a public repository, builds on GitHub Actions, published releases, and the
+   [code signing policy](https://actualitydesktop.org/code-signing-policy) page
+   (`website/src/pages/code-signing-policy.md`), linked from the site's footer and from every release.
+   Turn on multi-factor authentication for every team member, on GitHub and on SignPath.
+2. **Set up the SignPath project** once SignPath Foundation approves it. The names must match `ci.yml`:
+   - Project slug `actuality`, with this GitHub repository as its trusted build system.
+   - Artifact configuration `windows-installers`: paste
+     `.signpath/artifact-configurations/windows-installers.xml`.
+   - Signing policy `release-signing`, with the SignPath Foundation certificate and the approvers named on
+     the code signing policy page.
+   - A CI user for GitHub Actions, allowed to submit to that policy. Copy its API token.
+3. **Add the repository settings** (Settings ▸ Secrets and variables ▸ Actions):
+   - Secret `SIGNPATH_API_TOKEN`: the CI user's API token.
+   - Variable `SIGNPATH_ORGANIZATION_ID`: the organization ID from SignPath's organization settings.
+4. **Release.** The next release signs its Windows installers (step 3 of
+   [Cutting a release](#cutting-a-release)). Afterwards, check a downloaded installer in PowerShell:
+   `Get-AuthenticodeSignature .\Actuality-Windows-{version}-x64.exe` shows `Valid`, signed by SignPath
+   Foundation. Windows SmartScreen may still warn for a while: its reputation for a publisher builds up as
+   people download the installers.
+
+Keep the policy page true: update it when the team changes, or when Actuality starts sending anything new
+over the network. When `.signpath/artifact-configurations/windows-installers.xml` changes, paste it into
+SignPath again.

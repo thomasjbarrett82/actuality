@@ -2,8 +2,8 @@
 // About Actuality (18 §1): the app icon, the motto, the version and commit, the Electron, Chromium and Node versions,
 // the update check's status line (24 §2.2), the Actual API version, the connected server and its Actual
 // version, the copyright and the non-affiliation lines, Release notes, View licenses (the bundled
-// third-party license file) and Close.
-import { APP_NAME } from '@shared/app';
+// third-party license file), Privacy policy and Close.
+import { APP_NAME, PRIVACY_POLICY_URL } from '@shared/app';
 import { RELEASE_NOTES_URL, releasePostUrl } from '@shared/news/feed';
 import type { AppInfo } from '@shared/shell-api';
 import { onMounted, ref } from 'vue';
@@ -89,6 +89,9 @@ async function licenses(): Promise<void> {
         <p>{{ t('app.aboutNotAffiliated') }}</p>
         <p v-if="info?.licenses">
           <UiLink @click="licenses">{{ t('app.aboutViewLicenses') }}</UiLink>
+        </p>
+        <p>
+          <UiLink :href="PRIVACY_POLICY_URL">{{ t('app.aboutPrivacyPolicy') }}</UiLink>
         </p>
       </div>
     </div>

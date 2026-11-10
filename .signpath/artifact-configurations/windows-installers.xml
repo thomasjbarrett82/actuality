@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  SignPath artifact configuration `windows-installers` (02 §5, docs/operations.md "Windows code signing").
+  SignPath keeps its own copy: when this file changes, paste it into the project's artifact configuration
+  in SignPath too. The CI build job uploads the two NSIS installers as one GitHub artifact (a zip with the
+  files at its root) and passes the release version as the `version` parameter.
+
+  Only the installers are signed. The files inside them include upstream Electron binaries, which SignPath
+  Foundation's terms let a signed installer carry unsigned but not be signed with the project's certificate.
+-->
+<artifact-configuration xmlns="http://signpath.io/artifact-configuration/v1">
+  <parameters>
+    <parameter name="version" required="true" />
+  </parameters>
+  <zip-file>
+    <pe-file-set product-name="Actuality" product-version="${version}">
+      <include path="Actuality-Windows-*-x64.exe" />
+      <include path="Actuality-Windows-*-arm64.exe" />
+      <for-each>
+        <authenticode-sign description="Actuality" description-url="https://actualitydesktop.org" />
+      </for-each>
+    </pe-file-set>
+  </zip-file>
+</artifact-configuration>

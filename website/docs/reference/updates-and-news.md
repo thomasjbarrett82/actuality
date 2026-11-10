@@ -55,4 +55,6 @@ Both are on until you turn them off, and changes apply straight away.
 
 Both checks download public files and send nothing about you or your budgets: no account, no budget data, and no identifier for you or this computer. Apart from your own Actual server, actualitydesktop.org and api.github.com are the only places Actuality connects to. What you've seen and closed is remembered on this computer only.
 
+The [privacy policy](https://actualitydesktop.org/privacy) describes everything Actuality sends and keeps on your computer. **Help ▸ About Actuality** links to it too: select **Privacy policy**.
+
 The posts are written in English.

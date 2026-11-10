@@ -3,6 +3,7 @@
   "aboutCopyright": "Copyright © 2026 the Actuality contributors",
   "aboutMotto": "Potential made actual",
   "aboutNotAffiliated": "Not affiliated with Actual Budget.",
+  "aboutPrivacyPolicy": "Privacy policy",
   "aboutReleaseNotes": "Release notes",
   "aboutRuntime": "Electron {electron} · Chromium {chromium} · Node {node}",
   "aboutServer": "Connected server: {url} (Actual {version})",

@@ -108,6 +108,16 @@ jobs:
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
+      # SignPath downloads the installers to sign from this run's artifacts with the job's token.
+      actions: read
+    env:
+      # Windows Authenticode through SignPath Foundation (02 §5): on a release merge, once the repository
+      # has the SIGNPATH_ORGANIZATION_ID variable and the SIGNPATH_API_TOKEN secret. Other builds are unsigned.
+      SIGN_WINDOWS: >-
+        ${{ matrix.os == 'windows-latest' && needs.check.outputs.release-version != '' &&
+        vars.SIGNPATH_ORGANIZATION_ID != '' }}
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -120,11 +130,13 @@ jobs:
         shell: bash
         # A secret that isn't set still arrives as an empty variable, and electron-builder reads an empty
         # CSC_LINK as a path (the working directory). Unset the empty ones, so builds without signing
-        # secrets are simply unsigned.
+        # secrets are simply unsigned. CSC_LINK is the macOS certificate: Windows signing is SignPath's, after
+        # packaging, so electron-builder must not try the Apple certificate on Windows.
         run: |
           for v in CSC_LINK CSC_KEY_PASSWORD APPLE_API_KEY APPLE_API_KEY_ID APPLE_API_ISSUER; do
             if [ -z "${!v}" ]; then unset "$v"; fi
           done
+          if [ "$RUNNER_OS" = Windows ]; then unset CSC_LINK CSC_KEY_PASSWORD; fi
           npm run package -- --publish never
         env:
           # Code signing and notarization use repository secrets when present (02 §5).
@@ -134,6 +146,49 @@ jobs:
           APPLE_API_KEY_ID: ${{ secrets.APPLE_API_KEY_ID }}
           APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
           CSC_IDENTITY_AUTO_DISCOVERY: ${{ secrets.CSC_LINK != '' }}
+      # SignPath signs the two installers (the artifact configuration is in .signpath/), after an approver
+      # approves the signing request in SignPath, so the job waits up to an hour for that. The signed
+      # installers replace the unsigned ones in release/, so the uploads below pick them up.
+      - name: Upload the Windows installers for signing
+        id: unsigned
+        if: env.SIGN_WINDOWS == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: unsigned-windows-installers
+          path: release/*-Windows-*.exe
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 1
+          overwrite: true
+      - name: Sign the Windows installers (SignPath)
+        if: env.SIGN_WINDOWS == 'true'
+        uses: signpath/github-action-submit-signing-request@v2
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORGANIZATION_ID }}
+          project-slug: actuality
+          signing-policy-slug: release-signing
+          artifact-configuration-slug: windows-installers
+          github-artifact-id: ${{ steps.unsigned.outputs.artifact-id }}
+          parameters: |
+            version: "${{ needs.check.outputs.release-version }}"
+          wait-for-completion: true
+          wait-for-completion-timeout-in-seconds: 3600
+          output-artifact-directory: release/signed
+      - name: Check the signatures
+        if: env.SIGN_WINDOWS == 'true'
+        shell: pwsh
+        run: |
+          $signed = @(Get-ChildItem release/signed -Filter '*-Windows-*.exe')
+          if ($signed.Count -ne 2) { throw "Expected 2 signed installers, found $($signed.Count)" }
+          foreach ($f in $signed) {
+            $sig = Get-AuthenticodeSignature $f.FullName
+            if ($sig.Status -ne 'Valid' -or -not $sig.TimeStamperCertificate) {
+              throw "$($f.Name): signature $($sig.Status), timestamped: $([bool]$sig.TimeStamperCertificate)"
+            }
+            "$($f.Name): signed by $($sig.SignerCertificate.Subject)"
+            Move-Item -Force $f.FullName release/
+          }
       - uses: actions/upload-artifact@v7
         if: matrix.os == 'windows-latest'
         with:
@@ -248,7 +303,12 @@ jobs:
             ls -la installers
             exit 1
           fi
-      - run: npx tsx scripts/release-notes.ts "$VERSION" > notes.md
+      # The release page is where people download, so it links the code signing policy (SignPath Foundation's
+      # terms ask for it on the download page).
+      - name: Write the release notes
+        run: |
+          npx tsx scripts/release-notes.ts "$VERSION" > notes.md
+          printf '\n---\n\n[Code signing policy](https://actualitydesktop.org/code-signing-policy)\n' >> notes.md
       - name: Tag the release commit
         run: |
           if git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null; then

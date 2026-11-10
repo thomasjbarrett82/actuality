@@ -234,7 +234,7 @@ describe('Import a budget file (07 §3.4)', () => {
 });
 
 describe('About (18 §1)', () => {
-  it('shows the versions, the server and View licenses', async () => {
+  it('shows the versions, the server, View licenses and the privacy policy', async () => {
     mocked = mockHost({ 'session.serverVersion': () => '26.2.0' });
     useConnection().info = { ...ONLINE, serverUrl: 'https://budget.example.com' };
     const queryClient = new QueryClient();
@@ -253,6 +253,13 @@ describe('About (18 §1)', () => {
       .find((b) => b.text() === 'View licenses')
       ?.trigger('click');
     expect(vi.mocked(window.app.shell).openLicenses.mock.calls).toHaveLength(1);
+    await w
+      .findAll('a')
+      .find((a) => a.text() === 'Privacy policy')
+      ?.trigger('click');
+    expect(vi.mocked(window.app.shell).openExternal.mock.calls).toEqual([
+      ['https://actualitydesktop.org/privacy'],
+    ]);
   });
 });
 

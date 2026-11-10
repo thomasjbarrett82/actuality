@@ -57,6 +57,7 @@ Download the installer for your computer from
 | macOS   | `Actuality-macOS-{version}-….dmg` or `.zip`, for Intel (`x64`) or Apple silicon (`arm64`)         |
 | Linux   | `Actuality-Linux-{version}-…`: AppImage, `.deb` or `.rpm`, for x64 (`x86_64`, `amd64`) or `arm64` |
 
+How the Windows installers are signed: [code signing policy](https://actualitydesktop.org/code-signing-policy).
 To build installers yourself, see [Packaging](#packaging).
 
 ## Development

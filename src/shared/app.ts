@@ -10,6 +10,8 @@ export const APP_HELP_URL = 'https://github.com/thomasjbarrett82/actuality#readm
 /** Help ▸ Actuality resources (06 §4, 18 §1). */
 export const APP_DOCS_URL = 'https://actualitydesktop.org';
 export const APP_GITHUB_URL = 'https://github.com/thomasjbarrett82/actuality';
+/** About ▸ Privacy policy (18 §1): the website page that states what Actuality sends and stores. */
+export const PRIVACY_POLICY_URL = 'https://actualitydesktop.org/privacy';
 
 /** Help ▸ Actual Budget resources (06 §4). */
 export const ACTUAL_DOCS_URL = 'https://actualbudget.org/docs/';
