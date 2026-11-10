@@ -221,6 +221,9 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      # Build provenance attestations: the OIDC token signs them (Sigstore), and GitHub stores them.
+      id-token: write
+      attestations: write
     env:
       VERSION: ${{ needs.check.outputs.release-version }}
       GH_TOKEN: ${{ github.token }}
@@ -261,6 +264,13 @@ jobs:
               tag -a "v$VERSION" -m "Actuality $VERSION" "$GITHUB_SHA"
             git push origin "v$VERSION"
           fi
+      # One build provenance attestation per installer, made from the files the release uploads (so after
+      # any signing in build), which anyone can check with `gh attestation verify` (02 §5.1). A re-run
+      # attests again, which does no harm.
+      - name: Attest the installers
+        uses: actions/attest@v4
+        with:
+          subject-path: installers/*
       - name: Draft the GitHub release
         run: |
           if gh release view "v$VERSION" >/dev/null 2>&1; then

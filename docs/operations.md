@@ -80,8 +80,8 @@ workflows for a pull request opened with `GITHUB_TOKEN`, so its required checks 
    Don't merge other pull requests while it's open: a change merged after the release pull request was
    opened but before it merged ends up in neither changelog section.
 3. **Wait for the draft.** The CI run on `main` for the merge runs every job plus E2E, then its `release`
-   job tags the commit `v{version}` and drafts the GitHub release with the 12 installers and the version's
-   changelog section as its notes. The run's summary says "Draft release v{version} is ready". The merge
+   job tags the commit `v{version}`, attests the 12 installers (build provenance) and drafts the GitHub
+   release with them and the version's changelog section as its notes. The run's summary says "Draft release v{version} is ready". The merge
    also publishes the website, so the release post and its news feed entry are live from here on, before
    the release is.
 4. **Finish the checklist and publish.** Do the **Release** items of the checklist in
