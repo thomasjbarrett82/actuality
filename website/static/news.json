@@ -2,6 +2,16 @@
   "schemaVersion": 1,
   "entries": [
     {
+      "id": "release-0.5.0",
+      "type": "release",
+      "title": "Actuality 0.5.0",
+      "date": "2026-11-11T19:17:07Z",
+      "version": "0.5.0",
+      "url": "https://actualitydesktop.org/blog/release-0.5.0",
+      "body": "Actuality 0.5.0 is out. Download it for Windows, macOS or Linux from the [releases page](https://github.com/thomasjbarrett82/actuality/releases).",
+      "details": "## Features\n\n- multiple tag improvements ([#39](https://github.com/thomasjbarrett82/actuality/issues/39)) ([36e6033](https://github.com/thomasjbarrett82/actuality/commit/36e6033d7c817e6f6d0aadcde3a820cf5eb03bd5))"
+    },
+    {
       "id": "release-0.4.1",
       "type": "release",
       "title": "Actuality 0.4.1",

@@ -2,6 +2,12 @@
 
 The user-visible changes in each release of Actuality. Changes before 0.2.0 are in the git history.
 
+## [0.5.0](https://github.com/thomasjbarrett82/actuality/compare/v0.4.1...v0.5.0) (2026-11-11)
+
+### Features
+
+* multiple tag improvements ([#39](https://github.com/thomasjbarrett82/actuality/issues/39)) ([36e6033](https://github.com/thomasjbarrett82/actuality/commit/36e6033d7c817e6f6d0aadcde3a820cf5eb03bd5))
+
 ## [0.4.1](https://github.com/thomasjbarrett82/actuality/compare/v0.4.0...v0.4.1) (2026-11-10)
 
 ### Features
