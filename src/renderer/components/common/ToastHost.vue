@@ -69,7 +69,7 @@ function onKeydown(e: KeyboardEvent, id: string): void {
 }
 
 async function runAction(id: string): Promise<void> {
-  await toasts.list.find((x) => x.id === id)?.action.run();
+  await toasts.list.find((x) => x.id === id)?.action?.run();
 }
 </script>
 
@@ -96,7 +96,7 @@ async function runAction(id: string): Promise<void> {
       <div class="toast__text">
         <p :id="`toast-${toast.id}-title`" class="toast__title">{{ toast.title }}</p>
         <p class="toast__message">{{ toast.message }}</p>
-        <div class="toast__actions">
+        <div v-if="toast.action" class="toast__actions">
           <UiButton @click="runAction(toast.id)">{{ toast.action.label }}</UiButton>
         </div>
       </div>

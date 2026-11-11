@@ -3,6 +3,7 @@
 // to transactions too, and deleting an entity leaves the notes alone. `needs-review` drives approval state,
 // so it can't be renamed or deleted here.
 import type { TagEntity } from '@shared/domain/types';
+import { noteTags } from '@shared/metadata/notes-codec';
 import { REVIEW_TAG } from '@shared/metadata/tags';
 import { RpcError } from '@shared/rpc/protocol';
 import type { ActualApi, RawTag } from '../actual';
@@ -112,13 +113,48 @@ export class TagsService {
     });
   }
 
-  /** `tags.discover`: entities for the tags already used in notes. Returns the tags that were added. */
-  discover(): Promise<TagEntity[]> {
+  /**
+   * `tags.unmanaged`: the tag names used in transaction notes (split lines too) that have no entity, by name.
+   * Nothing is written: the Discover dialog lets the user choose which to add (`tags.createMany`).
+   * `needs-review` is never listed; the session start restores its entity (03 §6.4).
+   */
+  unmanaged(): Promise<string[]> {
     this.requireBudget();
-    return this.connection.write('tags.discover', ['tags'], async () => {
-      const before = new Set((await this.all()).map((t) => t.id));
-      await this.actual.discoverTags();
-      return sortByName((await this.all()).filter((t) => !before.has(t.id)));
+    return this.queue.run(
+      'tags.unmanaged',
+      async () => {
+        const known = new Set((await this.all()).map((t) => t.tag));
+        known.add(REVIEW_TAG);
+        const found = new Set<string>();
+        for (const notes of await this.actual.getTaggedNotes())
+          for (const tag of noteTags(notes)) if (!known.has(tag)) found.add(tag);
+        return [...found].sort(byName);
+      },
+      { kind: 'read' },
+    );
+  }
+
+  /**
+   * `tags.createMany`: an entity for each name, in one job. A name that already has one is left as it is.
+   * Returns the tags that were added, by name.
+   */
+  createMany(
+    tags: readonly { tag: string; color?: string | undefined; description?: string | undefined }[],
+  ): Promise<TagEntity[]> {
+    this.requireBudget();
+    return this.connection.write('tags.createMany', ['tags'], async () => {
+      const known = new Set((await this.all()).map((t) => t.tag));
+      const added = new Set<string>();
+      for (const t of tags) {
+        if (known.has(t.tag) || added.has(t.tag)) continue;
+        await this.actual.createTag({
+          tag: t.tag,
+          ...(t.color === undefined ? {} : { color: t.color }),
+          ...(t.description === undefined ? {} : { description: t.description }),
+        });
+        added.add(t.tag);
+      }
+      return sortByName((await this.all()).filter((t) => added.has(t.tag)));
     });
   }
 
@@ -135,5 +171,7 @@ const NAME_TAKEN = /already exists/i;
 const duplicateTag = (): RpcError =>
   new RpcError('validation', 'A tag with that name already exists.', { code: 'duplicate-tag' });
 
+const byName = (a: string, b: string): number => (a < b ? -1 : a > b ? 1 : 0);
+
 const sortByName = (tags: TagEntity[]): TagEntity[] =>
-  [...tags].sort((a, b) => (a.tag < b.tag ? -1 : a.tag > b.tag ? 1 : 0));
+  [...tags].sort((a, b) => byName(a.tag, b.tag));

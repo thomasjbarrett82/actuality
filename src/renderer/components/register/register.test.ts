@@ -1060,6 +1060,16 @@ describe('split lines (10 §2, §4; 11 §7.2)', () => {
     expect(lineRows(w)).toHaveLength(0);
   });
 
+  it("shows a line's tags as the same clickable pills as a transaction's (10 §6.2)", async () => {
+    const w = await open();
+    await toggle(w).trigger('click');
+    const pills = lineRows(w)[0]?.findAll('.note-pill') ?? [];
+    expect(pills.map((p) => p.text())).toEqual(['#trip']);
+    expect(pills[0]?.attributes('aria-label')).toBe('Filter by tag #trip');
+    await pills[0]?.trigger('click');
+    expect(useRegisterSession().view('chk').search).toBe('Tag: trip,');
+  });
+
   it("opens a split a search matches only in part, dimming the other lines, and puts the user's expand state back after", async () => {
     const w = await open();
     await toggle(w).trigger('click');

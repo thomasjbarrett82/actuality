@@ -79,7 +79,29 @@ Type the amount in **Outflow** or **Inflow**; filling one clears the other. A ne
 
 Add tags anywhere in Notes by typing `#` and a name, such as `#vacation`. As you type, Actuality suggests tags you've used. Tags are shown as colored labels; select one in the register to list every transaction with that tag. Type `##` for a plain `#`.
 
+![Add tag to transaction dialog in the register screen](/img/accounts/add-tag-to-transaction-light.png#light)
+![Add tag to transaction dialog in the register screen](/img/accounts/add-tag-to-transaction-dark.png#dark)
+
 Tags are part of the transaction's notes, so they sync and show up in Actual's web app too. To give tags colors and descriptions, or to rename or delete them, choose **Manage Tags…** in [Preferences](../reference/preferences.md).
+
+![Window for managing tags, descriptions, and colors](/img/accounts/manage-tags-light.png#light)
+![Window for managing tags, descriptions, and colors](/img/accounts/manage-tags-dark.png#dark)
+
+A tag you type in Notes isn't added to Manage Tags by itself. To add the tags you've already used:
+
+1. In Manage Tags, select **Discover New Tags**. The list shows every tag in your notes that Manage Tags doesn't have yet, all checked. If there are none, you see "No unmanaged tags found in the register."
+2. Clear the tags you don't want, or use **Select all** to clear or check them all.
+3. Select **Add**. Select **Cancel** to close without adding anything.
+
+![Window for discovering new tags from existing transactions](/img/accounts/discover-new-tags-light.png#light)
+![Window for discovering new tags from existing transactions](/img/accounts/discover-new-tags-dark.png#dark)
+
+Coming from YNAB? As long as you have no tags that start with `flag-`, the dialog also has **Add YNAB flags**, which adds `#flag-red`, `#flag-orange`, `#flag-yellow`, `#flag-green`, `#flag-blue` and `#flag-purple` with their YNAB colors. They're ordinary tags: type them in Notes like any other. The button goes away once you have a tag that starts with `flag-`.
+
+![Example YNAB flags with colors](/img/accounts/ynab-flags-light.png#light)
+![Example YNAB flags with colors](/img/accounts/ynab-flags-dark.png#dark)
+
+Like other changes, discovering and adding tags needs a connection to your server.
 
 ## Check numbers
 

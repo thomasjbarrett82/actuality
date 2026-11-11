@@ -78,3 +78,64 @@ Select **Save** to save the rule.
 Rules run on every new transaction: those you enter, and those imported from your bank. They don't run when you edit an existing transaction. When you enter a transaction yourself, Actuality keeps the payee, category and notes you typed, even if a rule would change them.
 
 Rules that belong to schedules open read-only. Edit them through the schedule, with **Edit Schedule**.
+
+### Example rules
+
+These examples show what rules can do. Rules do most of their work on imported transactions, so try them on your next import. To use a rule on transactions you already have, tick them under **Matching transactions** and select **Apply Actions**.
+
+#### 1. Give a bank's payee name a clean name
+
+Your bank sends "FUELSTOP 0042 SPRINGFIELD" and you want "Fuel Stop".
+
+- Stage: **Pre**, so the clean payee is in place before your other rules run.
+- If: imported payee contains `FUELSTOP`
+- Then: set payee to Fuel Stop
+
+#### 2. Categorize several payees at once
+
+Every gas station goes to Fuel.
+
+- If: payee is one of Fuel Stop, Highway Gas
+- Then: set category to Fuel
+
+#### 3. Recognize your paycheck
+
+Your employer's deposits arrive with a long payroll code and an amount that changes a little each time.
+
+- If **all** of these conditions match: imported payee contains `ACME PAYROLL`, and amount (inflow) is approximately 4,850.00
+- Then: set payee to Acme Corp, set category to Income, set notes to `Paycheck`
+
+"Is approximately" allows 7.5% either way, so overtime or a small raise still matches.
+
+#### 4. Split one bill across two categories
+
+Your power company bills electricity and gas together, about 60/40.
+
+- If: payee is City Power
+- Then: **Add a split**. Split 1: **Percent of remainder** 60, set category to Electricity. Split 2: **Remainder**, set category to Natural Gas/Propane/Oil.
+
+Use **Fixed amount** for a part that's the same every month, such as a 20.00 equipment fee. Percentages are taken from what the fixed amounts leave, and **Remainder** takes the rest.
+
+#### 5. Tag large card purchases
+
+Mark anything over 500.00 on your credit card so you can find it later.
+
+- If **all** of these conditions match: account is Credit Card, and amount (outflow) is greater than 500.00
+- Then: append to notes a space and `#large`
+
+Appended text is added exactly as you type it, so start it with a space to keep it apart from the existing notes.
+
+#### 6. Tag by category, after the others have run
+
+Tag every medical expense for tax time, including those whose category another rule set.
+
+- Stage: **Post**, so it sees the category set by your Default rules.
+- If: category is Medical
+- Then: append to notes a space and `#tax`
+
+#### 7. Catch any of several spellings
+
+One store shows up as "HOME STORE", "HOMESTORE.COM" and "HS ONLINE".
+
+- If **any** of these conditions match: imported payee contains `HOME STORE`, imported payee contains `HOMESTORE`, imported payee contains `HS ONLINE`
+- Then: set payee to Home Store, set category to Household Goods

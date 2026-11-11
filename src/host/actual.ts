@@ -48,7 +48,6 @@ export type InternalHandler =
   | 'rule-apply-actions'
   | 'save-prefs'
   | 'key-make'
-  | 'tags-discover'
   | 'tags-rename'
   | 'delete-budget'
   | 'transactions-batch-update';
@@ -396,8 +395,11 @@ export interface ActualApi {
   renameTag(id: string, tag: string): Promise<void>;
   /** `deleteTag`: removes the entity only; the hashtag text stays in the notes. */
   deleteTag(id: string): Promise<void>;
-  /** The internal `tags-discover` (04 §5.2): creates entities for note tags that have none. */
-  discoverTags(): Promise<void>;
+  /**
+   * The notes of every transaction, split lines included, that has a `#` in them: where the Discover dialog
+   * looks for tags with no entity (04 §5.2), as Actual's own `tags-discover` does.
+   */
+  getTaggedNotes(): Promise<string[]>;
   /**
    * Creates an account (04 §3). With a non-zero balance Actual adds the starting-balance transaction
    * itself: dated today, cleared, payee "Starting Balance", categorized as its starting-balance income
@@ -1167,9 +1169,15 @@ class RealActual implements ActualApi {
     await this.api.deleteTag(id);
   }
 
-  async discoverTags(): Promise<void> {
-    this.assertWritable();
-    await this.internal('tags-discover', {});
+  async getTaggedNotes(): Promise<string[]> {
+    const rows = await this.aql<{ notes: string | null }[]>(
+      this.api
+        .q('transactions')
+        .filter({ notes: { $like: '%#%' } })
+        .select(['notes'])
+        .options({ splits: 'all' }),
+    );
+    return rows.flatMap((r) => (r.notes ? [r.notes] : []));
   }
 
   async deleteLocalBudget(localId: string): Promise<void> {

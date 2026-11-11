@@ -9,7 +9,7 @@ import {
   type SchedulerColumn,
   type SchedulerToggleable,
 } from '@shared/domain/scheduler';
-import type { Id, Schedule } from '@shared/domain/types';
+import type { Account, Id, Schedule, ScheduleLine } from '@shared/domain/types';
 import { FREQUENCIES } from '@shared/schedule/frequency';
 import { useQuery, useQueryClient } from '@tanstack/vue-query';
 import { computed, inject, provide, reactive, ref, type InjectionKey, type Ref } from 'vue';
@@ -19,6 +19,7 @@ import { useBudgetSettings } from '../stores/budget-settings';
 import { useConnection } from '../stores/connection';
 import { attempt } from './dialogs';
 import { customDescription, frequencyLabel } from './frequency-text';
+import { transferKindOf } from './rows';
 import { openScheduleDialog } from './schedule-dialog';
 import type { Register } from './use-register';
 
@@ -26,12 +27,21 @@ import type { Register } from './use-register';
 export const SCHEDULER_DEFAULT_H = 15.5;
 export const SCHEDULER_MIN_H = 14.25;
 
+/** A split schedule's line as the pane shows it under its expanded parent (12 §3, 11 §7.2). */
+export interface ScheduleLineRow {
+  line: ScheduleLine;
+  /** "Transfer : {account}" for a transfer line, '' otherwise, as in the register (10 §2.2). */
+  transferText: string;
+  categoryText: string;
+}
+
 export interface ScheduleRow {
   s: Schedule;
   accountName: string;
   payeeText: string;
   categoryText: string;
   frequencyText: string;
+  lines: ScheduleLineRow[];
   sort: SortRow;
 }
 
@@ -122,6 +132,16 @@ export function createScheduler(accountId: Ref<string>, reg: Register) {
     const a = accountIdOf ? reg.accountMap.get(accountIdOf) : undefined;
     return a ? t('app.transferPayee', { account: a.name }) : '';
   };
+  /** A line's texts, read as the register reads a transaction's split line (10 §2.2). */
+  const lineRow = (own: Account | undefined, line: ScheduleLine): ScheduleLineRow => {
+    const target = line.transferAccountId ? reg.accountMap.get(line.transferAccountId) : undefined;
+    const category = reg.categoryText(line.categoryId);
+    const categoryText =
+      own && !own.onBudget
+        ? ''
+        : category || (transferKindOf(own, target) === 'onOn' ? t('app.regCategoryNotNeeded') : '');
+    return { line, transferText: transferText(line.transferAccountId), categoryText };
+  };
   const rows = computed<ScheduleRow[]>(() =>
     (listQ.data.value ?? []).map((s) => {
       const payee = s.payeeId ? reg.payees.find((p) => p.id === s.payeeId) : undefined;
@@ -132,7 +152,8 @@ export function createScheduler(accountId: Ref<string>, reg: Register) {
         s.subtransactions.length > 0
           ? t('register.splitCategoryOption')
           : reg.categoryText(s.categoryId);
-      const accountName = s.accountId ? (reg.accountMap.get(s.accountId)?.name ?? '') : '';
+      const own = s.accountId ? reg.accountMap.get(s.accountId) : undefined;
+      const accountName = own?.name ?? '';
       const frequencyText =
         s.frequency === 'custom'
           ? customDescription(s.raw.date, reg.format.dateFormat)
@@ -143,6 +164,7 @@ export function createScheduler(accountId: Ref<string>, reg: Register) {
         payeeText,
         categoryText,
         frequencyText,
+        lines: s.subtransactions.map((l) => lineRow(own, l)),
         sort: {
           id: s.id,
           date: s.nextDate,
@@ -167,6 +189,15 @@ export function createScheduler(accountId: Ref<string>, reg: Register) {
   });
   const loaded = computed(() => listQ.data.value !== undefined);
   const count = computed(() => rows.value.length);
+
+  /** The split schedules whose lines are shown; collapsed by default, as in the register (11 §7.2). */
+  const expanded = ref(new Set<Id>());
+  function toggleExpanded(id: Id): void {
+    const next = new Set(expanded.value);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    expanded.value = next;
+  }
 
   // ----------------------------------------------------------------------------------- selection
 
@@ -314,6 +345,8 @@ export function createScheduler(accountId: Ref<string>, reg: Register) {
     canSkip,
     skipUnavailable,
     canTransfer,
+    expanded,
+    toggleExpanded,
     selection,
     selectedRows,
     focusRow,

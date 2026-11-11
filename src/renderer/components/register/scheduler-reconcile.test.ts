@@ -10,6 +10,7 @@ import { flushPromises, type VueWrapper } from '@vue/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { leaveEdit } from '../../register/edit-guard';
 import type { ScheduleForm } from '../../register/schedule-form';
+import { useRegisterSession } from '../../register/view-state';
 import { queryClient as appQueryClient } from '../../rpc/query-client';
 import RegisterPanel from '../../screens/shell/RegisterPanel.vue';
 import { useBudgetSettings } from '../../stores/budget-settings';
@@ -259,6 +260,64 @@ describe('the scheduler pane (12 §3)', () => {
     const dialog = await scheduleDialog();
     expect(dialog.form.id).toBe('s1');
     await closeDialog(dialog.id, null);
+  });
+
+  it('expands a split schedule into its lines, with tag pills that filter the register (12 §3)', async () => {
+    schedules = [
+      schedule({
+        id: 's3',
+        categoryId: null,
+        notes: 'Weekly shop',
+        amount: -3000,
+        subtransactions: [
+          {
+            amount: -2000,
+            method: 'fixed-amount',
+            payeeId: null,
+            transferAccountId: null,
+            categoryId: 'c-groceries',
+            notes: 'milk #trip',
+          },
+          {
+            amount: -1000,
+            method: 'remainder',
+            payeeId: null,
+            transferAccountId: 'sav',
+            categoryId: null,
+            notes: 'to savings',
+          },
+        ],
+      }),
+    ];
+    const w = await open();
+    await showPane(w);
+    const lines = () => w.findAll('[data-scheduler] [data-line-parent="s3"]');
+    const disclosure = () => w.get('[data-schedule-id="s3"] .sched__disclosure');
+    expect(w.get('[data-schedule-id="s3"] [data-col="category"]').text()).toBe(
+      'Split (Multiple Categories)...',
+    );
+    expect(lines()).toHaveLength(0);
+    expect(disclosure().attributes('aria-expanded')).toBe('false');
+    await disclosure().trigger('click');
+    expect(disclosure().attributes('aria-expanded')).toBe('true');
+    const [groceries, transfer] = lines();
+    expect(lines()).toHaveLength(2);
+    expect(groceries?.get('[data-col="category"]').text()).toContain('Groceries');
+    expect(groceries?.get('[data-col="outflow"]').text()).toContain('20.00');
+    expect(transfer?.get('[data-col="payee"]').text()).toBe('Transfer : Savings');
+    expect(transfer?.get('[data-col="category"]').text()).toBe('(Category not needed)');
+    expect(lines().map((l) => l.attributes('aria-rowindex'))).toEqual(['3', '4']);
+    // Expanding doesn't select; a click on a line selects its schedule.
+    expect(w.get('[data-schedule-id="s3"]').classes()).not.toContain('is-selected');
+    await transfer?.get('[data-col="notes"]').trigger('click');
+    expect(w.get('[data-schedule-id="s3"]').classes()).toContain('is-selected');
+    const pills = groceries?.findAll('.note-pill') ?? [];
+    expect(pills.map((p) => p.text())).toEqual(['#trip']);
+    expect(pills[0]?.attributes('aria-label')).toBe('Filter by tag #trip');
+    await pills[0]?.trigger('click');
+    expect(useRegisterSession().view('chk').search).toBe('Tag: trip,');
+    await disclosure().trigger('click');
+    expect(lines()).toHaveLength(0);
   });
 
   it('opens a custom schedule with its own pattern', async () => {

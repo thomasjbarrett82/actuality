@@ -1,6 +1,6 @@
 // Tag entities on the fake API (03 §8 `tags`; 04 §5.2): create (an existing name updates its color), update
-// (a rename rewrites the exact hashtag in the notes), delete (the notes keep the text), discover, the
-// protected needs-review tag, and the write gate.
+// (a rename rewrites the exact hashtag in the notes), delete (the notes keep the text), the note tags with no
+// entity and adding a chosen set of them, the protected needs-review tag, and the write gate.
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Connection } from '../connection';
 import { JobQueue } from '../queue';
@@ -154,12 +154,36 @@ describe('TagsService (04 §5.2)', () => {
     expect(notesOf('t2')).toBe('lunch #Dine #needs-review');
   });
 
-  it('discovers the tags used in notes that have no entity, and reports the new ones', async () => {
+  it('lists the note tags with no entity, split lines included, without writing anything', async () => {
+    budget().transactions.push(
+      rawTransaction({
+        id: 't3',
+        account: 'a1',
+        isParent: true,
+        subtransactions: [
+          rawTransaction({ id: 't3a', account: 'a1', parentId: 't3', notes: 'part #Zoo #trip' }),
+        ],
+      }),
+    );
     await service.create({ tag: 'Dine', color: '#336699' });
-    const found = await service.discover();
-    expect(found.map((t) => t.tag)).toEqual(['dine.', 'flag-red', 'needs-review']);
+    // needs-review is the app's own tag, so it is never offered.
+    expect(await service.unmanaged()).toEqual(['Zoo', 'dine.', 'flag-red', 'trip']);
+    expect((await service.list()).map((t) => t.tag)).toEqual(['Dine']);
+  });
+
+  it('adds the chosen tags in one job, with colors and descriptions, and skips existing names', async () => {
+    await service.create({ tag: 'Dine', color: '#336699' });
+    const added = await service.createMany([
+      { tag: 'flag-red', color: '#E53935', description: 'Flags' },
+      { tag: 'dine.' },
+      { tag: 'Dine', color: '#000000' },
+      { tag: 'dine.' },
+    ]);
+    expect(added.map((t) => t.tag)).toEqual(['dine.', 'flag-red']);
+    expect(added[1]).toMatchObject({ color: '#E53935', description: 'Flags' });
+    // An existing tag keeps its color.
     expect((await service.list()).find((t) => t.tag === 'Dine')?.color).toBe('#336699');
-    expect(await service.discover()).toEqual([]);
+    expect(await service.unmanaged()).toEqual([]);
   });
 
   it('reports a missing tag on update, and ignores one on delete', async () => {
@@ -193,8 +217,9 @@ describe('TagsService (04 §5.2)', () => {
       code: 'offline',
     });
     await expect(service.delete('tag-x')).rejects.toMatchObject({ code: 'offline' });
-    await expect(service.discover()).rejects.toMatchObject({ code: 'offline' });
+    await expect(service.createMany([{ tag: 'x' }])).rejects.toMatchObject({ code: 'offline' });
     // Reads still work.
     await expect(service.list()).resolves.toEqual([]);
+    await expect(service.unmanaged()).resolves.toEqual(['Dine', 'dine.', 'flag-red']);
   });
 });

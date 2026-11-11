@@ -70,8 +70,9 @@ workflows for a pull request opened with `GITHUB_TOKEN`, so its required checks 
 
 1. **Start it.** Actions ▸ **Release** ▸ **Run workflow**, on `main`, choosing `patch`, `minor` or `major`.
    The workflow:
-   - bumps the version in `package.json` and the lockfile, and writes the version's `CHANGELOG.md` section
-     from the Conventional Commits since the last tag;
+   - bumps the version in `package.json` and the lockfile, and in the website's (`website/package.json` and
+     its lockfile) to the same version (the `bumpFiles` of `.versionrc.json`), and writes the version's
+     `CHANGELOG.md` section from the Conventional Commits since the last tag;
    - writes the release's blog post (`website/blog/{date}-release-{version}.md`) from that section, and
      regenerates the news feed;
    - pushes all of it as one commit to `release/v{version}` and opens the pull request

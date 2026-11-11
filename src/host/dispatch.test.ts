@@ -53,7 +53,7 @@ const WRITE_SAMPLES: Partial<Record<HostMethod, unknown>> = {
   'tags.create': { tag: 'trip', color: '#112233' },
   'tags.update': { id: 'tag-trip', color: '#445566' },
   'tags.delete': { id: 'tag-trip' },
-  'tags.discover': {},
+  'tags.createMany': { tags: [{ tag: 'trip', color: '#112233' }] },
   'transactions.categorize': { ids: ['t1'], categoryId: null },
   'transactions.delete': { ids: ['t1'] },
   'transactions.undo': { token: 'any' },
@@ -399,7 +399,8 @@ const ROUTES: Record<HostMethod, [params: object, to: string, args: unknown[]]> 
   'tags.create': [p, 'tags.create', [p]],
   'tags.update': [{ id: 'g', color: '#fff' }, 'tags.update', ['g', { color: '#fff' }]],
   'tags.delete': [{ id: 'g' }, 'tags.delete', ['g']],
-  'tags.discover': [{}, 'tags.discover', []],
+  'tags.unmanaged': [{}, 'tags.unmanaged', []],
+  'tags.createMany': [{ tags: [{ tag: 'trip' }] }, 'tags.createMany', [[{ tag: 'trip' }]]],
   'transactions.categorize': [
     { ids: ['t1'], categoryId: 'c1' },
     'transactions.categorize',

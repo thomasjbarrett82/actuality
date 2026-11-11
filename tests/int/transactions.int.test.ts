@@ -556,7 +556,7 @@ describe.skipIf(!HAS_SERVER)(
       });
     });
 
-    it('manages tag entities: create, color, rename (rewrites the notes), discover and delete (04 §5.2)', async () => {
+    it('manages tag entities: create, color, rename (rewrites the notes), discover, add and delete (04 §5.2)', async () => {
       const tagged = (await host.transactions.commit(edit({ notes: 'dinner #Dine #dine.' }))).id;
       const created = await host.tags.create({ tag: 'Dine', color: '#336699' });
       expect(created).toMatchObject({ tag: 'Dine', color: '#336699' });
@@ -598,16 +598,17 @@ describe.skipIf(!HAS_SERVER)(
       await expect(host.tags.update(review?.id ?? '', { tag: 'to-review' })).rejects.toMatchObject({
         code: 'validation',
       });
-      // Discovery finds the tags used in notes that have no entity.
-      // A server version without the internal handler reports that, which is accepted here.
-      const found = await host.tags.discover().then(
-        (added) => added.map((t) => t.tag),
-        (e: unknown) =>
-          (e as { details?: { code?: string } }).details?.code === 'internal-handler-unavailable'
-            ? ['Meals', 'dine.']
-            : Promise.reject(new Error('discover failed', { cause: e })),
-      );
+      // Discovery lists the tags used in notes that have no entity, and adds only the chosen ones.
+      const found = await host.tags.unmanaged();
       expect(found).toEqual(expect.arrayContaining(['Meals', 'dine.']));
+      expect(found).not.toContain('needs-review');
+      // `Meals` is the name of a deleted tag: Actual brings that entity back.
+      const added = await host.tags.createMany([
+        { tag: 'Meals', color: '#E53935' },
+        { tag: 'Lunch' },
+      ]);
+      expect(added).toEqual([expect.objectContaining({ tag: 'Meals', color: '#E53935' })]);
+      expect(await host.tags.unmanaged()).toEqual(found.filter((t) => t !== 'Meals'));
     });
 
     it('rejects every transaction, payee and category write while offline (03 §5)', async () => {
@@ -625,7 +626,7 @@ describe.skipIf(!HAS_SERVER)(
         () => host.tags.create({ tag: 'offline' }),
         () => host.tags.update('tag-id', { color: '#112233' }),
         () => host.tags.delete('tag-id'),
-        () => host.tags.discover(),
+        () => host.tags.createMany([{ tag: 'offline' }]),
         () => host.transactions.categorize([id], food),
         () => host.transactions.delete([id]),
         () => host.transactions.undo('any'),

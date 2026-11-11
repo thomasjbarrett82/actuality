@@ -17,7 +17,8 @@ export interface Toast {
   /** Already translated. */
   title: string;
   message: string;
-  action: ToastAction;
+  /** A toast that only informs has none. */
+  action?: ToastAction;
   /** Runs when the user closes the toast, not when the app removes it. */
   onClose?: () => void | Promise<void>;
 }

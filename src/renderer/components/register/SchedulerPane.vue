@@ -2,7 +2,7 @@
 // The Scheduled Transactions pane (12 §3): the title bar with Edit Transactions ▾, Add and Transfer and the
 // centered title pill, and a grid of the schedules (sort, column chooser, resizing). It is a list: a
 // double-click, Add, Transfer and Edit Schedule… open the Schedule dialog (12 §3.1). The actions menu also
-// runs Enter in register now, Skip, Delete and Move to account.
+// runs Enter in register now, Skip, Delete and Move to account. A split schedule expands into its lines.
 import { bySortOrder } from '@shared/domain/accounts';
 import {
   SCHEDULER_SORTABLE,
@@ -12,7 +12,14 @@ import {
 import type { Id } from '@shared/domain/types';
 import { dateShort } from '@shared/format';
 import type { ContextMenuItem } from '@shared/shell-api';
-import { ArrowDown, ArrowLeftRight, ArrowUp, Plus } from 'lucide-vue-next';
+import {
+  ArrowDown,
+  ArrowLeftRight,
+  ArrowUp,
+  ChevronDown,
+  ChevronRight,
+  Plus,
+} from 'lucide-vue-next';
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { gridTemplate, minWidth, schedulerLayoutOf } from '../../register/layout';
@@ -222,24 +229,39 @@ watch(
   },
 );
 
-/** Clicks, right-clicks and keys reach the body by delegation: the row and column from the element. */
+/**
+ * Clicks, right-clicks and keys reach the body by delegation: the row and column from the element. A split
+ * line stands for its schedule.
+ */
 function rowAt(e: Event): ScheduleRow | null {
   const el = e.target instanceof HTMLElement ? e.target : null;
   if (!el) return null;
-  const id = el.closest<HTMLElement>('[data-schedule-id]')?.dataset['scheduleId'];
+  const id =
+    el.closest<HTMLElement>('[data-schedule-id]')?.dataset['scheduleId'] ??
+    el.closest<HTMLElement>('[data-line-parent]')?.dataset['lineParent'];
   return id ? (sched.byId.get(id) ?? null) : null;
 }
+const onLine = (e: Event): boolean =>
+  e.target instanceof HTMLElement && e.target.closest('[data-line-parent]') !== null;
 function onBodyClick(e: MouseEvent): void {
   const row = rowAt(e);
   if (!row) return;
+  // A click on a split line selects its schedule, as in the register (10 §9).
+  if (onLine(e)) {
+    sched.select(row.s.id);
+    focusId.value = row.s.id;
+    return;
+  }
   const col = (e.target as HTMLElement).closest<HTMLElement>('[data-col]')?.dataset['col'];
   onCell(row, (col ?? 'date') as SchedulerColumn, e);
 }
-/** A double-click opens the Schedule dialog on the row (12 §3). */
+/** A double-click opens the Schedule dialog on the row (12 §3); not on the split disclosure. */
 function onBodyDblClick(e: MouseEvent): void {
   const row = rowAt(e);
-  const col = (e.target as HTMLElement).closest<HTMLElement>('[data-col]')?.dataset['col'];
-  if (row && col !== 'select') void sched.openEditor({ id: row.s.id });
+  const el = e.target as HTMLElement;
+  const col = el.closest<HTMLElement>('[data-col]')?.dataset['col'];
+  if (row && col !== 'select' && !el.closest('.sched__disclosure'))
+    void sched.openEditor({ id: row.s.id });
 }
 function onBodyMenu(e: MouseEvent): void {
   const row = rowAt(e);
@@ -277,6 +299,17 @@ onBeforeUnmount(() => {
 
 /** Offline, Add and Transfer stay focusable with aria-disabled so the tooltip can be read (22 §4.6). */
 const offlineTooltip = computed(() => (reg.canEdit ? null : t('app.editingUnavailableOffline')));
+/** Each row's and shown split line's aria-rowindex; the header row is 1. */
+const rowIndex = computed(() => {
+  const out = new Map<string, number>();
+  let n = 2;
+  for (const row of sched.rows) {
+    out.set(row.s.id, n++);
+    if (sched.expanded.has(row.s.id))
+      row.lines.forEach((_, j) => out.set(`${row.s.id}:${String(j)}`, n++));
+  }
+  return out;
+});
 const activeDescendant = computed(() =>
   focusId.value && sched.byId.has(focusId.value) ? `sched-row-${focusId.value}` : undefined,
 );
@@ -316,7 +349,7 @@ const activeDescendant = computed(() =>
     </div>
     <div
       class="sched__grid"
-      role="grid"
+      role="treegrid"
       aria-multiselectable="true"
       :aria-label="t('a11y.schedulerGrid')"
     >
@@ -382,8 +415,10 @@ const activeDescendant = computed(() =>
               'is-focused': focusId === row.s.id,
             }"
             role="row"
-            :aria-rowindex="i + 2"
+            aria-level="1"
+            :aria-rowindex="rowIndex.get(row.s.id)"
             :aria-selected="sched.selection.has(row.s.id)"
+            :aria-expanded="row.lines.length > 0 ? sched.expanded.has(row.s.id) : undefined"
             :data-schedule-id="row.s.id"
           >
             <div
@@ -417,6 +452,22 @@ const activeDescendant = computed(() =>
                 >{{ row.frequencyText }}</span
               >
               <template v-else-if="c.field === 'payee'">
+                <button
+                  v-if="row.lines.length > 0"
+                  type="button"
+                  tabindex="-1"
+                  class="sched__disclosure"
+                  :aria-label="t('a11y.splitLines')"
+                  :aria-expanded="sched.expanded.has(row.s.id)"
+                  @click.stop="sched.toggleExpanded(row.s.id)"
+                >
+                  <ChevronDown
+                    v-if="sched.expanded.has(row.s.id)"
+                    class="sched__icon"
+                    aria-hidden="true"
+                  />
+                  <ChevronRight v-else class="sched__icon" aria-hidden="true" />
+                </button>
                 <span v-tooltip="row.payeeText" class="sched__text">{{ row.payeeText }}</span>
                 <span
                   v-if="!row.s.postsTransaction"
@@ -452,6 +503,54 @@ const activeDescendant = computed(() =>
               /></span>
             </div>
           </div>
+          <template v-if="sched.expanded.has(row.s.id)">
+            <div
+              v-for="(l, j) in row.lines"
+              :key="j"
+              class="sched__line"
+              :class="{ 'is-alt': j % 2 === 1 }"
+              role="row"
+              aria-level="2"
+              :aria-rowindex="rowIndex.get(`${row.s.id}:${String(j)}`)"
+              :data-line-parent="row.s.id"
+            >
+              <div
+                v-for="c in layout"
+                :key="c.field"
+                class="sched__line-cell"
+                :class="{
+                  'sched__cell--money': c.field === 'outflow' || c.field === 'inflow',
+                  'sched__line-cell--indent': c.field === 'payee',
+                }"
+                role="gridcell"
+                :data-col="c.field"
+              >
+                <span v-if="c.field === 'payee'" class="sched__text">{{ l.transferText }}</span>
+                <span v-else-if="c.field === 'category'" class="sched__text">{{
+                  l.categoryText
+                }}</span>
+                <NoteText
+                  v-else-if="c.field === 'notes'"
+                  v-tooltip.truncated="l.line.notes"
+                  class="sched__text"
+                  :notes="l.line.notes"
+                  @tag="onTag"
+                />
+                <MoneyAmount
+                  v-else-if="c.field === 'outflow'"
+                  :value="l.line.amount < 0 ? -l.line.amount : 0"
+                  :settings="money"
+                  blank-zero
+                />
+                <MoneyAmount
+                  v-else-if="c.field === 'inflow'"
+                  :value="l.line.amount > 0 ? l.line.amount : 0"
+                  :settings="money"
+                  blank-zero
+                />
+              </div>
+            </div>
+          </template>
         </template>
       </div>
     </div>
@@ -643,6 +742,48 @@ const activeDescendant = computed(() =>
 .sched__cell--money {
   justify-content: flex-end;
   font-variant-numeric: tabular-nums;
+}
+
+.sched__disclosure {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* A split schedule's lines under its expanded row, styled as the register's split lines (11 §7.2). */
+.sched__line {
+  display: grid;
+  grid-template-columns: var(--reg-cols);
+  height: var(--row-h);
+  background: var(--budget-row-alt-even);
+  color: var(--split-text);
+  font-size: var(--font-body);
+  font-weight: 600;
+}
+
+.sched__line.is-alt {
+  background: var(--panel-bg);
+}
+
+.sched__line-cell {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  padding: 0 var(--space-2);
+  border-bottom: 1px solid var(--split-border);
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.sched__line-cell--indent {
+  padding-left: var(--space-6);
 }
 
 .sched__badge {

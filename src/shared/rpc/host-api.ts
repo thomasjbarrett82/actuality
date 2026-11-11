@@ -486,7 +486,26 @@ export const hostMethods = {
       .strict(),
   },
   'tags.delete': { params: z.object({ id }).strict() },
-  'tags.discover': { params: z.object({}).strict() },
+  /** The Discover dialog (04 §5.2): note tags with no entity, then the ones the user chose. */
+  'tags.unmanaged': { params: z.object({}).strict() },
+  'tags.createMany': {
+    params: z
+      .object({
+        tags: z
+          .array(
+            z
+              .object({
+                tag: tagName,
+                color: tagColor.optional(),
+                description: z.string().optional(),
+              })
+              .strict(),
+          )
+          .min(1)
+          .max(10_000),
+      })
+      .strict(),
+  },
   /** Categorize As (10 §6.1) and the error popovers (10 §6.3). Ids may be split lines. */
   'transactions.categorize': {
     params: z.object({ ids, categoryId: id.nullable() }).strict(),
@@ -867,7 +886,8 @@ export interface HostResults {
   'tags.create': TagEntity;
   'tags.update': TagEntity;
   'tags.delete': null;
-  'tags.discover': TagEntity[];
+  'tags.unmanaged': string[];
+  'tags.createMany': TagEntity[];
   'transactions.categorize': null;
   'transactions.delete': UndoableResult;
   /** Old id → new id of every re-created transaction. */
@@ -987,7 +1007,7 @@ export const WRITE_METHODS: ReadonlySet<HostMethod> = new Set<HostMethod>([
   'tags.create',
   'tags.update',
   'tags.delete',
-  'tags.discover',
+  'tags.createMany',
   'transactions.categorize',
   'transactions.delete',
   'transactions.undo',
