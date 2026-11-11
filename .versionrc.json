@@ -1,5 +1,11 @@
 {
   "header": "# Changelog\n\nThe user-visible changes in each release of Actuality. Changes before 0.2.0 are in the git history.\n",
+  "bumpFiles": [
+    "package.json",
+    "package-lock.json",
+    "website/package.json",
+    "website/package-lock.json"
+  ],
   "types": [
     { "type": "feat", "section": "Features" },
     { "type": "fix", "section": "Bug fixes" },
