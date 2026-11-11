@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // A split's line under its expanded parent (11 §7.2): indented, background --budget-row-alt-even/white,
 // 600 body --split-text. Lines that don't match a search are struck through for context (10 §4). A line
-// has its own error icon (11 §7.1).
+// has its own error icon (11 §7.1) and its notes show tag pills as on the parent (10 §6.2).
 import { CircleAlert, TriangleAlert } from 'lucide-vue-next';
 import { computed } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -11,6 +11,7 @@ import { errorText } from '../../register/messages';
 import type { LineView, RowView } from '../../register/rows';
 import { useRegister } from '../../register/use-register';
 import MoneyAmount from '../common/MoneyAmount.vue';
+import NoteText from './NoteText.vue';
 
 const props = defineProps<{
   row: RowView;
@@ -20,7 +21,7 @@ const props = defineProps<{
   rowIndex: number;
   matched: boolean;
 }>();
-const emit = defineEmits<{ error: [anchor: HTMLElement] }>();
+const emit = defineEmits<{ error: [anchor: HTMLElement]; tag: [tag: string] }>();
 const { t } = useI18n();
 const reg = useRegister();
 const l = computed(() => props.line.line);
@@ -70,7 +71,12 @@ const errorName = computed(() =>
         }}</span>
       </div>
       <div v-else-if="c.field === 'notes'" class="split-cell" role="gridcell">
-        <span class="split-text">{{ l.notes }}</span>
+        <NoteText
+          v-tooltip.truncated="l.notes"
+          class="split-text"
+          :notes="l.notes"
+          @tag="emit('tag', $event)"
+        />
       </div>
       <div
         v-else-if="c.field === 'outflow'"

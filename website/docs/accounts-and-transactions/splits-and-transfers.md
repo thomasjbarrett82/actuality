@@ -48,7 +48,7 @@ If the lines don't add up to the total when you save, Actuality asks how to hand
 
 Empty lines are removed when you save. A split left with a single line becomes an ordinary transaction.
 
-In the register, a split shows "Split (Multiple Categories)..." with an arrow; select the arrow to see its lines.
+In the register, a split shows "Split (Multiple Categories)..." with an arrow; select the arrow to see its lines. Tags in a line's notes appear as colored labels, just like on any other transaction.
 
 ### Splits with transfers
 

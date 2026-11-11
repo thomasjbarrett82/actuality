@@ -206,7 +206,7 @@ Choose **Split (Multiple Categories)...**. A **split editor** grows below the ma
 
 ### 7.2 Display mode
 
-The parent shows "Split (Multiple Categories)..." with a disclosure arrow. The arrow expands the lines (indented, background `--budget-row-alt-even`/white, 600 `body` `--split-text`). Splits are collapsed by default. Search auto-expands them (`10` §4).
+The parent shows "Split (Multiple Categories)..." with a disclosure arrow. The arrow expands the lines (indented, background `--budget-row-alt-even`/white, 600 `body` `--split-text`). A line's Notes shows its tags as the same colored, clickable pills as a transaction's (`10` §6.2). Splits are collapsed by default. Search auto-expands them (`10` §4).
 
 ### 7.3 Commit rules
 

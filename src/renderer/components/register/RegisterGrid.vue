@@ -705,6 +705,7 @@ defineExpose({
               :line-index="item.lineIndex"
               :row-index="v.index + 2"
               :matched="item.matched"
+              @tag="onTag"
               @error="(a) => onError(item.row.t, a, item.line.line.id)"
             />
             <TransactionEditor

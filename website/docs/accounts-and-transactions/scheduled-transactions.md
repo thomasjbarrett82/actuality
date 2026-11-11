@@ -13,6 +13,8 @@ Select **Scheduled Transactions** in the register's footer to open the pane unde
 
 The pane lists each schedule's next **Date**, its **Frequency**, payee, category, notes and amount. In **All Accounts** it lists every schedule.
 
+A split schedule shows "Split (Multiple Categories)..." with an arrow before its payee; select the arrow to see its lines. Tags in the notes appear as colored labels; select one to list the register's transactions with that tag.
+
 ![Scheduled transactions panel with examples and buttons](/img/accounts/scheduled-transactions-light.png#light)
 ![Scheduled transactions panel with examples and buttons](/img/accounts/scheduled-transactions-dark.png#dark)
 
