@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // The Tags manager (04 §5.2; 07 §7): Actual's tag entities. Search, create, discover tags already used in
-// notes, change a tag's color and description, rename (Actual rewrites every note that has it; a name in use,
+// notes (the Discover dialog), change a tag's color and description, rename (Actual rewrites every note that has it; a name in use,
 // even by a deleted tag, is refused) or delete (the
 // `#name` text stays in the notes), and view the transactions with a tag. `needs-review` drives approval, so it
 // has no Rename or Delete. Writes need an online connection.
@@ -16,9 +16,11 @@ import { errorInfo } from '../../rpc/errors';
 import { host } from '../../rpc/host-client';
 import { useConnection } from '../../stores/connection';
 import { useDialogs } from '../../stores/dialogs';
+import { useModals } from '../../stores/modals';
 import { escapeRichText } from '../common/rich-text';
 import StandardDialog from '../common/StandardDialog.vue';
 import UiButton from '../common/UiButton.vue';
+import DiscoverTagsDialog from './DiscoverTagsDialog.vue';
 
 const emit = defineEmits<{ close: [result: { search: string } | null] }>();
 const { t } = useI18n();
@@ -74,16 +76,9 @@ async function create(): Promise<void> {
   }
 }
 
+/** The Discover dialog: the note tags with no entity, to choose which to add. */
 async function discover(): Promise<void> {
-  const result = await run(() => host.call('tags.discover', {}));
-  if (!result.ok) return;
-  const n = result.value.length;
-  await tell(
-    t('app.tagsDiscoverTitle'),
-    n === 0 ? t('app.tagsDiscoverNone') : t('app.tagsDiscoverFound', { n }, n),
-    'info',
-    'ok',
-  );
+  await useModals().open(DiscoverTagsDialog);
 }
 
 async function setColor(x: TagEntity, color: string | null): Promise<void> {

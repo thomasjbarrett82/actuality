@@ -36,9 +36,9 @@ If Actuality can't reach the blog, usually because you're offline, the bell show
 
 ## Messages and the keyboard
 
-The messages at the bottom right never take focus away from what you're doing, and they stay until you close them. Screen readers announce them when they appear.
+The messages at the bottom right never take focus away from what you're doing, and they stay until you close them. Screen readers announce them when they appear. Other parts of Actuality use the same messages for short notes, such as "No tags selected to add" when you select **Add** in **Discover New Tags** with no tags checked.
 
-To reach them from the keyboard, press **F6** until focus moves into them (they come last), then **Tab** between the message's button and **✕**. **Esc** closes the message and takes you back to where you were.
+To reach them from the keyboard, press **F6** until focus moves into them (they come last), then **Tab** between the message's button, if it has one, and **✕**. **Esc** closes the message and takes you back to where you were.
 
 ## Turning them off
 

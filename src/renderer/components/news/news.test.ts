@@ -386,6 +386,18 @@ describe('the toast stack (24 §5)', () => {
     await nextTick();
     expect(w.find('section').attributes('inert')).toBeUndefined();
   });
+
+  it('shows a toast with no action with only its close button', async () => {
+    const toasts = useToasts();
+    const w = mountApp(ToastHost);
+    toasts.show({ id: 'info', title: 'Title', message: 'Message.' });
+    await nextTick();
+    expect(w.find('.toast__actions').exists()).toBe(false);
+    expect(w.findAll('[data-toast] button').map((b) => b.attributes('aria-label'))).toEqual([
+      'Close',
+    ]);
+    expect(await axe(document.body)).toHaveNoViolations();
+  });
 });
 
 /** Mounts the App.vue effects and the toast stack. */

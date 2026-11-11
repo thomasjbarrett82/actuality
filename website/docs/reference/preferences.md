@@ -16,7 +16,7 @@ Choose **File ▸ Preferences…** (**Ctrl+,**). On macOS, choose **Actuality �
 | Server | The server you're connected to, **Sign out** and **Change server…** (see [Connect to your server](../getting-started/connect-to-your-server.md#sign-out-or-change-server)). **Stay signed in on this computer**. **Trust a certificate file…** for a server with a self-signed certificate; it takes effect after restarting Actuality. |
 | Offline Cache | Where the copies of your budgets are kept on this computer, with **Show in Folder** and **Clear Offline Cache…**. **Clear the offline cache when I quit Actuality**. |
 | Appearance | **Theme:** **Use system setting**, **Light** or **Dark**. **Use color-blind friendly colors** shows positive and negative amounts and statuses in blue and orange instead of green and red. |
-| Tags | **Manage Tags…**: view, create, recolor, describe, rename and delete tags, find tags already used in notes, and see the transactions with a tag. |
+| Tags | **Manage Tags…**: view, create, recolor, describe, rename and delete tags, choose which tags already used in notes to add (**Discover New Tags**), and see the transactions with a tag. See [Tags](../accounts-and-transactions/entering-transactions.md#tags). |
 | Language | **Use system setting**, or one of Actuality's languages. |
 | Auto-fill (all payees) | Whether choosing a payee fills in the **Category**, **Notes** and **Amount** from last time. The same settings are in [Payee Settings](../accounts-and-transactions/payees-and-rules.md#auto-fill-for-all-payees). |
 | File Associations | **Use Actuality to open bank statement files (.OFX, .QFX, .QIF, .CSV)?** (Windows and Linux). |

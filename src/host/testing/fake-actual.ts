@@ -518,19 +518,9 @@ export class FakeActual implements ActualApi {
     });
   }
 
-  /** Creates an entity (no color) for each hashtag in the notes that has none. */
-  discoverTags(): Promise<void> {
-    return this.write(['tags'], (b) => {
-      const known = new Set(b.tags.map((t) => t.tag));
-      for (const row of b.transactions.flatMap((t) => [t, ...t.subtransactions])) {
-        for (const m of (row.notes ?? '').matchAll(/(?<!#)#([^#\s]+)/g)) {
-          const name = m[1] ?? '';
-          if (known.has(name)) continue;
-          known.add(name);
-          b.tags.push({ id: `tag-${name}`, tag: name, color: null, description: null });
-        }
-      }
-    });
+  getTaggedNotes(): Promise<string[]> {
+    const rows = this.requireOpen().transactions.flatMap((t) => [t, ...t.subtransactions]);
+    return Promise.resolve(rows.flatMap((r) => (r.notes?.includes('#') ? [r.notes] : [])));
   }
 
   /** The next created budget isn't uploaded: the API only logs that. */

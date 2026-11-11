@@ -8,8 +8,10 @@ import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query';
 import { flushPromises, type VueWrapper } from '@vue/test-utils';
 import { beforeEach, describe, expect, it } from 'vitest';
 import { useConnection } from '../../stores/connection';
-import { answerDialog, mockHost, ONLINE } from '../../testing/fixtures';
+import { useModals } from '../../stores/modals';
+import { answerDialog, answerModal, mockHost, ONLINE } from '../../testing/fixtures';
 import { axe, mountApp } from '../../testing/mount';
+import DiscoverTagsDialog from './DiscoverTagsDialog.vue';
 import TagsManagerDialog from './TagsManagerDialog.vue';
 
 const TAGS: TagEntity[] = [
@@ -30,7 +32,7 @@ beforeEach(() => {
     }),
     'tags.update': (p: { id: string }) => TAGS.find((t) => t.id === p.id),
     'tags.delete': () => null,
-    'tags.discover': () => [{ id: 'd1', tag: 'found', color: null, description: null }],
+    'tags.unmanaged': () => ['found'],
   });
   useConnection().info = ONLINE;
   useConnection().hostReady = true;
@@ -88,12 +90,12 @@ describe('Tags manager (04 §5.2)', () => {
     expect(host.calls('tags.create')).toEqual([]);
   });
 
-  it('reports what discovery added', async () => {
+  it('opens the Discover dialog', async () => {
     const w = await open();
     await button(w, 'Discover New Tags').trigger('click');
-    expect(await answerDialog('ok')).toMatchObject({
-      content: 'Added 1 tag used in your notes.',
-    });
+    await flushPromises();
+    expect(useModals().stack.at(-1)?.component).toBe(DiscoverTagsDialog);
+    await answerModal(null);
   });
 
   it('changes a description on blur and a color on change', async () => {
